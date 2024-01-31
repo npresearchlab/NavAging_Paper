@@ -1,0 +1,461 @@
+---
+title: "2024 CSM"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(stringr)
+library(ez)
+library(cowplot)
+library(viridis)
+library(dplyr)
+library(viridisLite)
+library("readxl")
+library("plotrix")
+```
+
+```{r}
+nonnav_data <- read_csv('/Users/yasminebassil/Documents/Emory/3_Research/Conferences/2024_CSM/2024_csm_nonnav_data_concise.csv')
+nav_data <- read_csv('/Users/yasminebassil/Documents/Emory/3_Research/Conferences/2024_CSM/2024_csm_nav_data.csv')
+```
+
+```{r}
+# Factorizing
+nav_data$Block_Num <- as.factor(nav_data$Block_Num)
+nav_data$Group <- factor(nav_data$Group, levels = c("YA", "OA"))
+nonnav_data$Group <- factor(nonnav_data$Group, levels = c("YA", "OA"))
+
+# Organizing the data
+nav_data_ya <- subset(nav_data, Group == "YA")
+nav_data_oa <- subset(nav_data, Group == "OA")
+
+nav_data_averaged <- nav_data %>%
+  group_by(Participant) %>%
+  summarise(
+    Total_Time = mean(Total_Time),
+    Distance = mean(Distance)
+  )
+```
+
+# Result #1: Navigation
+
+## Completion Time
+
+```{r}
+nav_data.summary <- nav_data %>%
+  group_by(Block_Num, Group) %>%
+  summarise(
+    se = std.error(Total_Time),
+    Total_Time = mean(Total_Time)
+  )
+#Total_time by Block_num
+p_ct <- ggplot(nav_data, aes(x=Block_Num, y=Total_Time, color=Group))+
+  geom_line(nav_data, mapping = aes(x= Block_Num, y = Total_Time, group = Participant, color = Group), alpha = .2)+
+  geom_point(nav_data, mapping = aes(x= Block_Num, y = Total_Time, group = Participant),color = 'white', size = 3)+
+  geom_point(nav_data, mapping = aes(x= Block_Num, y = Total_Time, group = Participant, color = Group), alpha = .2)+
+  geom_errorbar(
+    data = nav_data.summary,
+    mapping = aes(ymin = Total_Time - se, ymax = Total_Time + se),
+    width = 0.2,
+    size = 0.8 # Adjust the dodge width if necessary
+    ) +
+  geom_line(
+    data = nav_data.summary,
+    mapping = aes(group = Group),
+    size = 0.8
+  ) +
+  labs(color= "Participant", y="Completion Time (s)", x="")+
+  scale_x_discrete(labels = c( "Block 1","Block 2","Block 3"))+
+  ylim(0,300)+
+  theme_classic()+
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = "none")+
+  theme(axis.text.x = element_text(size=16))+
+  theme(axis.text.y = element_text(size=16))+
+  theme(axis.title.y = element_text(size=16))
+p_ct
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Conferences/2024_CSM/fig_ct_all.svg",
+       height = 4, width=5, plot=p_ct)
+```
+
+```{r}
+anova_ct <- aov(Total_Time ~ Group + Block_Num, data = nav_data)
+summary(anova_ct)
+```
+
+
+## Distance Traveled
+
+```{r}
+nav_data.summary <- nav_data %>%
+  group_by(Block_Num, Group) %>%
+  summarise(
+    se = std.error(Distance),
+    Distance = mean(Distance)
+  )
+#Total_time by Block_num
+p_dt <- ggplot(nav_data, aes(x=Block_Num, y=Distance, color=Group))+
+  geom_line(nav_data, mapping = aes(x= Block_Num, y = Distance, group = Participant, color = Group), alpha = .2)+
+  geom_point(nav_data, mapping = aes(x= Block_Num, y = Distance, group = Participant),color = 'white', size = 3)+
+  geom_point(nav_data, mapping = aes(x= Block_Num, y = Distance, group = Participant, color = Group), alpha = .2)+
+  geom_errorbar(
+    data = nav_data.summary,
+    mapping = aes(ymin = Distance - se, ymax = Distance + se),
+    width = 0.2,
+    size = 0.8 # Adjust the dodge width if necessary
+    ) +
+  geom_line(
+    data = nav_data.summary,
+    mapping = aes(group = Group),
+    size = 0.8
+  ) +
+  labs(color= "Participant", y="Distance Traveled (VR Units)", x="")+
+  scale_x_discrete(labels = c( "Block 1","Block 2","Block 3"))+
+  theme_classic()+
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = "none")+
+  theme(axis.text.x = element_text(size=16))+
+  theme(axis.text.y = element_text(size=16))+
+  theme(axis.title.y = element_text(size=16))
+p_dt
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Conferences/2024_CSM/fig_dt_all.svg",
+       height = 4, width=5, plot=p_dt)
+```
+
+```{r}
+anova_dt <- aov(Distance ~ Group + Block_Num, data = nav_data)
+summary(anova_dt)
+```
+
+
+## SBSOD
+
+```{r}
+p_sbsod <- ggplot(nonnav_data, aes(x=Group, y=SBSOD, color=Group))+
+  geom_point(size=2, alpha = 0.5) + 
+  labs(color= "Participant", y="SBSOD Score", x="Age Group")+
+  stat_summary(fun.dat = mean,fun.args = list(mult=1), geom="errorbar", width=0.2, size = 1) +
+  theme_classic() +
+  scale_color_manual(values = c("YA" = "#f8756d", "OA" = "#02bfc4")) +
+  labs(color= "Participant", y="SBSOD Score (points)", x="") +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = "none")+
+  theme(axis.text.x = element_text(size=16))+
+  theme(axis.text.y = element_text(size=16))+
+  theme(axis.title.y = element_text(size=16))
+p_sbsod
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Conferences/2024_CSM/fig_sbsod.svg",
+       height = 4, width=4, plot=p_sbsod)
+```
+
+```{r}
+nonnav_data_ya <- subset(nonnav_data, Group == "YA")
+nonnav_data_oa <- subset(nonnav_data, Group == "OA")
+stats_sbsod <- wilcox.test(nonnav_data_ya$SBSOD, nonnav_data_oa$SBSOD)
+stats_sbsod
+```
+
+# Results #2: Balance
+
+## NBWT
+
+```{r}
+p_nbwt <- ggplot(nonnav_data, aes(x=Group, y=NBWT, color=Group))+
+  geom_point(size=2, alpha = 0.5) + 
+  labs(color= "Participant", y="NBWT Score", x="Age Group")+
+  stat_summary(fun.dat = mean,fun.args = list(mult=1), geom="errorbar", width=0.2, size = 1) +
+  theme_classic() +
+  scale_color_manual(values = c("YA" = "#f8756d", "OA" = "#02bfc4")) +
+  labs(color= "Participant", y="NBWT Score (m)", x="") +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = "none")+
+  theme(axis.text.x = element_text(size=16))+
+  theme(axis.text.y = element_text(size=16))+
+  theme(axis.title.y = element_text(size=16))
+p_nbwt
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Conferences/2024_CSM/fig_nbwt.svg",
+       height = 4, width=4, plot=p_nbwt)
+```
+
+```{r}
+stats_nbwt <- t.test(nonnav_data_ya$NBWT, nonnav_data_oa$NBWT)
+stats_nbwt
+```
+
+## FSST
+
+```{r}
+p_fsst <- ggplot(nonnav_data, aes(x=Group, y=FSST, color=Group))+
+  geom_point(size=2, alpha = 0.5) + 
+  labs(color= "Participant", y="FSST Score", x="Age Group")+
+  stat_summary(fun.dat = mean,fun.args = list(mult=1), geom="errorbar", width=0.2, size = 1) +
+  theme_classic() +
+  scale_color_manual(values = c("YA" = "#f8756d", "OA" = "#02bfc4")) +
+  labs(color= "Participant", y="FSST Score (sec)", x="") +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = "none")+
+  theme(axis.text.x = element_text(size=16))+
+  theme(axis.text.y = element_text(size=16))+
+  theme(axis.title.y = element_text(size=16))
+p_fsst
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Conferences/2024_CSM/fig_fsst.svg",
+       height = 4, width=4, plot=p_fsst)
+```
+
+```{r}
+stats_fsst <- t.test(nonnav_data_ya$FSST, nonnav_data_oa$FSST)
+stats_fsst
+```
+
+# Results: Cognition
+
+## Set Shifting
+
+```{r}
+p_setshifting <- ggplot(nonnav_data, aes(x=Group, y=SetShifting, color=Group))+
+  geom_point(size=2, alpha = 0.5) + 
+  labs(color= "Participant", y="Set Shifting Score", x="Age Group")+
+  stat_summary(fun.dat = mean,fun.args = list(mult=1), geom="errorbar", width=0.2, size = 1) +
+  theme_classic() +
+  scale_color_manual(values = c("YA" = "#f8756d", "OA" = "#02bfc4")) +
+  labs(color= "Participant", y="Set Shifting Score (sec)", x="") +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = "none")+
+  theme(axis.text.x = element_text(size=16))+
+  theme(axis.text.y = element_text(size=16))+
+  theme(axis.title.y = element_text(size=16))
+p_setshifting
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Conferences/2024_CSM/fig_setshifting.svg",
+       height = 4, width=4, plot=p_setshifting)
+```
+
+```{r}
+stats_setshifting <- t.test(nonnav_data_ya$SetShifting, nonnav_data_oa$SetShifting)
+stats_setshifting
+```
+
+
+## Dual Task Interference (TUG/TUGcog)
+
+```{r}
+p_dti <- ggplot(nonnav_data, aes(x=Group, y=DTI, color=Group))+
+  geom_point(size=2, alpha = 0.5) + 
+  labs(color= "Participant", y="DTI Score", x="Age Group")+
+  stat_summary(fun.dat = mean,fun.args = list(mult=1), geom="errorbar", width=0.2, size = 1) +
+  theme_classic() +
+  scale_color_manual(values = c("YA" = "#f8756d", "OA" = "#02bfc4")) +
+  labs(color= "Participant", y="DTI Score (sec)", x="") +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = "none")+
+  theme(axis.text.x = element_text(size=16))+
+  theme(axis.text.y = element_text(size=16))+
+  theme(axis.title.y = element_text(size=16))
+p_dti
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Conferences/2024_CSM/fig_dti.svg",
+       height = 4, width=4, plot=p_dti)
+```
+
+```{r}
+stats_dti <- t.test(nonnav_data_ya$DTI, nonnav_data_oa$DTI)
+stats_dti
+```
+
+
+## Corsi Blocks
+
+```{r}
+p_corsi <- ggplot(nonnav_data, aes(x=Group, y=Corsi, color=Group))+
+  geom_point(position = position_jitter(height = 0, width = 0.1), size=2, alpha = 0.5) + 
+  labs(color= "Participant", y="Corsi Blocks Score", x="Age Group")+
+  stat_summary(fun.args = list(mult=1), geom="errorbar", width=0.2, size = 1) +
+  theme_classic() +
+  scale_color_manual(values = c("YA" = "#f8756d", "OA" = "#02bfc4")) +
+  labs(color= "Participant", y="Corsi Score (highest span)", x="") +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = "none")+
+  theme(axis.text.x = element_text(size=16))+
+  theme(axis.text.y = element_text(size=16))+
+  theme(axis.title.y = element_text(size=16))
+p_corsi
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Conferences/2024_CSM/fig_corsi.svg",
+       height = 4, width=4, plot=p_corsi)
+```
+
+```{r}
+stats_corsi <- wilcox.test(nonnav_data_ya$Corsi, nonnav_data_oa$Corsi)
+stats_corsi
+```
+
+
+# Results #4: Correlations
+
+```{r}
+# Organizing the data
+nav_data_averaged$Group <- nonnav_data$Group
+corr_data <- nav_data_averaged %>% select(Participant, Group, Total_Time, Distance)
+corr_data$NBWT <- nonnav_data$NBWT
+```
+
+```{r}
+p_corr_ct_nbwt <- ggplot(corr_data, aes(x = Total_Time, y = NBWT, color = Group)) + 
+  geom_point() +
+  geom_smooth(method = lm, aes(fill=Group)) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))+
+  labs(color= "Group", y="NBWT (score)", x="Total Time (s)") +
+  theme(legend.position = "none")
+p_corr_ct_nbwt
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Conferences/2024_CSM/fig_corr_ct_nbwt.svg",
+       height = 4, width=4, plot=p_corr_ct_nbwt)
+```
+
+```{r}
+corr_data$FSST <- nonnav_data$FSST
+p_corr_ct_fsst <- ggplot(corr_data, aes(x = Total_Time, y = FSST, color = Group)) + 
+  geom_point() +
+  geom_smooth(method = lm, aes(fill=Group)) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))+
+  labs(color= "Group", y="FSST (s)", x="Total Time (s)") +
+  theme(legend.position = "none")
+p_corr_ct_fsst
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Conferences/2024_CSM/fig_corr_ct_fsst.svg",
+       height = 4, width=4, plot=p_corr_ct_fsst)
+```
+
+```{r}
+corr_data$SetShifting <- nonnav_data$SetShifting
+p_corr_ct_setshifting <- ggplot(corr_data, aes(x = Total_Time, y = SetShifting, color = Group)) + 
+  geom_point() +
+  geom_smooth(method = lm, aes(fill=Group)) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))+
+  labs(color= "Group", y="Set Shifting Score (s)", x="Total Time (s)") +
+  theme(legend.position = "none")
+p_corr_ct_setshifting
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Conferences/2024_CSM/fig_corr_ct_setshifting.svg",
+       height = 4, width=4, plot=p_corr_ct_setshifting)
+```
+
+```{r}
+corr_data$DTI <- nonnav_data$DTI
+p_corr_ct_DTI <- ggplot(corr_data, aes(x = Total_Time, y = DTI, color = Group)) + 
+  geom_point() +
+  geom_smooth(method = lm, aes(fill=Group)) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))+
+  labs(color= "Group", y="DTI Score (s)", x="Total Time (s)") +
+  theme(legend.position = "none")
+p_corr_ct_DTI 
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Conferences/2024_CSM/fig_corr_ct_dti.svg",
+       height = 4, width=4, plot=p_corr_ct_DTI )
+```
+
+```{r}
+corr_data$Corsi <- nonnav_data$Corsi
+p_corr_ct_corsi <- ggplot(corr_data, aes(x = Total_Time, y = Corsi, color = Group)) + 
+  geom_point() +
+  geom_smooth(method = lm, aes(fill=Group)) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))+
+  labs(color= "Group", y="Corsi Score (highest span)", x="Total Time (s)") +
+  theme(legend.position = "none")
+p_corr_ct_corsi 
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Conferences/2024_CSM/fig_corr_ct_corsi.svg",
+       height = 4, width=4, plot=p_corr_ct_corsi )
+```
+
+```{r}
+corr_data$SBSOD <- nonnav_data$SBSOD
+
+corr_data_ya <- subset(corr_data, Group == "YA")
+corr_data_oa <- subset(corr_data, Group == "OA")
+```
+
+```{r}
+corr_ya_sbsod <- cor.test(corr_data_ya$SBSOD, corr_data_ya$Total_Time, method = "spearman", exact = FALSE)
+corr_ya_sbsod
+```
+
+```{r}
+corr_oa_sbsod <- cor.test(corr_data_oa$SBSOD, corr_data_oa$Total_Time, method = "spearman", exact = FALSE)
+corr_oa_sbsod
+```
+
+```{r}
+corr_ya_nbwt <- cor.test(corr_data_ya$NBWT, corr_data_ya$Total_Time)
+corr_ya_nbwt
+```
+
+```{r}
+corr_oa_nbwt <- cor.test(corr_data_oa$NBWT, corr_data_oa$Total_Time)
+corr_oa_nbwt
+```
+
+```{r}
+corr_ya_fsst <- cor.test(corr_data_ya$FSST, corr_data_ya$Total_Time)
+corr_ya_fsst
+```
+
+```{r}
+corr_oa_fsst <- cor.test(corr_data_oa$FSST, corr_data_oa$Total_Time)
+corr_oa_fsst
+```
+
+```{r}
+corr_ya_setshifting <- cor.test(corr_data_ya$SetShifting, corr_data_ya$Total_Time)
+corr_ya_setshifting
+```
+
+```{r}
+corr_oa_setshifting <- cor.test(corr_data_oa$SetShifting, corr_data_oa$Total_Time)
+corr_oa_setshifting
+```
+
+```{r}
+corr_ya_dti <- cor.test(corr_data_ya$DTI, corr_data_ya$Total_Time)
+corr_ya_dti
+```
+
+```{r}
+corr_oa_dti <- cor.test(corr_data_oa$DTI, corr_data_oa$Total_Time)
+corr_oa_dti
+```
+
+```{r}
+corr_ya_corsi <- cor.test(corr_data_ya$Corsi, corr_data_ya$Total_Time, method = "spearman", exact = FALSE)
+corr_ya_corsi
+```
+
+```{r}
+corr_oa_corsi <- cor.test(corr_data_oa$Corsi, corr_data_oa$Total_Time, method = "spearman", exact = FALSE)
+corr_oa_corsi
+```
+
