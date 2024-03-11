@@ -190,7 +190,13 @@ change$Target_Name <- factor(change$Target_Name, levels = desired_order)
 
 ```{r ct}
 #Data.summary for Total_Time
-data.summary <- data %>%
+oa_data.summary <- oa_data %>%
+  group_by(Block_num) %>%
+  summarise(
+    se = std.error(Total_Time),
+    Total_Time = mean(Total_Time)
+  )
+ya_data.summary <- ya_data %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Total_Time),
@@ -198,16 +204,16 @@ data.summary <- data %>%
   )
 #Total_time by Block_num
 p_ct <- ggplot(data, aes(x=Block_num, y=Total_Time, color=Age))+
-  scale_color_manual(values =c('#1E88E5', '#FFC107'))+
-  #ßgeom_line(data, mapping = aes(x= Block_num, y = Total_Time, group = Age, color = Age), alpha = .3)+
-  #geom_point(data, mapping = aes(x= Block_num, y = Total_Time, group = Age), color = 'white', size = 5)+
-  geom_point(data, mapping = aes(x= Block_num, y = Total_Time, group = Age, color = Age), size = 3, alpha = .5)+
-  geom_line(data.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#242526')+
-  geom_point(data.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#242526')+
-  stat_summary(fun.args = list(mean_se), 
-                geom="errorbar", 
-                width=0.2,
-                color="#242526") +
+  scale_color_manual(values =c('#5E7AFA', '#FF9FAF'))+
+  geom_line(data, mapping = aes(x= Block_num, y = Total_Time, group = Participant, color = Age), alpha = .2)+
+  geom_point(data, mapping = aes(x= Block_num, y = Total_Time, group = Participant), color = 'white', size = 5)+
+  geom_point(data, mapping = aes(x= Block_num, y = Total_Time, group = Age, color = Age), size = 3, alpha = .2)+
+  geom_line(ya_data.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#FF9FAF')+
+  #stat_summary(data = ya_data, fun = mean, geom = "line", aes(group = 1), size = 1,color='#FF9FAF', alpha = .5)+
+  stat_summary(data = ya_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
+  geom_line(oa_data.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#5E7AFA')+
+  #stat_summary(data = oa_data, fun = mean, geom = "line", aes(group = 1), size = 1,color='#5E7AFA', alpha = .5)+
+  stat_summary(data = oa_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
   labs(color= "Age", y="Total Time (s)", x="")+
   scale_x_discrete(labels = c( "Block 1","Block 2","Block 3"))+
   #ylim(0,130)+
