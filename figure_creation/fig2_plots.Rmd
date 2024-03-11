@@ -207,17 +207,21 @@ p_ct <-ggplot(mean_data, aes(x = factor(Age), y=Total_Time, fill=factor(Age))) +
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   stat_halfeye(
-    adjust = .5, 
-    width = .6, 
-    .width = 0, 
-    justification = -.2, 
+    # adjust bandwidth
+    adjust = 0.5,
+    # move to the right
+    justification = -0.2,
+    # remove the slub interval
+    .width = 0,
     point_colour = NA,
     scale = 0.5 ##  <(**new parameter**)
-  ) + 
-  geom_boxplot(
-    width = .15, 
-    outlier.shape = NA
   ) +
+  geom_boxplot(
+    width = 0.12,
+    # removing outliers
+    outlier.color = NA,
+    alpha = 0.5
+  )+
   geom_half_point(
     aes(color = Age),
     side = 'l',
