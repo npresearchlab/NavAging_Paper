@@ -1,7 +1,7 @@
 ---
 title: "Figure 3 Code"
 output: html_document
-date: "01-25-2024"
+date: "2023-11-01"
 ---
 
 
@@ -31,55 +31,113 @@ library(lme4)
 library(lmerTest)
 #install.packages('emmeans')
 library('emmeans')
+#install.packages("svglite")
+library(svglite)
 ```
 
 ```{r reading data, include=FALSE}
-#This data chunk loads and tidies up the data
+# This data chunk loads and tidies up the data
+
+# This loads the data file as the variable "data"
+ya_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_averaged_results.csv')
+# Tidying up the data
+ya_data<- ya_data %>% mutate(Age = 'YA')
+ya_data
+names(ya_data)[1] <- 'index'
+names(ya_data)[2] <- 'Participant'
+names(ya_data)[3] <- 'Block_num'
+names(ya_data)[4] <- 'Total_Time'
+names(ya_data)[5] <- 'Orientation_Time'
+names(ya_data)[6] <- 'Navigation_Time'
+names(ya_data)[7] <- 'Distance'
+names(ya_data)[8] <- 'Speed'
+names(ya_data)[9] <- 'Mean_Dwell'
+names(ya_data)[10] <- 'Teleportations'
+names(ya_data)[11] <- 'Age'
+ya_data <- ya_data[ -c(1) ]
+ya_data$Block_num <- as.factor(ya_data$Block_num)
+sapply(ya_data, class)
+ya_data
 
 #This loads the data file as the variable "data"
-data <- read.csv('/Users/yasminebassil/Desktop/YA_Data/averaged_results.csv')
+oa_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_averaged_results.csv')
 # Tidying up the data
-names(data)[1] <- 'index'
-names(data)[2] <- 'Participant'
-names(data)[3] <- 'Block_num'
-names(data)[4] <- 'Total_Time'
-names(data)[5] <- 'Orientation_Time'
-names(data)[6] <- 'Navigation_Time'
-names(data)[7] <- 'Distance'
-names(data)[8] <- 'Speed'
-names(data)[9] <- 'Mean_Dwell'
-names(data)[10] <- 'Teleportations'
-data <- data[ -c(1) ]
-data$Block_num <- as.factor(data$Block_num)
-sapply(data, class)
-data
+oa_data<- oa_data %>% mutate(Age = 'OA')
+oa_data
+names(oa_data)[1] <- 'index'
+names(oa_data)[2] <- 'Participant'
+names(oa_data)[3] <- 'Block_num'
+names(oa_data)[4] <- 'Total_Time'
+names(oa_data)[5] <- 'Orientation_Time'
+names(oa_data)[6] <- 'Navigation_Time'
+names(oa_data)[7] <- 'Distance'
+names(oa_data)[8] <- 'Speed'
+names(oa_data)[9] <- 'Mean_Dwell'
+names(oa_data)[10] <- 'Teleportations'
+names(oa_data)[11] <- 'Age'
+oa_data <- oa_data[ -c(1) ]
+oa_data$Block_num <- as.factor(oa_data$Block_num)
+sapply(oa_data, class)
+oa_data
+
+data <- rbind(ya_data, oa_data)
 ```
 
 ```{r reading more data, include=FALSE}
 #This loads the data file as the variable "data"
-nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/merged_results.csv')
+ya_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_merged_results.csv')
 # Tidying up the data
-names(nav_data)[1] <- 'index'
-names(nav_data)[2] <- 'Participant'
-names(nav_data)[3] <- 'Block_num'
-names(nav_data)[4] <- 'Target_Name'
-names(nav_data)[5] <- 'Total_Time'
-names(nav_data)[6] <- 'Orientation_Time'
-names(nav_data)[7] <- 'Navigation_Time'
-names(nav_data)[8] <- 'Distance'
-names(nav_data)[9] <- 'Speed'
-names(nav_data)[10] <- 'Mean_Dwell'
-names(nav_data)[11] <- 'Teleportations'
-nav_data <- nav_data[ -c(1) ]
-nav_data$Block_num <- as.factor(nav_data$Block_num)
-sapply(nav_data, class)
+ya_nav_data<- ya_nav_data %>% mutate(Age = 'YA')
+names(ya_nav_data)[1] <- 'index'
+names(ya_nav_data)[2] <- 'Participant'
+names(ya_nav_data)[3] <- 'Block_num'
+names(ya_nav_data)[4] <- 'Target_Name'
+names(ya_nav_data)[5] <- 'Total_Time'
+names(ya_nav_data)[6] <- 'Orientation_Time'
+names(ya_nav_data)[7] <- 'Navigation_Time'
+names(ya_nav_data)[8] <- 'Distance'
+names(ya_nav_data)[9] <- 'Speed'
+names(ya_nav_data)[10] <- 'Mean_Dwell'
+names(ya_nav_data)[11] <- 'Teleportations'
+names(ya_nav_data)[12] <- 'Age'
+ya_nav_data <- ya_nav_data[ -c(1) ]
+ya_nav_data$Block_num <- as.factor(ya_nav_data$Block_num)
+sapply(ya_nav_data, class)
 
 desired_order <- c("Automobile shop", "Police station ", "Fire Station", "Bank", "Pawn Shop", "Pizzeria", "Quattroki Restaurant", "High School")
 # Reorder the levels of Target_Name
-nav_data$Target_Name <- factor(nav_data$Target_Name, levels = desired_order)
+ya_nav_data$Target_Name <- factor(ya_nav_data$Target_Name, levels = desired_order)
 
 #This loads the data file as the variable "data"
-non_nav_data <- read.csv('/Users/yasminebassil/Desktop/YA_Data/non_nav_data.csv')
+oa_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_merged_results.csv')
+# Tidying up the data
+oa_nav_data<- oa_nav_data %>% mutate(Age = 'OA')
+names(oa_nav_data)[1] <- 'index'
+names(oa_nav_data)[2] <- 'Participant'
+names(oa_nav_data)[3] <- 'Block_num'
+names(oa_nav_data)[4] <- 'Target_Name'
+names(oa_nav_data)[5] <- 'Total_Time'
+names(oa_nav_data)[6] <- 'Orientation_Time'
+names(oa_nav_data)[7] <- 'Navigation_Time'
+names(oa_nav_data)[8] <- 'Distance'
+names(oa_nav_data)[9] <- 'Speed'
+names(oa_nav_data)[10] <- 'Mean_Dwell'
+names(oa_nav_data)[11] <- 'Teleportations'
+names(oa_nav_data)[12] <- 'Age'
+oa_nav_data <- oa_nav_data[ -c(1) ]
+oa_nav_data$Block_num <- as.factor(oa_nav_data$Block_num)
+sapply(oa_nav_data, class)
+
+desired_order <- c("Automobile shop", "Police station ", "Fire Station", "Bank", "Pawn Shop", "Pizzeria", "Quattroki Restaurant", "High School")
+# Reorder the levels of Target_Name
+oa_nav_data$Target_Name <- factor(oa_nav_data$Target_Name, levels = desired_order)
+
+nav_data <- rbind(ya_nav_data, oa_nav_data)
+```
+
+```{r reading more data, include=FALSE}
+#This loads the data file as the variable "data"
+non_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/non_nav_data.csv')
 # Tidying up the data
 names(non_nav_data)[1] <- 'Participant'
 names(non_nav_data)[2] <- 'Age'
@@ -100,7 +158,7 @@ names(non_nav_data)[14] <- 'NARA'
 
 ```{r organizing data, include=FALSE}
 b1 <- subset(nav_data, Block_num == 1)
-rownames(b1) <- NULL 
+rownames(b1) <- NULL
 b2 <- subset(nav_data, Block_num == 2)
 rownames(b2) <- NULL 
 b3 <- subset(nav_data, Block_num == 3)
@@ -127,56 +185,36 @@ b3$Target_Name <- factor(b3$Target_Name, levels = desired_order)
 change$Target_Name <- factor(change$Target_Name, levels = desired_order)
 ```
 
-```{r}
-target_data <- nav_data %>%
-  group_by(Participant, Target_Name) %>%
-  summarize(Total_Time = mean(Total_Time),
-            Orientation_Time = mean(Orientation_Time),
-            Navigation_Time = mean(Navigation_Time),
-            Distance = mean(Distance),
-            Speed = mean(Speed),
-            Mean_Dwell = mean(Mean_Dwell),
-            Teleportations = mean(Teleportations))
-```
-
-```{r}
-all_target_data <- nav_data %>%
-  group_by(Target_Name) %>%
-  summarize(Total_Time = mean(Total_Time),
-            Orientation_Time = mean(Orientation_Time),
-            Navigation_Time = mean(Navigation_Time),
-            Distance = mean(Distance),
-            Speed = mean(Speed),
-            Mean_Dwell = mean(Mean_Dwell),
-            Teleportations = mean(Teleportations))
-```
 
 # Total Time
 
 ```{r ct}
-#Data.summary for Total_Time for all blocks
-target_data.summary <- target_data %>%
-  group_by(Target_Name) %>%
+#Data.summary for Total_Time
+oa_data.summary <- oa_data %>%
+  group_by(Block_num) %>%
   summarise(
     se = std.error(Total_Time),
     Total_Time = mean(Total_Time)
   )
-#Total_time by Target_Name
-p_ct <- ggplot(target_data, aes(x=Target_Name, y=Total_Time, color=Participant))+
-  geom_line(target_data, mapping = aes(x= Target_Name, y = Total_Time, group = Participant, color = Participant), alpha = .3)+
-  scale_color_viridis(option = "plasma", discrete = TRUE)+
-  geom_point(target_data, mapping = aes(x= Target_Name, y = Total_Time, group = Participant), 
-             color = 'white', size = 5)+
-  geom_point(target_data, mapping = aes(x= Target_Name, y = Total_Time, group = Participant, 
-                                        color = Participant), size = 3, alpha = .5)+
-  geom_line(target_data.summary, mapping = aes(x= Target_Name, y = Total_Time, group = 1), size = 1.5, color = '#242526')+
-  geom_point(target_data.summary, mapping = aes(x= Target_Name, y = Total_Time, group = 1), size = 1.5, color = '#242526')+
-  stat_summary(fun.args = list(mean_se), 
-                geom="errorbar", 
-                width=0.2, 
-                color="#242526") +
-  labs(color= "Participant", y="Total Time (s)", x="")+
-  scale_x_discrete(labels = c("T1","T2","T3", "T4", "T5", "T6", "T7", "T8"))+
+ya_data.summary <- ya_data %>%
+  group_by(Block_num) %>%
+  summarise(
+    se = std.error(Total_Time),
+    Total_Time = mean(Total_Time)
+  )
+#Total_time by Block_num
+p_ct <- ggplot(data, aes(x=Block_num, y=Total_Time, color=Age))+
+  scale_color_manual(values =c('#5E7AFA', '#FF9FAF'))+
+  geom_line(data, mapping = aes(x= Block_num, y = Total_Time, group = Participant, color = Age), alpha = .2)+
+  geom_point(data, mapping = aes(x= Block_num, y = Total_Time, group = Participant), color = 'white', size = 5)+
+  geom_point(data, mapping = aes(x= Block_num, y = Total_Time, group = Age, color = Age), size = 3, alpha = .2)+
+  geom_line(ya_data.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#FF9FAF')+
+  stat_summary(data = ya_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
+  geom_line(oa_data.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#5E7AFA')+
+  stat_summary(data = oa_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
+  labs(color= "Age", y="Total Time (s)", x="")+
+  scale_x_discrete(labels = c( "Block 1","Block 2","Block 3"))+
+  #ylim(0,130)+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
@@ -184,37 +222,41 @@ p_ct <- ggplot(target_data, aes(x=Target_Name, y=Total_Time, color=Participant))
   theme(legend.position = "none")+
   theme(axis.text.x = element_text(size=20))+
   theme(axis.text.y = element_text(size=20))+
-  theme(axis.title.y = element_text(size=20))+
-  theme(axis.title.x = element_text(size=20))
+  theme(axis.title.y = element_text(size=20))
 p_ct
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/CogMap_Paper/figure_creation/plots/fig4_ct.svg", height = 4, width = 6.5, plot=p_ct)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig3_ct.svg", height = 5, width = 5, plot=p_ct)
 ```
+
 
 # Orientation Time
 
 ```{r orict}
-#Data.summary for Orientation_Time for all blocks
-target_data.summary <- target_data %>%
-  group_by(Target_Name) %>%
+#Data.summary for Orientation_Time
+oa_data.summary <- oa_data %>%
+  group_by(Block_num) %>%
   summarise(
     se = std.error(Orientation_Time),
     Orientation_Time = mean(Orientation_Time)
   )
-#Orientation_Time by Target_Name
-p_orict <- ggplot(target_data, aes(x=Target_Name, y=Orientation_Time, color=Participant))+
-  geom_line(target_data, mapping = aes(x= Target_Name, y = Orientation_Time, group = Participant, color = Participant), alpha = .3)+
-  scale_color_viridis(option = "plasma", discrete = TRUE)+
-  geom_point(target_data, mapping = aes(x= Target_Name, y = Orientation_Time, group = Participant),
-             color = 'white', size = 5)+
-  geom_point(target_data, mapping = aes(x= Target_Name, y = Orientation_Time, group = Participant, color = Participant), size = 3, alpha = .5)+
-  geom_line(target_data.summary, mapping = aes(x= Target_Name, y = Orientation_Time, group = 1), size = 1.5, color = '#242526')+
-  geom_point(target_data.summary, mapping = aes(x= Target_Name, y = Orientation_Time, group = 1), size = 1.5, color = '#242526')+
-  stat_summary(fun.args = list(mean_se), 
-                geom="errorbar", 
-                width=0.2, 
-                color="#242526") +
-  labs(color= "Participant", y="Orientation Time (s)", x="")+
-  scale_x_discrete(labels = c("T1","T2","T3", "T4", "T5", "T6", "T7", "T8"))+
+ya_data.summary <- ya_data %>%
+  group_by(Block_num) %>%
+  summarise(
+    se = std.error(Orientation_Time),
+    Orientation_Time = mean(Orientation_Time)
+  )
+#Orientation Time by Block_num
+p_orict <- ggplot(data, aes(x=Block_num, y=Orientation_Time, color=Age))+
+  scale_color_manual(values =c('#5E7AFA', '#FF9FAF'))+
+  geom_line(data, mapping = aes(x= Block_num, y = Orientation_Time, group = Participant, color = Age), alpha = .2)+
+  geom_point(data, mapping = aes(x= Block_num, y = Orientation_Time, group = Participant), color = 'white', size = 5)+
+  geom_point(data, mapping = aes(x= Block_num, y = Orientation_Time, group = Age, color = Age), size = 3, alpha = .2)+
+  geom_line(ya_data.summary, mapping = aes(x= Block_num, y = Orientation_Time, group = 1), size = 1.5, color = '#FF9FAF')+
+  stat_summary(data = ya_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
+  geom_line(oa_data.summary, mapping = aes(x= Block_num, y = Orientation_Time, group = 1), size = 1.5, color = '#5E7AFA')+
+  stat_summary(data = oa_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
+  labs(color= "Age", y="Orientation Time (s)", x="")+
+  scale_x_discrete(labels = c( "Block 1","Block 2","Block 3"))+
+  #ylim(0,11.8)+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
@@ -222,75 +264,42 @@ p_orict <- ggplot(target_data, aes(x=Target_Name, y=Orientation_Time, color=Part
   theme(legend.position = "none")+
   theme(axis.text.x = element_text(size=20))+
   theme(axis.text.y = element_text(size=20))+
-  theme(axis.title.y = element_text(size=20))+
-  theme(axis.title.x = element_text(size=20))
+  theme(axis.title.y = element_text(size=20))
 p_orict
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/CogMap_Paper/figure_creation/plots/fig4_orict.svg", height = 4, width = 6.5, plot=p_orict)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig3_orict.svg", height = 5, width = 5, plot=p_orict)
 ```
 
 # Navigation Time
 
 ```{r navct}
-#Data.summary for Navigation_Time for all blocks
-target_data.summary <- target_data %>%
-  group_by(Target_Name) %>%
+#Data.summary for Navigation_Time
+ya_data.summary <- ya_data %>%
+  group_by(Block_num) %>%
   summarise(
     se = std.error(Navigation_Time),
     Navigation_Time = mean(Navigation_Time)
   )
-#Navigation_Time by Target_Name
-p_navct <- ggplot(target_data, aes(x=Target_Name, y=Navigation_Time, color=Participant))+
-  geom_line(target_data, mapping = aes(x= Target_Name, y = Navigation_Time, group = Participant, color = Participant), alpha = .3)+
-  scale_color_viridis(option = "plasma", discrete = TRUE)+
-  geom_point(target_data, mapping = aes(x= Target_Name, y = Navigation_Time, group = Participant),
-             color = 'white', size = 5)+
-  geom_point(target_data, mapping = aes(x= Target_Name, y = Navigation_Time, group = Participant, color = Participant), size = 3, alpha = .5)+
-  geom_line(target_data.summary, mapping = aes(x= Target_Name, y = Navigation_Time, group = 1), size = 1.5, color = '#242526')+
-  geom_point(target_data.summary, mapping = aes(x= Target_Name, y = Navigation_Time, group = 1), size = 1.5, color = '#242526')+
-  stat_summary(fun.args = list(mean_se), 
-                geom="errorbar", 
-                width=0.2, 
-                color="#242526") +
-  labs(color= "Participant", y="Navigation Time (s)", x="")+
-  scale_x_discrete(labels = c("T1","T2","T3", "T4", "T5", "T6", "T7", "T8"))+
-  theme_classic()+
-  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
-  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
-  theme(plot.title = element_text(hjust = 0.5))+
-  theme(legend.position = "none")+
-  theme(axis.text.x = element_text(size=20))+
-  theme(axis.text.y = element_text(size=20))+
-  theme(axis.title.y = element_text(size=20))+
-  theme(axis.title.x = element_text(size=20))
-p_navct
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/CogMap_Paper/figure_creation/plots/fig4_navct.svg", height = 4, width = 6.5, plot=p_navct)
-```
-
-# Dwell Time
-
-```{r dwell}
-#Data.summary for Mean_Dwell for all blocks
-target_data.summary <- target_data %>%
-  group_by(Target_Name) %>%
+oa_data.summary <- oa_data %>%
+  group_by(Block_num) %>%
   summarise(
-    se = std.error(Mean_Dwell),
-    Mean_Dwell = mean(Mean_Dwell)
+    se = std.error(Navigation_Time),
+    Navigation_Time = mean(Navigation_Time)
   )
-#Mean_Dwell by Target_Name
-p_dwell <- ggplot(target_data, aes(x=Target_Name, y=Mean_Dwell, color=Participant))+
-  geom_line(target_data, mapping = aes(x= Target_Name, y = Mean_Dwell, group = Participant, color = Participant), alpha = .3)+
-  scale_color_viridis(option = "plasma", discrete = TRUE)+
-  geom_point(target_data, mapping = aes(x= Target_Name, y = Mean_Dwell, group = Participant),
-             color = 'white', size = 5)+
-  geom_point(target_data, mapping = aes(x= Target_Name, y = Mean_Dwell, group = Participant, color = Participant), size = 3, alpha = .5)+
-  geom_line(target_data.summary, mapping = aes(x= Target_Name, y = Mean_Dwell, group = 1), size = 1.5, color = '#242526')+
-  geom_point(target_data.summary, mapping = aes(x= Target_Name, y = Mean_Dwell, group = 1), size = 1.5, color = '#242526')+
-  stat_summary(fun.args = list(mean_se), 
-                geom="errorbar", 
-                width=0.2, 
-                color="#242526") +
-  labs(color= "Participant", y="Dwell Time (s)", x="")+
-  scale_x_discrete(labels = c("T1","T2","T3", "T4", "T5", "T6", "T7", "T8"))+
+
+
+#Navigation Time by Block_num
+p_navct <- ggplot(data, aes(x=Block_num, y=Navigation_Time, color=Age))+
+  scale_color_manual(values =c('#5E7AFA', '#FF9FAF'))+
+  geom_line(data, mapping = aes(x= Block_num, y = Navigation_Time, group = Participant, color = Age), alpha = .2)+
+  geom_point(data, mapping = aes(x= Block_num, y = Navigation_Time, group = Participant), color = 'white', size = 5)+
+  geom_point(data, mapping = aes(x= Block_num, y = Navigation_Time, group = Age, color = Age), size = 3, alpha = .2)+
+  geom_line(ya_data.summary, mapping = aes(x= Block_num, y = Navigation_Time, group = 1), size = 1.5, color = '#FF9FAF')+
+  stat_summary(data = ya_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
+  geom_line(oa_data.summary, mapping = aes(x= Block_num, y = Navigation_Time, group = 1), size = 1.5, color = '#5E7AFA')+
+  stat_summary(data = oa_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
+  labs(color= "Age", y="Navigation Time (s)", x="")+
+  scale_x_discrete(labels = c( "Block 1","Block 2","Block 3"))+
+  #ylim(0,120)+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
@@ -298,37 +307,40 @@ p_dwell <- ggplot(target_data, aes(x=Target_Name, y=Mean_Dwell, color=Participan
   theme(legend.position = "none")+
   theme(axis.text.x = element_text(size=20))+
   theme(axis.text.y = element_text(size=20))+
-  theme(axis.title.y = element_text(size=20))+
-  theme(axis.title.x = element_text(size=20))
-p_dwell
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/CogMap_Paper/figure_creation/plots/fig4_dwell.svg", height = 4, width = 6.5, plot=p_dwell)
+  theme(axis.title.y = element_text(size=20))
+p_navct
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig3_navct.svg", height = 5, width = 5, plot=p_navct)
 ```
 
-# Dwell Time
+# Distance
 
 ```{r dt}
-#Data.summary for Distance for all blocks
-target_data.summary <- target_data %>%
-  group_by(Target_Name) %>%
+#Data.summary for Distance
+oa_data.summary <- oa_data %>%
+  group_by(Block_num) %>%
   summarise(
     se = std.error(Distance),
     Distance = mean(Distance)
   )
-#Distance by Target_Name
-p_dt <- ggplot(target_data, aes(x=Target_Name, y=Distance, color=Participant))+
-  geom_line(target_data, mapping = aes(x= Target_Name, y = Distance, group = Participant, color = Participant), alpha = .3)+
-  scale_color_viridis(option = "plasma", discrete = TRUE)+
-  geom_point(target_data, mapping = aes(x= Target_Name, y = Distance, group = Participant),
-             color = 'white', size = 5)+
-  geom_point(target_data, mapping = aes(x= Target_Name, y = Distance, group = Participant, color = Participant), size = 3, alpha = .5)+
-  geom_line(target_data.summary, mapping = aes(x= Target_Name, y = Distance, group = 1), size = 1.5, color = '#242526')+
-  geom_point(target_data.summary, mapping = aes(x= Target_Name, y = Distance, group = 1), size = 1.5, color = '#242526')+
-  stat_summary(fun.args = list(mean_se), 
-                geom="errorbar", 
-                width=0.2, 
-                color="#242526") +
-  labs(color= "Participant", y="Distance Traveled (VR Units)", x="")+
-  scale_x_discrete(labels = c("T1","T2","T3", "T4", "T5", "T6", "T7", "T8"))+
+ya_data.summary <- ya_data %>%
+  group_by(Block_num) %>%
+  summarise(
+    se = std.error(Distance),
+    Distance = mean(Distance)
+  )
+#Distance by Block_num
+p_dt <- ggplot(data, aes(x=Block_num, y=Distance, color=Age))+
+  scale_color_manual(values =c('#5E7AFA', '#FF9FAF'))+
+  geom_line(data, mapping = aes(x= Block_num, y = Distance, group = Participant, color = Age), alpha = .2)+
+  geom_point(data, mapping = aes(x= Block_num, y = Distance, group = Participant), color = 'white', size = 5)+
+  geom_point(data, mapping = aes(x= Block_num, y = Distance, group = Age, color = Age), size = 3, alpha = .2)+
+  geom_line(ya_data.summary, mapping = aes(x= Block_num, y = Distance, group = 1), size = 1.5, color = '#FF9FAF')+
+  stat_summary(data = ya_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
+  geom_line(oa_data.summary, mapping = aes(x= Block_num, y = Distance, group = 1), size = 1.5, color = '#5E7AFA')+
+  stat_summary(data = oa_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
+  labs(color= "Age", y="Distance Traveled (VR Units)", x="")+
+  scale_x_discrete(labels = c( "Block 1","Block 2","Block 3"))+
+  #ylim(0,600)+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
@@ -336,37 +348,40 @@ p_dt <- ggplot(target_data, aes(x=Target_Name, y=Distance, color=Participant))+
   theme(legend.position = "none")+
   theme(axis.text.x = element_text(size=20))+
   theme(axis.text.y = element_text(size=20))+
-  theme(axis.title.y = element_text(size=18))+
-  theme(axis.title.x = element_text(size=20))
+  theme(axis.title.y = element_text(size=20))
 p_dt
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/CogMap_Paper/figure_creation/plots/fig4_dt.svg", height = 4, width = 6.5, plot=p_dt)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig3_dt.svg", height = 5, width = 5, plot=p_dt)
 ```
 
 # Speed
 
 ```{r speed}
-#Data.summary for Speed for all blocks
-target_data.summary <- target_data %>%
-  group_by(Target_Name) %>%
+#Data.summary for Speed
+oa_data.summary <- oa_data %>%
+  group_by(Block_num) %>%
   summarise(
     se = std.error(Speed),
     Speed = mean(Speed)
   )
-#Speed by Target_Name
-p_speed <- ggplot(target_data, aes(x=Target_Name, y=Speed, color=Participant))+
-  geom_line(target_data, mapping = aes(x= Target_Name, y = Speed, group = Participant, color = Participant), alpha = .3)+
-  scale_color_viridis(option = "plasma", discrete = TRUE)+
-  geom_point(target_data, mapping = aes(x= Target_Name, y = Speed, group = Participant),
-             color = 'white', size = 5)+
-  geom_point(target_data, mapping = aes(x= Target_Name, y = Speed, group = Participant, color = Participant), size = 3, alpha = .5)+
-  geom_line(target_data.summary, mapping = aes(x= Target_Name, y = Speed, group = 1), size = 1.5, color = '#242526')+
-  geom_point(target_data.summary, mapping = aes(x= Target_Name, y = Speed, group = 1), size = 1.5, color = '#242526')+
-  stat_summary(fun.args = list(mean_se), 
-                geom="errorbar", 
-                width=0.2, 
-                color="#242526") +
-  labs(color= "Participant", y="Speed (VR Units/s)", x="")+
-  scale_x_discrete(labels = c("T1","T2","T3", "T4", "T5", "T6", "T7", "T8"))+
+ya_data.summary <- ya_data %>%
+  group_by(Block_num) %>%
+  summarise(
+    se = std.error(Speed),
+    Speed = mean(Speed)
+  )
+#Speed by Block_num
+p_speed <- ggplot(data, aes(x=Block_num, y=Speed, color=Age))+
+  scale_color_manual(values =c('#5E7AFA', '#FF9FAF'))+
+  geom_line(data, mapping = aes(x= Block_num, y = Speed, group = Participant, color = Age), alpha = .2)+
+  geom_point(data, mapping = aes(x= Block_num, y = Speed, group = Participant), color = 'white', size = 5)+
+  geom_point(data, mapping = aes(x= Block_num, y = Speed, group = Age, color = Age), size = 3, alpha = .2)+
+  geom_line(ya_data.summary, mapping = aes(x= Block_num, y = Speed, group = 1), size = 1.5, color = '#FF9FAF')+
+  stat_summary(data = ya_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
+  geom_line(oa_data.summary, mapping = aes(x= Block_num, y = Speed, group = 1), size = 1.5, color = '#5E7AFA')+
+  stat_summary(data = oa_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
+  labs(color= "Age", y="Speed (VR Unit/s)", x="")+
+  scale_x_discrete(labels = c( "Block 1","Block 2","Block 3"))+
+  ylim(0,30)+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
@@ -374,38 +389,82 @@ p_speed <- ggplot(target_data, aes(x=Target_Name, y=Speed, color=Participant))+
   theme(legend.position = "none")+
   theme(axis.text.x = element_text(size=20))+
   theme(axis.text.y = element_text(size=20))+
-  theme(axis.title.y = element_text(size=20))+
-  theme(axis.title.x = element_text(size=20))
+  theme(axis.title.y = element_text(size=20))
 p_speed
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/CogMap_Paper/figure_creation/plots/fig4_speed.svg", height = 4, width = 6.5, plot=p_speed)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig3_speed.svg", height = 5, width = 5, plot=p_speed)
 ```
 
+# Dwell Time
+
+```{r dwell}
+#Data.summary for Mean_Dwell
+oa_data.summary <- oa_data %>%
+  group_by(Block_num) %>%
+  summarise(
+    se = std.error(Mean_Dwell),
+    Mean_Dwell = mean(Mean_Dwell)
+  )
+ya_data.summary <- ya_data %>%
+  group_by(Block_num) %>%
+  summarise(
+    se = std.error(Mean_Dwell),
+    Mean_Dwell = mean(Mean_Dwell)
+  )
+
+#Mean_Dwell by Block_num
+p_dwell <- ggplot(data, aes(x=Block_num, y=Mean_Dwell, color=Age))+
+  scale_color_manual(values =c('#5E7AFA', '#FF9FAF'))+
+  geom_line(data, mapping = aes(x= Block_num, y = Mean_Dwell, group = Participant, color = Age), alpha = .2)+
+  geom_point(data, mapping = aes(x= Block_num, y = Mean_Dwell, group = Participant), color = 'white', size = 5)+
+  geom_point(data, mapping = aes(x= Block_num, y = Mean_Dwell, group = Age, color = Age), size = 3, alpha = .2)+
+  geom_line(ya_data.summary, mapping = aes(x= Block_num, y = Mean_Dwell, group = 1), size = 1.5, color = '#FF9FAF')+
+  stat_summary(data = ya_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
+  geom_line(oa_data.summary, mapping = aes(x= Block_num, y = Mean_Dwell, group = 1), size = 1.5, color = '#5E7AFA')+
+  stat_summary(data = oa_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
+  labs(color= "Age", y="Dwell Time (s)", x="")+
+  scale_x_discrete(labels = c( "Block 1","Block 2","Block 3"))+
+  #ylim(0,3)+
+  theme_classic()+
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = "none")+
+  theme(axis.text.x = element_text(size=20))+
+  theme(axis.text.y = element_text(size=20))+
+  theme(axis.title.y = element_text(size=20))
+p_dwell
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig3_dwell.svg", height = 5, width = 5, plot=p_dwell)
+``` 
 
 # Teleportations
 
 ```{r teleport}
-#Data.summary for Teleportations for all blocks
-target_data.summary <- target_data %>%
-  group_by(Target_Name) %>%
+#Data.summary for Teleportations
+oa_data.summary <- oa_data %>%
+  group_by(Block_num) %>%
   summarise(
     se = std.error(Teleportations),
     Teleportations = mean(Teleportations)
   )
-#Teleportations by Target_Name
-p_teleport <- ggplot(target_data, aes(x=Target_Name, y=Teleportations, color=Participant))+
-  geom_line(target_data, mapping = aes(x= Target_Name, y = Teleportations, group = Participant, color = Participant), alpha = .3)+
-  scale_color_viridis(option = "plasma", discrete = TRUE)+
-  geom_point(target_data, mapping = aes(x= Target_Name, y = Teleportations, group = Participant),
-             color = 'white', size = 5)+
-  geom_point(target_data, mapping = aes(x= Target_Name, y = Teleportations, group = Participant, color = Participant), size = 3, alpha = .5)+
-  geom_line(target_data.summary, mapping = aes(x= Target_Name, y = Teleportations, group = 1), size = 1.5, color = '#242526')+
-  geom_point(target_data.summary, mapping = aes(x= Target_Name, y = Teleportations, group = 1), size = 1.5, color = '#242526')+
-  stat_summary(fun.args = list(mean_se), 
-                geom="errorbar", 
-                width=0.2, 
-                color="#242526") +
-  labs(color= "Participant", y="Teleportations (count)", x="")+
-  scale_x_discrete(labels = c("T1","T2","T3", "T4", "T5", "T6", "T7", "T8"))+
+ya_data.summary <- ya_data %>%
+  group_by(Block_num) %>%
+  summarise(
+    se = std.error(Teleportations),
+    Teleportations = mean(Teleportations)
+  )
+#Teleportations by Block_num
+p_teleport <- ggplot(data, aes(x=Block_num, y=Teleportations, color=Age))+
+  scale_color_manual(values =c('#5E7AFA', '#FF9FAF'))+
+  geom_line(data, mapping = aes(x= Block_num, y = Teleportations, group = Participant, color = Age), alpha = .2)+
+  geom_point(data, mapping = aes(x= Block_num, y = Teleportations, group = Participant), color = 'white', size = 5)+
+  geom_point(data, mapping = aes(x= Block_num, y = Teleportations, group = Age, color = Age), size = 3, alpha = .2)+
+  geom_line(ya_data.summary, mapping = aes(x= Block_num, y = Teleportations, group = 1), size = 1.5, color = '#FF9FAF')+
+  stat_summary(data = ya_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
+  geom_line(oa_data.summary, mapping = aes(x= Block_num, y = Teleportations, group = 1), size = 1.5, color = '#5E7AFA')+
+  stat_summary(data = oa_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
+  labs(color= "Age", y="Teleportations (count)", x="")+
+  scale_x_discrete(labels = c( "Block 1","Block 2","Block 3"))+
+  #ylim(0,85)+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
@@ -413,8 +472,8 @@ p_teleport <- ggplot(target_data, aes(x=Target_Name, y=Teleportations, color=Par
   theme(legend.position = "none")+
   theme(axis.text.x = element_text(size=20))+
   theme(axis.text.y = element_text(size=20))+
-  theme(axis.title.y = element_text(size=20))+
-  theme(axis.title.x = element_text(size=20))
+  theme(axis.title.y = element_text(size=20))
 p_teleport
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/CogMap_Paper/figure_creation/plots/fig4_teleport.svg", height = 4, width = 6.5, plot=p_teleport)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig3_teleport.svg", height = 5, width = 5, plot=p_teleport)
 ```
+
