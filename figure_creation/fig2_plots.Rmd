@@ -161,14 +161,14 @@ names(non_nav_data)[14] <- 'NARA'
 
 
 ```{r organizing data, include=FALSE}
-b1 <- subset(nav_data, Block_num == 1)
+b1 <- subset(data, Block_num == 1)
 rownames(b1) <- NULL
-b2 <- subset(nav_data, Block_num == 2)
+b2 <- subset(data, Block_num == 2)
 rownames(b2) <- NULL 
-b3 <- subset(nav_data, Block_num == 3)
+b3 <- subset(data, Block_num == 3)
 rownames(b3) <- NULL 
 
-mean_data <- subset(b3, select = c(Participant, Target_Name, Age))
+mean_data <- subset(b3, select = c(Participant, Age))
 
 for (i in 1:nrow(b3)) {
   mean_data$Total_Time[i] <- (b3$Total_Time[i] + b2$Total_Time[i]+b1$Total_Time[i])/3
@@ -183,10 +183,6 @@ for (i in 1:nrow(b3)) {
   mean_data$Teleportations[i] <- (b3$Teleportations[i] + b2$Teleportations[i]+b1$Teleportations[i])/3
 }
 
-b1$Target_Name <- factor(b1$Target_Name, levels = desired_order)
-b2$Target_Name <- factor(b2$Target_Name, levels = desired_order)
-b3$Target_Name <- factor(b3$Target_Name, levels = desired_order)
-mean_data$Target_Name <- factor(mean_data$Target_Name, levels = desired_order)
 mean_data$Age <- factor(mean_data$Age, levels=c("YA", "OA"))
 ```
 
@@ -240,7 +236,7 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 #Orientation Time by Block_num
 p_orict <- ggplot(mean_data, aes(x = factor(Age), y=Orientation_Time, fill=Age)) +
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
-  ylim (0,50)+
+  ylim (0,30)+
   labs(color= "Age", y="Mean Orientation Time (s)", x="")+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
