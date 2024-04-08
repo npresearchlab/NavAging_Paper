@@ -236,7 +236,7 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 #Orientation Time by Block_num
 p_orict <- ggplot(mean_data, aes(x = factor(Age), y=Orientation_Time, fill=Age)) +
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
-  ylim (0,50)+
+  ylim (0,30)+
   labs(color= "Age", y="Mean Orientation Time (s)", x="")+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
