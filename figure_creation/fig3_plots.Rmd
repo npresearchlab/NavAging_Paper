@@ -33,6 +33,8 @@ library(lmerTest)
 library('emmeans')
 #install.packages("svglite")
 library(svglite)
+library(grid)
+library(gridExtra)
 ```
 
 ```{r reading data, include=FALSE}
@@ -476,4 +478,8 @@ p_teleport <- ggplot(data, aes(x=Block_num, y=Teleportations, color=Age))+
 p_teleport
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig3_teleport.svg", height = 5, width = 5, plot=p_teleport)
 ```
+```{r fig8, fig.height = 16, fig.width = 20, fig.align = "center"}
+p<-grid.arrange(p_speed, p_ct, p_orict, p_navct, p_dt, p_dwell, p_teleport, ncol=4, nrow=3)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/composite_fig3.svg", height = 16, width =20, plot=p)
 
+```
