@@ -195,6 +195,8 @@ mean_data$Age <- factor(mean_data$Age, levels=c("YA", "OA"))
 #Total_time by Block_num
 p_ct <-ggplot(mean_data, aes(x = factor(Age), y=Total_Time, fill=factor(Age))) +
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
+  ylim (0,168)+
   labs(color= "Age", y="Mean Total Time (s)", x="")+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
@@ -226,8 +228,7 @@ p_ct <-ggplot(mean_data, aes(x = factor(Age), y=Total_Time, fill=factor(Age))) +
     range_scale = .4,
     alpha = .3,
     position = position_jitter(seed = 1, width = .12)
-  ) + scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
-  scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
+  ) +scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
 p_ct
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_ct.svg", height = 5, width = 5, plot=p_ct)
 ```
@@ -375,6 +376,7 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 p_speed <- ggplot(mean_data, aes(x = factor(Age), y=Speed, fill=Age)) +
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
+  ylim(0,30)+
   labs(color= "Age", y="Mean Speed (VR Unit/s)", x="")+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
