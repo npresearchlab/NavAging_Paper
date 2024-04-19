@@ -1,0 +1,199 @@
+
+```{r global-options, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r loading libraries, include=FALSE}
+# This code chunk loads various libraries necessary to complete the data analysis and produce graphics
+library(tidyverse)
+library(stringr)
+library(ez)
+library(cowplot)
+library("readxl")
+library("ggcorrplot")
+library(dplyr)
+library(ltm)
+library(plotrix)
+library("viridis")
+library("paletteer")
+library(ggpubr)
+library(rstatix)
+library(lme4)
+#install.packages("lmerTest")
+library(lmerTest)
+#install.packages('emmeans')
+library('emmeans')
+#install.packages("svglite")
+library(svglite)
+library(tidyquant)
+library(ggdist)
+library(ggthemes)
+library(gghalves)
+```
+
+```{r reading data, include=FALSE}
+#This data chunk loads and tidies up the data
+
+#This loads the data file as the variable "data"
+ya_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_averaged_results.csv')
+# Tidying up the data
+ya_data<- ya_data %>% mutate(Age = 'YA')
+ya_data
+names(ya_data)[1] <- 'index'
+names(ya_data)[2] <- 'Participant'
+names(ya_data)[3] <- 'Block_num'
+names(ya_data)[4] <- 'Total_Time'
+names(ya_data)[5] <- 'Orientation_Time'
+names(ya_data)[6] <- 'Navigation_Time'
+names(ya_data)[7] <- 'Distance'
+names(ya_data)[8] <- 'Speed'
+names(ya_data)[9] <- 'Mean_Dwell'
+names(ya_data)[10] <- 'Teleportations'
+names(ya_data)[11] <- 'Age'
+ya_data <- ya_data[ -c(1) ]
+ya_data$Block_num <- as.factor(ya_data$Block_num)
+sapply(ya_data, class)
+ya_data
+
+#This loads the data file as the variable "data"
+oa_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_averaged_results.csv')
+# Tidying up the data
+oa_data<- oa_data %>% mutate(Age = 'OA')
+oa_data
+names(oa_data)[1] <- 'index'
+names(oa_data)[2] <- 'Participant'
+names(oa_data)[3] <- 'Block_num'
+names(oa_data)[4] <- 'Total_Time'
+names(oa_data)[5] <- 'Orientation_Time'
+names(oa_data)[6] <- 'Navigation_Time'
+names(oa_data)[7] <- 'Distance'
+names(oa_data)[8] <- 'Speed'
+names(oa_data)[9] <- 'Mean_Dwell'
+names(oa_data)[10] <- 'Teleportations'
+names(oa_data)[11] <- 'Age'
+oa_data <- oa_data[ -c(1) ]
+oa_data$Block_num <- as.factor(oa_data$Block_num)
+sapply(oa_data, class)
+oa_data
+
+data <- rbind(ya_data, oa_data)
+```
+
+```{r reading more data, include=FALSE}
+#This loads the data file as the variable "data"
+ya_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_merged_results.csv')
+# Tidying up the data
+ya_nav_data<- ya_nav_data %>% mutate(Age = 'YA')
+names(ya_nav_data)[1] <- 'index'
+names(ya_nav_data)[2] <- 'Participant'
+names(ya_nav_data)[3] <- 'Block_num'
+names(ya_nav_data)[4] <- 'Target_Name'
+names(ya_nav_data)[5] <- 'Total_Time'
+names(ya_nav_data)[6] <- 'Orientation_Time'
+names(ya_nav_data)[7] <- 'Navigation_Time'
+names(ya_nav_data)[8] <- 'Distance'
+names(ya_nav_data)[9] <- 'Speed'
+names(ya_nav_data)[10] <- 'Mean_Dwell'
+names(ya_nav_data)[11] <- 'Teleportations'
+names(ya_nav_data)[12] <- 'Age'
+ya_nav_data <- ya_nav_data[ -c(1) ]
+ya_nav_data$Block_num <- as.factor(ya_nav_data$Block_num)
+sapply(ya_nav_data, class)
+
+desired_order <- c("Automobile shop", "Police station ", "Fire Station", "Bank", "Pawn Shop", "Pizzeria", "Quattroki Restaurant", "High School")
+# Reorder the levels of Target_Name
+ya_nav_data$Target_Name <- factor(ya_nav_data$Target_Name, levels = desired_order)
+
+#This loads the data file as the variable "data"
+oa_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_merged_results.csv')
+# Tidying up the data
+oa_nav_data<- oa_nav_data %>% mutate(Age = 'OA')
+names(oa_nav_data)[1] <- 'index'
+names(oa_nav_data)[2] <- 'Participant'
+names(oa_nav_data)[3] <- 'Block_num'
+names(oa_nav_data)[4] <- 'Target_Name'
+names(oa_nav_data)[5] <- 'Total_Time'
+names(oa_nav_data)[6] <- 'Orientation_Time'
+names(oa_nav_data)[7] <- 'Navigation_Time'
+names(oa_nav_data)[8] <- 'Distance'
+names(oa_nav_data)[9] <- 'Speed'
+names(oa_nav_data)[10] <- 'Mean_Dwell'
+names(oa_nav_data)[11] <- 'Teleportations'
+names(oa_nav_data)[12] <- 'Age'
+oa_nav_data <- oa_nav_data[ -c(1) ]
+oa_nav_data$Block_num <- as.factor(oa_nav_data$Block_num)
+sapply(oa_nav_data, class)
+
+desired_order <- c("Automobile shop", "Police station ", "Fire Station", "Bank", "Pawn Shop", "Pizzeria", "Quattroki Restaurant", "High School")
+# Reorder the levels of Target_Name
+oa_nav_data$Target_Name <- factor(oa_nav_data$Target_Name, levels = desired_order)
+
+nav_data <- rbind(ya_nav_data, oa_nav_data)
+```
+
+```{r reading more data, include=FALSE}
+#This loads the data file as the variable "data"
+non_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/non_nav_data.csv')
+# Tidying up the data
+names(non_nav_data)[1] <- 'Participant'
+names(non_nav_data)[2] <- 'Age'
+names(non_nav_data)[3] <- 'PSQI'
+names(non_nav_data)[4] <- 'SSS_Pre'
+names(non_nav_data)[5] <- 'SSS_Post'
+names(non_nav_data)[6] <- 'SBSOD'
+names(non_nav_data)[7] <- 'MiniCog'
+names(non_nav_data)[8] <- 'TrailsA'
+names(non_nav_data)[9] <- 'TrailsB'
+names(non_nav_data)[10] <- 'SetShifting'
+names(non_nav_data)[11] <- 'CorsiBlocks'
+names(non_nav_data)[12] <- 'SSQ_Pre'
+names(non_nav_data)[13] <- 'SSQ_Post'
+names(non_nav_data)[14] <- 'NARA'
+non_nav_data <- select(non_nav_data, -Age) 
+```
+
+```{r organizing data, include=FALSE}
+b1 <- subset(nav_data, Block_num == 1)
+rownames(b1) <- NULL
+b2 <- subset(nav_data, Block_num == 2)
+rownames(b2) <- NULL 
+b3 <- subset(nav_data, Block_num == 3)
+rownames(b3) <- NULL 
+
+mean_data <- subset(b3, select = c(Participant, Age))
+
+for (i in 1:nrow(b3)) {
+  mean_data$Total_Time[i] <- (b3$Total_Time[i] + b2$Total_Time[i]+b1$Total_Time[i])/3
+  mean_data$Orientation_Time[i] <- (b3$Orientation_Time[i] + b2$Orientation_Time[i]+b1$Orientation_Time[i])/3
+  mean_data$Navigation_Time[i] <- (b3$Navigation_Time[i] + b2$Navigation_Time[i]+b1$Navigation_Time[i])/3
+  mean_data$Distance[i] <- (b3$Distance[i] + b2$Distance[i]+b1$Distance[i])/3
+  mean_data$Speed[i] <- (b3$Speed[i] + b2$Speed[i]+b1$Speed[i])/3
+  mean_data$Mean_Dwell[i] <- (b3$Mean_Dwell[i] + b2$Mean_Dwell[i]+b1$Mean_Dwell[i])/3
+  mean_data$Var_X[i] <- (b3$Var_X[i] + b2$Var_X[i]+b1$Var_X[i])/3
+  mean_data$Var_Y[i] <- (b3$Var_Y[i] + b2$Var_Y[i]+b1$Var_Y[i])/3
+  mean_data$Var_Z[i] <- (b3$Var_Z[i] + b2$Var_Z[i]+b1$Var_Z[i])/3
+  mean_data$Teleportations[i] <- (b3$Teleportations[i] + b2$Teleportations[i]+b1$Teleportations[i])/3
+}
+
+mean_data$Age <- factor(mean_data$Age, levels=c("YA", "OA"))
+df_merge <- merge(mean_data,non_nav_data,by="Participant") 
+```
+
+
+
+```{r}
+data_plot <- ggplot(df_merge, aes(x=Age, y=NARA, color = Age))+
+  geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
+  scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_x_discrete(limits = c("YA", "OA"))+
+  stat_summary(fun.args = list(mean_se), geom="crossbar",  width=.3, size = .5,  color="#242526") +
+  stat_summary( fun = "mean",fun.args = list(mult=1), geom="point", size = 1.5, color="black") +
+  labs(color= "Participant", y="NARA Score", x="Cohort")+
+  theme_classic()+
+  theme(panel.background = element_rect(fill = "white", linewidth = .5, colour = "#242526"))+
+  #theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = 'none')
+data_plot
+```
