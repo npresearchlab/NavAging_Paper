@@ -92,6 +92,7 @@ names(non_nav_data)[11] <- 'CorsiBlocks'
 names(non_nav_data)[12] <- 'SSQ_Pre'
 names(non_nav_data)[13] <- 'SSQ_Post'
 names(non_nav_data)[14] <- 'NARA'
+non_nav_data <- select(non_nav_data, -Age) 
 ```
 
 
@@ -122,10 +123,14 @@ for (i in 1:nrow(b3)) {
 
 mean_data$Age <- factor(mean_data$Age, levels=c("YA", "OA"))
 df_merge <- merge(mean_data,non_nav_data,by="Participant") 
+oa_data <- df_merge %>%
+  filter(Age == "OA") 
+ya_data <- df_merge %>%
+  filter(Age == "YA")
 ```
 
 ```{r}
-p_dt <- ggplot(df_merge, aes(x=Distance, y=NARA, color = Cohort))+
+p_dt <- ggplot(df_merge, aes(x=Distance, y=NARA, color = Age))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
   scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
@@ -150,7 +155,7 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_dt.svg", height = 5, width = 5, plot=p_dt)
 ```
 ```{r}
-p_ct <- ggplot(df_merge, aes(y=NARA, x=Total_Time, color = Cohort))+
+p_ct <- ggplot(df_merge, aes(y=NARA, x=Total_Time, color = Age))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
   scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
@@ -176,7 +181,7 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_ct.svg", height = 5, width = 5, plot=p_ct)
 ```
 ```{r}
-p_orict <- ggplot(df_merge, aes(y=NARA, x=Orientation_Time, color = Cohort))+
+p_orict <- ggplot(df_merge, aes(y=NARA, x=Orientation_Time, color = Age))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
   scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
@@ -201,7 +206,7 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_orict.svg", height = 5, width = 5, plot=p_orict)
 ```
 ```{r}
-p_navct <- ggplot(df_merge, aes(y=NARA, x=Navigation_Time, color = Cohort))+
+p_navct <- ggplot(df_merge, aes(y=NARA, x=Navigation_Time, color = Age))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
   scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
@@ -214,7 +219,6 @@ p_navct <- ggplot(df_merge, aes(y=NARA, x=Navigation_Time, color = Cohort))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
   theme(plot.title = element_text(hjust = 0.5))+
   theme(legend.position = 'none')
-data_plot4
 corr <- cor.test(df_merge$NARA, df_merge$Navigation_Time, 
                     method = "pearson")
 corr
@@ -227,7 +231,7 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_navct.svg", height = 5, width = 5, plot=p_navct)
 ```
 ```{r}
-p_speed <- ggplot(df_merge, aes(y=NARA, x=Speed, color = Cohort))+
+p_speed <- ggplot(df_merge, aes(y=NARA, x=Speed, color = Age))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
   scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
@@ -253,7 +257,7 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_speed.svg", height = 5, width = 5, plot=p_speed)
 ```
 ```{r}
-p_teleport <- ggplot(df_merge, aes(y=NARA, x=Teleportations, color = Cohort))+
+p_teleport <- ggplot(df_merge, aes(y=NARA, x=Teleportations, color = Age))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
   scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
@@ -280,7 +284,7 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_teleport.svg", height = 5, width = 5, plot=p_teleport)
 ```
 ```{r}
-p_dwell <- ggplot(df_merge, aes(y=NARA, x=Mean_Dwell, color = Cohort))+
+p_dwell <- ggplot(df_merge, aes(y=NARA, x=Mean_Dwell, color = Age))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
   scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
