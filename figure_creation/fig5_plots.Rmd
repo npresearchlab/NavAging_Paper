@@ -356,6 +356,7 @@ ya_p_ct <- ggplot(allblocks_targets, aes(x=Block_num, y=Total_Time_m, shape=Targ
                 width=0.1, alpha=0.7)+
   labs(color= "Target_Name", y="Total Time (s)", x = "Block Number")+
   theme_classic()+
+  ylim(0,150)+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -391,6 +392,7 @@ oa_p_ct <- ggplot(allblocks_targets, aes(x=Block_num, y=Total_Time_m, shape=Targ
                 width=0.1, alpha=0.7)+
   labs(color= "Target_Name", y="Total Time (s)", x = "Block Number")+
   theme_classic()+
+  ylim(0,150)+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -434,6 +436,7 @@ ya_p_orict <- ggplot(allblocks_targets, aes(x=Block_num, y=Orientation_Time_m, s
                 width=0.1, alpha=0.7)+
   labs(color= "Target_Name", y="Orientation Time (s)", x = "Block Number")+
   theme_classic()+
+  ylim(0,15)+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -470,6 +473,7 @@ oa_p_orict <- ggplot(allblocks_targets, aes(x=Block_num, y=Orientation_Time_m, s
                 width=0.1, alpha=0.7)+
   labs(color= "Target_Name", y="Orientation Time (s)", x = "Block Number")+
   theme_classic()+
+  ylim(0,15)+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -514,6 +518,7 @@ ya_p_navct <- ggplot(allblocks_targets, aes(x=Block_num, y=Navigation_Time_m, sh
                 width=0.1, alpha=0.7)+
   labs(color= "Target_Name", y="Navigation Time (s)", x = "Block Number")+
   theme_classic()+
+  ylim(0,130)+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -550,6 +555,7 @@ oa_p_navct <- ggplot(allblocks_targets, aes(x=Block_num, y=Navigation_Time_m, sh
                 width=0.1, alpha=0.7)+
   labs(color= "Target_Name", y="Navigation Time (s)", x = "Block Number")+
   theme_classic()+
+  ylim(0,130)+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -592,6 +598,7 @@ ya_p_dt <- ggplot(allblocks_targets, aes(x=Block_num, y=Distance_m, shape=Target
                 width=0.1, alpha=0.7)+
   labs(color= "Target_Name", y="Distance (VR Units)", x = "Block Number")+
   theme_classic()+
+  ylim(0,800)+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -628,6 +635,7 @@ oa_p_dt <- ggplot(allblocks_targets, aes(x=Block_num, y=Distance_m, shape=Target
                 width=0.1, alpha=0.7)+
   labs(color= "Target_Name", y="Distance (VR Units)", x = "Block Number")+
   theme_classic()+
+  ylim(0,800)+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -670,6 +678,7 @@ ya_p_speed <- ggplot(allblocks_targets, aes(x=Block_num, y=Speed_m, shape=Target
                 width=0.1, alpha=0.7)+
   labs(color= "Target_Name", y="Speed (VR Units / s)", x = "Block Number")+
   theme_classic()+
+  ylim(0,22)+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -705,6 +714,7 @@ oa_p_speed <- ggplot(oa_allblocks_targets, aes(x=Block_num, y=Speed_m, shape=Tar
                 width=0.1, alpha=0.7)+
   labs(color= "Target_Name", y="Speed (VR Units / s)", x = "Block Number")+
   theme_classic()+
+  ylim(0,22)+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -748,6 +758,7 @@ ya_p_dwell <- ggplot(allblocks_targets, aes(x=Block_num, y=Mean_Dwell_m, shape=T
                 width=0.1, alpha=0.7)+
   labs(color= "Target_Name", y="Dwell Time (s)", x = "Block Number")+
   theme_classic()+
+  ylim(0,2.5)+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -784,6 +795,7 @@ oa_p_dwell <- ggplot(allblocks_targets, aes(x=Block_num, y=Mean_Dwell_m, shape=T
                 width=0.1, alpha=0.7)+
   labs(color= "Target_Name", y="Dwell Time (s)", x = "Block Number")+
   theme_classic()+
+  ylim(0,2.5)+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -826,6 +838,7 @@ ya_p_teleport <- ggplot(allblocks_targets, aes(x=Block_num, y=Teleportations_m, 
                     ymax=Teleportations_m+Teleportations_se, group = Target_Name, color = Target_Name), 
                 width=0.1, alpha=0.7)+
   theme_classic()+
+  ylim(0,130)+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
   theme(plot.title = element_text(hjust = 0.5))+
@@ -862,6 +875,7 @@ oa_p_teleport <- ggplot(allblocks_targets, aes(x=Block_num, y=Teleportations_m, 
                     ymax=Teleportations_m+Teleportations_se, group = Target_Name, color = Target_Name), 
                 width=0.1, alpha=0.7)+
   theme_classic()+
+  ylim(0,130)+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
   theme(plot.title = element_text(hjust = 0.5))+
