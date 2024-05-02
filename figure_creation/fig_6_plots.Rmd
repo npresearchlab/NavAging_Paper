@@ -182,7 +182,8 @@ df_merge <- merge(mean_data,non_nav_data,by="Participant")
 
 
 ```{r}
-df_merge_drop <- df_merge_drop[!duplicated(df_merge_drop$Participant), ]
+df_merge_drop <- select(df_merge, c('Participant','Age','NARA'))
+df_merge_drop<- df_merge_drop[!duplicated(df_merge_drop), ]
 data_plot <- ggplot(df_merge_drop, aes(x=Age, y=NARA, color = Age))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
   scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
