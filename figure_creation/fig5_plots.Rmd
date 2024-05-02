@@ -133,53 +133,39 @@ oa_nav_data$Target_Name <- factor(oa_nav_data$Target_Name, levels = desired_orde
 nav_data <- rbind(ya_nav_data, oa_nav_data)
 ```
 
-```{r reading more data, include=FALSE}
-#This loads the data file as the variable "data"
-non_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/non_nav_data.csv')
-# Tidying up the data
-names(non_nav_data)[1] <- 'Participant'
-names(non_nav_data)[2] <- 'Age'
-names(non_nav_data)[3] <- 'PSQI'
-names(non_nav_data)[4] <- 'SSS_Pre'
-names(non_nav_data)[5] <- 'SSS_Post'
-names(non_nav_data)[6] <- 'SBSOD'
-names(non_nav_data)[7] <- 'MiniCog'
-names(non_nav_data)[8] <- 'TrailsA'
-names(non_nav_data)[9] <- 'TrailsB'
-names(non_nav_data)[10] <- 'SetShifting'
-names(non_nav_data)[11] <- 'CorsiBlocks'
-names(non_nav_data)[12] <- 'SSQ_Pre'
-names(non_nav_data)[13] <- 'SSQ_Post'
-names(non_nav_data)[14] <- 'NARA'
-```
-
 
 ```{r ya organizing data, include=FALSE}
-b1 <- subset(nav_data, Block_num == 1| Age =='YA')
-rownames(b1) <- NULL 
-b2 <- subset(nav_data, Block_num == 2| Age =='YA')
-rownames(b2) <- NULL 
-b3 <- subset(nav_data, Block_num == 3| Age =='YA')
-rownames(b3) <- NULL 
+ya_b1 <- subset(ya_nav_data, Block_num == 1)
+rownames(ya_b1) <- NULL 
+ya_b2 <- subset(ya_nav_data, Block_num == 2)
+rownames(ya_b2) <- NULL 
+ya_b3 <- subset(ya_nav_data, Block_num == 3)
+rownames(ya_b3) <- NULL 
 
-change <- subset(b3, select = c(Participant, Target_Name))
+ya_b1$Target_Name <- factor(ya_b1$Target_Name, levels = desired_order)
+ya_b2$Target_Name <- factor(ya_b2$Target_Name, levels = desired_order)
+ya_b3$Target_Name <- factor(ya_b3$Target_Name, levels = desired_order)
 
-for (i in 1:nrow(b3)) {
-  change$Total_Time[i] <- b3$Total_Time[i] - b1$Total_Time[i]
-  change$Orientation_Time[i] <- b3$Orientation_Time[i] - b1$Orientation_Time[i]
-  change$Navigation_Time[i] <- b3$Navigation_Time[i] - b1$Navigation_Time[i]
-  change$Distance[i] <- b3$Distance[i] - b1$Distance[i]
-  change$Speed[i] <- b3$Speed[i] - b1$Speed[i]
-  change$Mean_Dwell[i] <- b3$Mean_Dwell[i] - b1$Mean_Dwell[i]
-  change$Teleportations[i] <- b3$Teleportations[i] - b1$Teleportations[i]
-}
-
-b1$Target_Name <- factor(b1$Target_Name, levels = desired_order)
-b2$Target_Name <- factor(b2$Target_Name, levels = desired_order)
-b3$Target_Name <- factor(b3$Target_Name, levels = desired_order)
-change$Target_Name <- factor(change$Target_Name, levels = desired_order)
-
-b1_targets <- b1 %>%
+ya_b1_targets <- ya_b1 %>%
+  group_by(Target_Name) %>%
+  summarize(Total_Time_m = mean(Total_Time),
+            Total_Time_se = std.error(Total_Time),
+            Orientation_Time_m = mean(Orientation_Time),
+            Orientation_Time_se = std.error(Orientation_Time),
+            Navigation_Time_m = mean(Navigation_Time),
+            Navigation_Time_se = std.error(Navigation_Time),
+            Distance_m = mean(Distance),
+            Distance_se = std.error(Distance),
+            Speed_m = mean(Speed),
+            Speed_se = std.error(Speed),
+            Mean_Dwell_m = mean(Mean_Dwell),
+            Mean_Dwell_se = std.error(Mean_Dwell),
+            Teleportations_m = mean(Teleportations),
+            Teleportations_se = std.error(Teleportations))
+ya_b1_targets <- ya_b1_targets %>% mutate(Age = 'YA')
+ya_b1_targets$Block_num <- as.factor(1)
+ ### USE THE CODE CHUNK ABOVE TO FIX
+ya_b2_targets <- ya_b2 %>%
   group_by(Target_Name) %>%
   summarize(Total_Time_m = mean(Total_Time),
             Total_Time_se = std.error(Total_Time),
@@ -196,9 +182,9 @@ b1_targets <- b1 %>%
             Teleportations_m = mean(Teleportations),
             Teleportations_se = std.error(Teleportations),
             Age = (Age))
-b1_targets$Block_num <- as.factor(1)
+ya_b2_targets$Block_num <- as.factor(2)
 
-b2_targets <- b2 %>%
+ya_b3_targets <- ya_b3 %>%
   group_by(Target_Name) %>%
   summarize(Total_Time_m = mean(Total_Time),
             Total_Time_se = std.error(Total_Time),
@@ -215,57 +201,25 @@ b2_targets <- b2 %>%
             Teleportations_m = mean(Teleportations),
             Teleportations_se = std.error(Teleportations),
             Age = (Age))
-b2_targets$Block_num <- as.factor(2)
+ya_b3_targets$Block_num <- as.factor(3)
 
-b3_targets <- b3 %>%
-  group_by(Target_Name) %>%
-  summarize(Total_Time_m = mean(Total_Time),
-            Total_Time_se = std.error(Total_Time),
-            Orientation_Time_m = mean(Orientation_Time),
-            Orientation_Time_se = std.error(Orientation_Time),
-            Navigation_Time_m = mean(Navigation_Time),
-            Navigation_Time_se = std.error(Navigation_Time),
-            Distance_m = mean(Distance),
-            Distance_se = std.error(Distance),
-            Speed_m = mean(Speed),
-            Speed_se = std.error(Speed),
-            Mean_Dwell_m = mean(Mean_Dwell),
-            Mean_Dwell_se = std.error(Mean_Dwell),
-            Teleportations_m = mean(Teleportations),
-            Teleportations_se = std.error(Teleportations),
-            Age = (Age))
-b3_targets$Block_num <- as.factor(3)
-
-test_allblocks_targets <- rbind(b1_targets, b2_targets, b3_targets)
-ya_allblocks_targets <- distinct(test_allblocks_targets)
+ya_test_allblocks_targets <- rbind(ya_b1_targets, ya_b2_targets, ya_b3_targets)
+#ya_allblocks_targets <- distinct(ya_test_allblocks_targets)
 ```
 
 ```{r oa organizing data, include=FALSE}
-b1 <- subset(nav_data, Block_num == 1| Age =='OA')
-rownames(b1) <- NULL 
-b2 <- subset(nav_data, Block_num == 2| Age =='OA')
-rownames(b2) <- NULL 
-b3 <- subset(nav_data, Block_num == 3| Age =='OA')
-rownames(b3) <- NULL 
+oa_b1 <- subset(nav_data, Block_num == 1| Age =='OA')
+rownames(oa_b1) <- NULL 
+oa_b2 <- subset(nav_data, Block_num == 2| Age =='OA')
+rownames(oa_b2) <- NULL 
+oa_b3 <- subset(nav_data, Block_num == 3| Age =='OA')
+rownames(oa_b3) <- NULL 
 
-change <- subset(b3, select = c(Participant, Target_Name))
 
-for (i in 1:nrow(b3)) {
-  change$Total_Time[i] <- b3$Total_Time[i] - b1$Total_Time[i]
-  change$Orientation_Time[i] <- b3$Orientation_Time[i] - b1$Orientation_Time[i]
-  change$Navigation_Time[i] <- b3$Navigation_Time[i] - b1$Navigation_Time[i]
-  change$Distance[i] <- b3$Distance[i] - b1$Distance[i]
-  change$Speed[i] <- b3$Speed[i] - b1$Speed[i]
-  change$Mean_Dwell[i] <- b3$Mean_Dwell[i] - b1$Mean_Dwell[i]
-  change$Teleportations[i] <- b3$Teleportations[i] - b1$Teleportations[i]
-}
-
-b1$Target_Name <- factor(b1$Target_Name, levels = desired_order)
-b2$Target_Name <- factor(b2$Target_Name, levels = desired_order)
-b3$Target_Name <- factor(b3$Target_Name, levels = desired_order)
-change$Target_Name <- factor(change$Target_Name, levels = desired_order)
-
-b1_targets <- b1 %>%
+oa_b1$Target_Name <- factor(oa_b1$Target_Name, levels = desired_order)
+oa_b2$Target_Name <- factor(oa_b2$Target_Name, levels = desired_order)
+oa_b3$Target_Name <- factor(oa_b3$Target_Name, levels = desired_order)
+oa_b1_targets <- oa_b1 %>%
   group_by(Target_Name) %>%
   summarize(Total_Time_m = mean(Total_Time),
             Total_Time_se = std.error(Total_Time),
@@ -282,9 +236,9 @@ b1_targets <- b1 %>%
             Teleportations_m = mean(Teleportations),
             Teleportations_se = std.error(Teleportations),
             Age = (Age))
-b1_targets$Block_num <- as.factor(1)
+oa_b1_targets$Block_num <- as.factor(1)
 
-b2_targets <- b2 %>%
+oa_b2_targets <- oa_b2 %>%
   group_by(Target_Name) %>%
   summarize(Total_Time_m = mean(Total_Time),
             Total_Time_se = std.error(Total_Time),
@@ -301,9 +255,9 @@ b2_targets <- b2 %>%
             Teleportations_m = mean(Teleportations),
             Teleportations_se = std.error(Teleportations),
             Age = (Age))
-b2_targets$Block_num <- as.factor(2)
+oa_b2_targets$Block_num <- as.factor(2)
 
-b3_targets <- b3 %>%
+oa_b3_targets <- oa_b3 %>%
   group_by(Target_Name) %>%
   summarize(Total_Time_m = mean(Total_Time),
             Total_Time_se = std.error(Total_Time),
@@ -320,11 +274,11 @@ b3_targets <- b3 %>%
             Teleportations_m = mean(Teleportations),
             Teleportations_se = std.error(Teleportations),
             Age = (Age))
-b3_targets$Block_num <- as.factor(3)
+oa_b3_targets$Block_num <- as.factor(3)
 
-test_allblocks_targets <- rbind(b1_targets, b2_targets, b3_targets)
-oa_allblocks_targets <- distinct(test_allblocks_targets)
-allblocks_targets <- rbind(ya_allblocks_targets, oa_allblocks_targets)
+oa_test_allblocks_targets <- rbind(oa_b1_targets, oa_b2_targets, oa_b3_targets)
+#oa_allblocks_targets <- distinct(oa_test_allblocks_targets)
+allblocks_targets <- rbind(ya_test_allblocks_targets, oa_test_allblocks_targets)
 ```
 
 # Total Time
@@ -660,7 +614,7 @@ allblocks_targets.summary <- ya_allblocks_targets %>%
     Speed = mean(Speed_m)
   )
 #Total_time by Target_Name
-ya_p_speed <- ggplot(allblocks_targets, aes(x=Block_num, y=Speed_m, shape=Target_Name))+
+ya_p_speed <- ggplot(ya_allblocks_targets, aes(x=Block_num, y=Speed_m, shape=Target_Name))+
   geom_line(ya_allblocks_targets, mapping = aes(x= Block_num, y = Speed_m,
                                              group = Target_Name, 
                                              color = Target_Name), alpha = 0.7)+
