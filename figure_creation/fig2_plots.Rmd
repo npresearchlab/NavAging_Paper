@@ -37,6 +37,8 @@ library(tidyquant)
 library(ggdist)
 library(ggthemes)
 library(gghalves)
+library(grid)
+library(gridExtra)
 ```
 
 ```{r reading data, include=FALSE}
@@ -193,6 +195,8 @@ mean_data$Age <- factor(mean_data$Age, levels=c("YA", "OA"))
 #Total_time by Block_num
 p_ct <-ggplot(mean_data, aes(x = factor(Age), y=Total_Time, fill=factor(Age))) +
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
+  ylim (0,168)+
   labs(color= "Age", y="Mean Total Time (s)", x="")+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
@@ -224,7 +228,7 @@ p_ct <-ggplot(mean_data, aes(x = factor(Age), y=Total_Time, fill=factor(Age))) +
     range_scale = .4,
     alpha = .3,
     position = position_jitter(seed = 1, width = .12)
-  ) + scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
+  ) +scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
 p_ct
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_ct.svg", height = 5, width = 5, plot=p_ct)
 ```
@@ -236,6 +240,7 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 #Orientation Time by Block_num
 p_orict <- ggplot(mean_data, aes(x = factor(Age), y=Orientation_Time, fill=Age)) +
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
   ylim (0,30)+
   labs(color= "Age", y="Mean Orientation Time (s)", x="")+
   theme_classic()+
@@ -280,6 +285,8 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 #Navigation Time by Block_num
 p_navct <- ggplot(mean_data, aes(x = factor(Age), y=Navigation_Time, fill=Age)) +
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
+  ylim (0,160)+
   labs(color= "Age", y="Mean Navigation Time (s)", x="")+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
@@ -323,6 +330,8 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 #Distance by Block_num
 p_dt <- ggplot(mean_data, aes(x = factor(Age), y=Distance, fill=Age)) +
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
+  #ylim (0,160)+
   labs(color= "Age", y="Mean Distance Traveled (VR Units)", x="")+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
@@ -366,6 +375,8 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 #Speed by Block_num
 p_speed <- ggplot(mean_data, aes(x = factor(Age), y=Speed, fill=Age)) +
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
+  ylim(0,30)+
   labs(color= "Age", y="Mean Speed (VR Unit/s)", x="")+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
@@ -410,7 +421,8 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 p_dwell <- ggplot(mean_data, aes(x = factor(Age), y=Mean_Dwell, fill=Age)) +
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   labs(color= "Age", y="Mean Dwell Time (s)", x="")+
-  #ylim(0,3)+
+  scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
+  ylim(0,3)+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
@@ -442,7 +454,7 @@ p_dwell <- ggplot(mean_data, aes(x = factor(Age), y=Mean_Dwell, fill=Age)) +
     range_scale = .4,
     alpha = .3,
     position = position_jitter(seed = 1, width = .12)
-  ) + scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
+  )+ scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
 p_dwell
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_dwell.svg", height = 5, width = 5, plot=p_dwell)
 ``` 
@@ -453,6 +465,8 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 #Teleportations by Block_num
 p_teleport <- ggplot(mean_data, aes(x = factor(Age), y=Teleportations, fill=Age)) +
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
+  ylim(0,150)+
   labs(color= "Age", y="Mean Teleportations (count)", x="")+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
@@ -488,5 +502,11 @@ p_teleport <- ggplot(mean_data, aes(x = factor(Age), y=Teleportations, fill=Age)
   ) + scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
 p_teleport
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_teleport.svg", height = 5, width = 5, plot=p_teleport)
+```
+
+```{r fig8, fig.height = 16, fig.width = 20, fig.align = "center"}
+p<-grid.arrange(p_speed, p_ct, p_orict, p_navct, p_dt, p_dwell, p_teleport, ncol=4, nrow=3)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/composite_fig2.svg", height = 16, width =20, plot=p)
+
 ```
 

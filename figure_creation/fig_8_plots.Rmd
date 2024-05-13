@@ -1,5 +1,5 @@
 ---
-title: "Figure 3 Code"
+title: "Figure 8 Code"
 output: html_document
 date: "2023-11-01"
 ---
@@ -41,48 +41,48 @@ library(gridExtra)
 # This data chunk loads and tidies up the data
 
 # This loads the data file as the variable "data"
-ya_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_averaged_results.csv')
+ya_ndata <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_averaged_results.csv')
 # Tidying up the data
-ya_data<- ya_data %>% mutate(Age = 'YA')
-ya_data
-names(ya_data)[1] <- 'index'
-names(ya_data)[2] <- 'Participant'
-names(ya_data)[3] <- 'Block_num'
-names(ya_data)[4] <- 'Total_Time'
-names(ya_data)[5] <- 'Orientation_Time'
-names(ya_data)[6] <- 'Navigation_Time'
-names(ya_data)[7] <- 'Distance'
-names(ya_data)[8] <- 'Speed'
-names(ya_data)[9] <- 'Mean_Dwell'
-names(ya_data)[10] <- 'Teleportations'
-names(ya_data)[11] <- 'Age'
-ya_data <- ya_data[ -c(1) ]
-ya_data$Block_num <- as.factor(ya_data$Block_num)
-sapply(ya_data, class)
-ya_data
+ya_ndata<- ya_ndata %>% mutate(Age = 'YA')
+ya_ndata
+names(ya_ndata)[1] <- 'index'
+names(ya_ndata)[2] <- 'Participant'
+names(ya_ndata)[3] <- 'Block_num'
+names(ya_ndata)[4] <- 'Total_Time'
+names(ya_ndata)[5] <- 'Orientation_Time'
+names(ya_ndata)[6] <- 'Navigation_Time'
+names(ya_ndata)[7] <- 'Distance'
+names(ya_ndata)[8] <- 'Speed'
+names(ya_ndata)[9] <- 'Mean_Dwell'
+names(ya_ndata)[10] <- 'Teleportations'
+names(ya_ndata)[11] <- 'Age'
+ya_ndata <- ya_ndata[ -c(1) ]
+ya_ndata$Block_num <- as.factor(ya_ndata$Block_num)
+sapply(ya_ndata, class)
+ya_ndata
 
 #This loads the data file as the variable "data"
-oa_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_averaged_results.csv')
+oa_ndata <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_averaged_results.csv')
 # Tidying up the data
-oa_data<- oa_data %>% mutate(Age = 'OA')
-oa_data
-names(oa_data)[1] <- 'index'
-names(oa_data)[2] <- 'Participant'
-names(oa_data)[3] <- 'Block_num'
-names(oa_data)[4] <- 'Total_Time'
-names(oa_data)[5] <- 'Orientation_Time'
-names(oa_data)[6] <- 'Navigation_Time'
-names(oa_data)[7] <- 'Distance'
-names(oa_data)[8] <- 'Speed'
-names(oa_data)[9] <- 'Mean_Dwell'
-names(oa_data)[10] <- 'Teleportations'
-names(oa_data)[11] <- 'Age'
-oa_data <- oa_data[ -c(1) ]
-oa_data$Block_num <- as.factor(oa_data$Block_num)
-sapply(oa_data, class)
-oa_data
+oa_ndata<- oa_ndata %>% mutate(Age = 'OA')
+oa_ndata
+names(oa_ndata)[1] <- 'index'
+names(oa_ndata)[2] <- 'Participant'
+names(oa_ndata)[3] <- 'Block_num'
+names(oa_ndata)[4] <- 'Total_Time'
+names(oa_ndata)[5] <- 'Orientation_Time'
+names(oa_ndata)[6] <- 'Navigation_Time'
+names(oa_ndata)[7] <- 'Distance'
+names(oa_ndata)[8] <- 'Speed'
+names(oa_ndata)[9] <- 'Mean_Dwell'
+names(oa_ndata)[10] <- 'Teleportations'
+names(oa_ndata)[11] <- 'Age'
+oa_ndata <- oa_ndata[ -c(1) ]
+oa_ndata$Block_num <- as.factor(oa_ndata$Block_num)
+sapply(oa_ndata, class)
+oa_ndata
 
-data <- rbind(ya_data, oa_data)
+data <- rbind(ya_ndata, oa_ndata)
 ```
 
 ```{r reading more data, include=FALSE}
@@ -133,7 +133,6 @@ sapply(oa_nav_data, class)
 desired_order <- c("Automobile shop", "Police station ", "Fire Station", "Bank", "Pawn Shop", "Pizzeria", "Quattroki Restaurant", "High School")
 # Reorder the levels of Target_Name
 oa_nav_data$Target_Name <- factor(oa_nav_data$Target_Name, levels = desired_order)
-
 nav_data <- rbind(ya_nav_data, oa_nav_data)
 ```
 
@@ -155,6 +154,8 @@ names(non_nav_data)[11] <- 'CorsiBlocks'
 names(non_nav_data)[12] <- 'SSQ_Pre'
 names(non_nav_data)[13] <- 'SSQ_Post'
 names(non_nav_data)[14] <- 'NARA'
+non_nav_data <- select(non_nav_data, -Age) 
+
 ```
 
 
@@ -185,7 +186,16 @@ b1$Target_Name <- factor(b1$Target_Name, levels = desired_order)
 b2$Target_Name <- factor(b2$Target_Name, levels = desired_order)
 b3$Target_Name <- factor(b3$Target_Name, levels = desired_order)
 change$Target_Name <- factor(change$Target_Name, levels = desired_order)
+
+df_merge <- merge(nav_data,non_nav_data,by="Participant") 
+ya_data <- df_merge %>%
+  filter(Age == "YA")
+ya_data$Cohort <- ifelse(ya_data$NARA>50.0, "ya_Good", "ya_Bad")
+oa_data <- df_merge %>%
+  filter(Age == "OA")
+oa_data$Cohort <- ifelse(oa_data$NARA>50.0, "oa_Good", "oa_Bad")
 ```
+
 
 
 # Total Time
@@ -205,11 +215,11 @@ ya_data.summary <- ya_data %>%
     Total_Time = mean(Total_Time)
   )
 #Total_time by Block_num
-p_ct <- ggplot(data, aes(x=Block_num, y=Total_Time, color=Age))+
+p_ct <- ggplot(data, aes(x=Block_num, y=Total_Time, color=Cohort))+
   scale_color_manual(values =c('#5E7AFA', '#FF9FAF'))+
-  geom_line(data, mapping = aes(x= Block_num, y = Total_Time, group = Participant, color = Age), alpha = .2)+
+  geom_line(data, mapping = aes(x= Block_num, y = Total_Time, group = Participant, color = Cohort), alpha = .2)+
   geom_point(data, mapping = aes(x= Block_num, y = Total_Time, group = Participant), color = 'white', size = 5)+
-  geom_point(data, mapping = aes(x= Block_num, y = Total_Time, group = Age, color = Age), size = 3, alpha = .2)+
+  geom_point(data, mapping = aes(x= Block_num, y = Total_Time, group = Cohort, color = Cohort), size = 3, alpha = .2)+
   geom_line(ya_data.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#FF9FAF')+
   stat_summary(data = ya_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
   geom_line(oa_data.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#5E7AFA')+
