@@ -29,6 +29,8 @@ library(tidyquant)
 library(ggdist)
 library(ggthemes)
 library(gghalves)
+library(grid)
+library(gridExtra)
 ```
 
 ```{r reading more data, include=FALSE}
@@ -119,10 +121,24 @@ for (i in 1:nrow(b3)) {
   mean_data$Teleportations[i] <- (b3$Teleportations[i] + b2$Teleportations[i]+b1$Teleportations[i])/3
 }
 
+change <- subset(b3, select = c(Participant, Age))
+
+for (i in 1:nrow(b3)) {
+  change$Total_Time[i] <- b3$Total_Time[i] - b1$Total_Time[i]
+  change$Orientation_Time[i] <- b3$Orientation_Time[i] - b1$Orientation_Time[i]
+  change$Navigation_Time[i] <- b3$Navigation_Time[i] - b1$Navigation_Time[i]
+  change$Distance[i] <- b3$Distance[i] - b1$Distance[i]
+  change$Speed[i] <- b3$Speed[i] - b1$Speed[i]
+  change$Mean_Dwell[i] <- b3$Mean_Dwell[i] - b1$Mean_Dwell[i]
+  change$Var_X[i] <- b3$Var_X[i] - b1$Var_X[i]
+  change$Var_Y[i] <- b3$Var_Y[i] - b1$Var_Y[i]
+  change$Var_Z[i] <- b3$Var_Z[i] - b1$Var_Z[i]
+  change$Teleportations[i] <- b3$Teleportations[i] - b1$Teleportations[i]
+}
 
 
-mean_data$Age <- factor(mean_data$Age, levels=c("YA", "OA"))
-df_merge <- merge(mean_data,non_nav_data,by="Participant") 
+change$Age <- factor(change$Age, levels=c("YA", "OA"))
+df_merge <- merge(change,non_nav_data,by="Participant") 
 oa_data <- df_merge %>%
   filter(Age == "OA") 
 ya_data <- df_merge %>%
