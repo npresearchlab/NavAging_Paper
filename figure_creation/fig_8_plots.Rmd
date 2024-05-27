@@ -160,73 +160,108 @@ non_nav_data <- select(non_nav_data, -Age)
 
 
 ```{r organizing data, include=FALSE}
-b1 <- subset(nav_data, Block_num == 1)
+b1 <- subset(data, Block_num == 1)
 rownames(b1) <- NULL
-b2 <- subset(nav_data, Block_num == 2)
+b2 <- subset(data, Block_num == 2)
 rownames(b2) <- NULL 
-b3 <- subset(nav_data, Block_num == 3)
+b3 <- subset(data, Block_num == 3)
 rownames(b3) <- NULL 
 
-change <- subset(b3, select = c(Participant, Target_Name))
+# change <- subset(b3, select = c(Participant, Target_Name))
+# 
+# for (i in 1:nrow(b3)) {
+#   change$Total_Time[i] <- b3$Total_Time[i] - b1$Total_Time[i]
+#   change$Orientation_Time[i] <- b3$Orientation_Time[i] - b1$Orientation_Time[i]
+#   change$Navigation_Time[i] <- b3$Navigation_Time[i] - b1$Navigation_Time[i]
+#   change$Distance[i] <- b3$Distance[i] - b1$Distance[i]
+#   change$Speed[i] <- b3$Speed[i] - b1$Speed[i]
+#   change$Mean_Dwell[i] <- b3$Mean_Dwell[i] - b1$Mean_Dwell[i]
+#   change$Var_X[i] <- b3$Var_X[i] - b1$Var_X[i]
+#   change$Var_Y[i] <- b3$Var_Y[i] - b1$Var_Y[i]
+#   change$Var_Z[i] <- b3$Var_Z[i] - b1$Var_Z[i]
+#   change$Teleportations[i] <- b3$Teleportations[i] - b1$Teleportations[i]
+# }
+# 
+# b1$Target_Name <- factor(b1$Target_Name, levels = desired_order)
+# b2$Target_Name <- factor(b2$Target_Name, levels = desired_order)
+# b3$Target_Name <- factor(b3$Target_Name, levels = desired_order)
+# change$Target_Name <- factor(change$Target_Name, levels = desired_order)
 
-for (i in 1:nrow(b3)) {
-  change$Total_Time[i] <- b3$Total_Time[i] - b1$Total_Time[i]
-  change$Orientation_Time[i] <- b3$Orientation_Time[i] - b1$Orientation_Time[i]
-  change$Navigation_Time[i] <- b3$Navigation_Time[i] - b1$Navigation_Time[i]
-  change$Distance[i] <- b3$Distance[i] - b1$Distance[i]
-  change$Speed[i] <- b3$Speed[i] - b1$Speed[i]
-  change$Mean_Dwell[i] <- b3$Mean_Dwell[i] - b1$Mean_Dwell[i]
-  change$Var_X[i] <- b3$Var_X[i] - b1$Var_X[i]
-  change$Var_Y[i] <- b3$Var_Y[i] - b1$Var_Y[i]
-  change$Var_Z[i] <- b3$Var_Z[i] - b1$Var_Z[i]
-  change$Teleportations[i] <- b3$Teleportations[i] - b1$Teleportations[i]
-}
-
-b1$Target_Name <- factor(b1$Target_Name, levels = desired_order)
-b2$Target_Name <- factor(b2$Target_Name, levels = desired_order)
-b3$Target_Name <- factor(b3$Target_Name, levels = desired_order)
-change$Target_Name <- factor(change$Target_Name, levels = desired_order)
-
-df_merge <- merge(nav_data,non_nav_data,by="Participant") 
+df_merge <- merge(data,non_nav_data,by="Participant") 
 ya_data <- df_merge %>%
   filter(Age == "YA")
 ya_data$Cohort <- ifelse(ya_data$NARA>50.0, "ya_Good", "ya_Bad")
 oa_data <- df_merge %>%
   filter(Age == "OA")
 oa_data$Cohort <- ifelse(oa_data$NARA>50.0, "oa_Good", "oa_Bad")
-```
 
+df_final <- rbind(oa_data,ya_data) 
+oa_good <- subset(oa_data, Cohort == "oa_Good")
+ya_good <- subset(ya_data, Cohort == "ya_Good")
+oa_bad <- subset(oa_data, Cohort == "oa_Bad")
+ya_bad <- subset(ya_data, Cohort == "ya_Bad")
+```
+```{r}
+
+#TURN THIS INTO A RAINCLOUD AND REMOVE BLOCK
+data_plot <- ggplot(df_final, aes(x=Cohort, y=NARA, color = Cohort))+
+  geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
+  labs(color= "Participant", y="NARA Score", x="Cohort")+
+  theme_classic()+
+  theme(panel.background = element_rect(fill = "white", linewidth = .5, colour = "#242526"))+
+  #theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = 'none')
+data_plot
+```
 
 
 # Total Time
 
 ```{r ct}
 #Data.summary for Total_Time
-oa_data.summary <- oa_data %>%
+oa_good.summary <- oa_good %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Total_Time),
     Total_Time = mean(Total_Time)
   )
-ya_data.summary <- ya_data %>%
+ya_good.summary <- ya_good %>%
+  group_by(Block_num) %>%
+  summarise(
+    se = std.error(Total_Time),
+    Total_Time = mean(Total_Time)
+  )
+oa_bad.summary <- oa_bad %>%
+  group_by(Block_num) %>%
+  summarise(
+    se = std.error(Total_Time),
+    Total_Time = mean(Total_Time)
+  )
+ya_bad.summary <- ya_bad %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Total_Time),
     Total_Time = mean(Total_Time)
   )
 #Total_time by Block_num
-p_ct <- ggplot(data, aes(x=Block_num, y=Total_Time, color=Cohort))+
-  scale_color_manual(values =c('#5E7AFA', '#FF9FAF'))+
-  geom_line(data, mapping = aes(x= Block_num, y = Total_Time, group = Participant, color = Cohort), alpha = .2)+
-  geom_point(data, mapping = aes(x= Block_num, y = Total_Time, group = Participant), color = 'white', size = 5)+
-  geom_point(data, mapping = aes(x= Block_num, y = Total_Time, group = Cohort, color = Cohort), size = 3, alpha = .2)+
-  geom_line(ya_data.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#FF9FAF')+
-  stat_summary(data = ya_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
-  geom_line(oa_data.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#5E7AFA')+
-  stat_summary(data = oa_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
+p_ct <- ggplot(df_final, aes(x=Block_num, y=Total_Time, color= Cohort))+
+  scale_color_manual(values =c('#9dff00','#5E7AFA','#fe9300', '#FF9FAF'))+
+  geom_line(df_final, mapping = aes(x= Block_num, y = Total_Time, group = Participant, color = Cohort), alpha = .2)+
+  geom_point(df_final, mapping = aes(x= Block_num, y = Total_Time, group = Participant), color = 'white', size = 5)+
+  geom_point(df_final, mapping = aes(x= Block_num, y = Total_Time, group = Participant, color = Cohort), size = 3, alpha = .2)+
+  geom_line(ya_good.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#FF9FAF')+
+  stat_summary(data = ya_good, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
+  geom_line(ya_bad.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#fe9300')+
+  stat_summary(data = ya_bad, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#fe9300', alpha = 1) +
+  geom_line(oa_good.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#5E7AFA')+
+  stat_summary(data = oa_good, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
+  geom_line(oa_bad.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#9dff00')+
+  stat_summary(data = oa_bad, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#9dff00', alpha = 1) +
   labs(color= "Age", y="Total Time (s)", x="")+
   scale_x_discrete(labels = c( "Block 1","Block 2","Block 3"))+
-  ylim(0,300)+
+  #ylim(0,300)+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
@@ -236,7 +271,7 @@ p_ct <- ggplot(data, aes(x=Block_num, y=Total_Time, color=Cohort))+
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))
 p_ct
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig3_ct.svg", height = 5, width = 5, plot=p_ct)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_ct.svg", height = 5, width = 5, plot=p_ct)
 ```
 
 
@@ -278,7 +313,7 @@ p_orict <- ggplot(data, aes(x=Block_num, y=Orientation_Time, color=Age))+
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))
 p_orict
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig3_orict.svg", height = 5, width = 5, plot=p_orict)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_orict.svg", height = 5, width = 5, plot=p_orict)
 ```
 
 # Navigation Time
@@ -321,7 +356,7 @@ p_navct <- ggplot(data, aes(x=Block_num, y=Navigation_Time, color=Age))+
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))
 p_navct
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig3_navct.svg", height = 5, width = 5, plot=p_navct)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_navct.svg", height = 5, width = 5, plot=p_navct)
 ```
 
 # Distance
@@ -362,7 +397,7 @@ p_dt <- ggplot(data, aes(x=Block_num, y=Distance, color=Age))+
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))
 p_dt
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig3_dt.svg", height = 5, width = 5, plot=p_dt)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_dt.svg", height = 5, width = 5, plot=p_dt)
 ```
 
 # Speed
@@ -403,7 +438,7 @@ p_speed <- ggplot(data, aes(x=Block_num, y=Speed, color=Age))+
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))
 p_speed
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig3_speed.svg", height = 5, width = 5, plot=p_speed)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_speed.svg", height = 5, width = 5, plot=p_speed)
 ```
 
 # Dwell Time
@@ -445,7 +480,7 @@ p_dwell <- ggplot(data, aes(x=Block_num, y=Mean_Dwell, color=Age))+
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))
 p_dwell
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig3_dwell.svg", height = 5, width = 5, plot=p_dwell)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_dwell.svg", height = 5, width = 5, plot=p_dwell)
 ``` 
 
 # Teleportations
@@ -486,10 +521,10 @@ p_teleport <- ggplot(data, aes(x=Block_num, y=Teleportations, color=Age))+
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))
 p_teleport
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig3_teleport.svg", height = 5, width = 5, plot=p_teleport)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_teleport.svg", height = 5, width = 5, plot=p_teleport)
 ```
 ```{r fig8, fig.height = 16, fig.width = 20, fig.align = "center"}
 p<-grid.arrange(p_speed, p_ct, p_orict, p_navct, p_dt, p_dwell, p_teleport, ncol=4, nrow=3)
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/composite_fig3.svg", height = 16, width =20, plot=p)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/composite_fig8.svg", height = 16, width =20, plot=p)
 
 ```

@@ -37,8 +37,8 @@ library('emmeans')
 #This data chunk loads and tidies up the data
 
 #This loads the data file as the variable "data"
-ya_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data_analysis/ya_merged_results.csv')
-oa_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data_analysis/oa_merged_results.csv')
+ya_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_merged_results.csv')
+oa_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_merged_results.csv')
 
 names(ya_data)[1] <- 'index'
 names(ya_data)[2] <- 'Participant'
@@ -76,7 +76,7 @@ ya_data$Target_Name <- factor(ya_data$Target_Name, levels = desired_order)
 oa_data$Target_Name <- factor(oa_data$Target_Name, levels = desired_order)
 
 #This loads the data file as the variable "data"
-non_nav_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data_analysis/non_nav_data.csv')
+non_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/non_nav_data.csv')
 # Tidying up the data
 names(non_nav_data)[1] <- 'Participant'
 names(non_nav_data)[2] <- 'Age'
@@ -212,7 +212,7 @@ p_ct_ya <- ggplot(target_data_ya, aes(x=Target_Name, y=Total_Time, color=Partici
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))
 p_ct_ya
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_ct_ya.svg", height = 4, width = 6.5, plot=p_ct_ya)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig4_ct_ya.svg", height = 4, width = 6.5, plot=p_ct_ya)
 ```
 ```{r ct oa}
 #Data.summary for Total_Time for all blocks
@@ -249,7 +249,7 @@ p_ct_oa <- ggplot(target_data_oa, aes(x=Target_Name, y=Total_Time, color=Partici
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))
 p_ct_oa
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_ct_oa.svg", height = 4, width = 6.5, plot=p_ct_oa)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig4_ct_oa.svg", height = 4, width = 6.5, plot=p_ct_oa)
 ```
 
 
@@ -288,7 +288,7 @@ p_orict_ya <- ggplot(target_data_ya, aes(x=Target_Name, y=Orientation_Time, colo
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))
 p_orict_ya
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_orict_ya.svg", height = 4, width = 6.5, plot=p_orict_ya)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig4_orict_ya.svg", height = 4, width = 6.5, plot=p_orict_ya)
 ```
 
 ```{r orict oa}
@@ -324,7 +324,7 @@ p_orict_oa <- ggplot(target_data_oa, aes(x=Target_Name, y=Orientation_Time, colo
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))
 p_orict_oa
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_orict_oa.svg", height = 4, width = 6.5, plot=p_orict_oa)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig4_orict_oa.svg", height = 4, width = 6.5, plot=p_orict_oa)
 ```
 
 # Navigation Time
@@ -363,7 +363,7 @@ p_navct_ya <- ggplot(target_data_ya, aes(x=Target_Name, y=Navigation_Time, color
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))
 p_navct_ya
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_navct_ya.svg", height = 4, width = 6.5, plot=p_navct_ya)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig4_navct_ya.svg", height = 4, width = 6.5, plot=p_navct_ya)
 ```
 
 ```{r navct oa}
@@ -400,7 +400,7 @@ p_navct_oa <- ggplot(target_data_oa, aes(x=Target_Name, y=Navigation_Time, color
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))
 p_navct_oa
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_navct_oa.svg", height = 4, width = 6.5, plot=p_navct_oa)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig4_navct_oa.svg", height = 4, width = 6.5, plot=p_navct_oa)
 ```
 
 
@@ -440,7 +440,7 @@ p_dwell_ya <- ggplot(target_data_ya, aes(x=Target_Name, y=Mean_Dwell, color=Part
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))
 p_dwell_ya
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_dwell_ya.svg", height = 4, width = 6.5, plot=p_dwell_ya)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig4_dwell_ya.svg", height = 4, width = 6.5, plot=p_dwell_ya)
 ```
 
 ```{r dwell oa}
@@ -477,7 +477,7 @@ p_dwell_oa <- ggplot(target_data_oa, aes(x=Target_Name, y=Mean_Dwell, color=Part
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))
 p_dwell_oa
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_dwell_oa.svg", height = 4, width = 6.5, plot=p_dwell_oa)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig4_dwell_oa.svg", height = 4, width = 6.5, plot=p_dwell_oa)
 ```
 # Distance 
 
@@ -515,7 +515,7 @@ p_dt_ya <- ggplot(target_data_ya, aes(x=Target_Name, y=Distance, color=Participa
   theme(axis.title.y = element_text(size=18))+
   theme(axis.title.x = element_text(size=20))
 p_dt_ya
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_dt_ya.svg", height = 4, width = 6.5, plot=p_dt_ya)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig4_dt_ya.svg", height = 4, width = 6.5, plot=p_dt_ya)
 ```
 
 ```{r dt oa}
@@ -552,7 +552,7 @@ p_dt_oa <- ggplot(target_data_oa, aes(x=Target_Name, y=Distance, color=Participa
   theme(axis.title.y = element_text(size=18))+
   theme(axis.title.x = element_text(size=20))
 p_dt_oa
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_dt_oa.svg", height = 4, width = 6.5, plot=p_dt_oa)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig4_dt_oa.svg", height = 4, width = 6.5, plot=p_dt_oa)
 ```
 
 # Speed
@@ -591,7 +591,7 @@ p_speed_ya <- ggplot(target_data_ya, aes(x=Target_Name, y=Speed, color=Participa
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))
 p_speed_ya
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_speed_ya.svg", height = 4, width = 6.5, plot=p_speed_ya)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig4_speed_ya.svg", height = 4, width = 6.5, plot=p_speed_ya)
 ```
 ```{r speed oa}
 #Data.summary for Speed for all blocks
@@ -627,7 +627,7 @@ p_speed_oa <- ggplot(target_data_oa, aes(x=Target_Name, y=Speed, color=Participa
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))
 p_speed_oa
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_speed_oa.svg", height = 4, width = 6.5, plot=p_speed_oa)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig4_speed_oa.svg", height = 4, width = 6.5, plot=p_speed_oa)
 ```
 
 
@@ -667,7 +667,7 @@ p_teleport_ya <- ggplot(target_data_ya, aes(x=Target_Name, y=Teleportations, col
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))
 p_teleport_ya
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_teleport_ya.svg", height = 4, width = 6.5, plot=p_teleport_ya)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig4_teleport_ya.svg", height = 4, width = 6.5, plot=p_teleport_ya)
 ```
 
 ```{r teleport oa}
@@ -704,5 +704,5 @@ p_teleport_oa <- ggplot(target_data_oa, aes(x=Target_Name, y=Teleportations, col
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))
 p_teleport_oa
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_teleport_oa.svg", height = 4, width = 6.5, plot=p_teleport_oa)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig4_teleport_oa.svg", height = 4, width = 6.5, plot=p_teleport_oa)
 ```
