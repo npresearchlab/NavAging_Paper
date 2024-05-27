@@ -202,18 +202,57 @@ oa_bad <- subset(oa_data, Cohort == "oa_Bad")
 ya_bad <- subset(ya_data, Cohort == "ya_Bad")
 ```
 ```{r}
-
+df_final_drop <- select(df_final, c('Participant','Age','NARA', 'Cohort'))
+df_final_drop<- df_final_drop[!duplicated(df_final_drop), ]
 #TURN THIS INTO A RAINCLOUD AND REMOVE BLOCK
-data_plot <- ggplot(df_final, aes(x=Cohort, y=NARA, color = Cohort))+
-  geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-  labs(color= "Participant", y="NARA Score", x="Cohort")+
+# data_plot <- ggplot(df_final_drop, aes(x=Cohort, y=NARA, color = Cohort))+
+#   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
+#   labs(color= "Participant", y="NARA Score", x="Cohort")+
+#   theme_classic()+
+#   theme(panel.background = element_rect(fill = "white", linewidth = .5, colour = "#242526"))+
+#   #theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+#   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
+#   theme(plot.title = element_text(hjust = 0.5))+
+#   theme(legend.position = 'none')
+# data_plot
+
+
+rain_nara <-ggplot(df_final_drop, aes(x = factor(Cohort), y=NARA, fill=Cohort)) +
+  scale_fill_manual(values =c('#9dff00','#5E7AFA','#fe9300', '#FF9FAF'))+
+  scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
+  labs(color= "Cohort", y="NARA Score", x="Cohort")+
   theme_classic()+
-  theme(panel.background = element_rect(fill = "white", linewidth = .5, colour = "#242526"))+
-  #theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
   theme(plot.title = element_text(hjust = 0.5))+
-  theme(legend.position = 'none')
-data_plot
+  theme(legend.position = "none")+
+  theme(axis.text.x = element_text(size=20))+
+  theme(axis.text.y = element_text(size=20))+
+  theme(axis.title.y = element_text(size=20))+
+  stat_halfeye(
+    # adjust bandwidth
+    adjust = 0.5,
+    # move to the right
+    justification = -0.2,
+    # remove the slub interval
+    .width = 0,
+    point_colour = NA,
+    scale = 0.5 ##  <(**new parameter**)
+  ) +
+  geom_boxplot(
+    width = 0.12,
+    # removing outliers
+    outlier.color = NA,
+    alpha = 0.5
+  )+
+  geom_half_point(
+    aes(color = Age),
+    side = 'l',
+    range_scale = .4,
+    alpha = .3,
+    position = position_jitter(seed = 1, width = .12)
+  ) +scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
+rain_nara
 ```
 
 
