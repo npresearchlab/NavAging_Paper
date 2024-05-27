@@ -146,9 +146,10 @@ ya_data <- df_merge %>%
 ```
 
 ```{r}
-p_dt <- ggplot(df_merge, aes(x=Distance, y=NARA, color = Age))+
+p_dt <- ggplot(df_merge, aes(x=Distance, y=NARA, color = Age, fill = Age))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
   scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", y="NARA Score", x = "Distance Travelled")+
@@ -171,9 +172,10 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_dt.svg", height = 5, width = 5, plot=p_dt)
 ```
 ```{r}
-p_ct <- ggplot(df_merge, aes(y=NARA, x=Total_Time, color = Age))+
+p_ct <- ggplot(df_merge, aes(y=NARA, x=Total_Time, color = Age, fill = Age))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
   scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="Total Completion Time", y="NARA Score")+
@@ -197,9 +199,10 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_ct.svg", height = 5, width = 5, plot=p_ct)
 ```
 ```{r}
-p_orict <- ggplot(df_merge, aes(y=NARA, x=Orientation_Time, color = Age))+
+p_orict <- ggplot(df_merge, aes(y=NARA, x=Orientation_Time, color = Age, fill = Age))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
   scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="Orientation Time", y="NARA Score")+
@@ -222,9 +225,10 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_orict.svg", height = 5, width = 5, plot=p_orict)
 ```
 ```{r}
-p_navct <- ggplot(df_merge, aes(y=NARA, x=Navigation_Time, color = Age))+
+p_navct <- ggplot(df_merge, aes(y=NARA, x=Navigation_Time,  color = Age, fill = Age))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
   scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="Navigation Time", y="NARA Score")+
@@ -247,9 +251,10 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_navct.svg", height = 5, width = 5, plot=p_navct)
 ```
 ```{r}
-p_speed <- ggplot(df_merge, aes(y=NARA, x=Speed, color = Age))+
+p_speed <- ggplot(df_merge, aes(y=NARA, x=Speed,  color = Age, fill = Age))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
   scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="Speed", y="NARA Score")+
@@ -273,9 +278,10 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_speed.svg", height = 5, width = 5, plot=p_speed)
 ```
 ```{r}
-p_teleport <- ggplot(df_merge, aes(y=NARA, x=Teleportations, color = Age))+
+p_teleport <- ggplot(df_merge, aes(y=NARA, x=Teleportations,  color = Age, fill = Age))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
   scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="Teleportations", y="NARA Score")+
@@ -300,9 +306,10 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_teleport.svg", height = 5, width = 5, plot=p_teleport)
 ```
 ```{r}
-p_dwell <- ggplot(df_merge, aes(y=NARA, x=Mean_Dwell, color = Age))+
+p_dwell <- ggplot(df_merge, aes(y=NARA, x=Mean_Dwell, color = Age, fill = Age))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
   scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="Mean Dwell Time (s)", y="NARA Score")+

@@ -205,7 +205,7 @@ data_plot
 rain_nara <-ggplot(df_merge_drop, aes(x = factor(Age), y=NARA, fill=Age)) +
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
-  labs(color= "Participant", y="NARA Score", x="Cohort")+
+  labs(color= "Participant", y="NARA Score (%)", x = ' ')+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
