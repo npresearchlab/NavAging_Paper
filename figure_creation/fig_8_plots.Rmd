@@ -35,6 +35,11 @@ library('emmeans')
 library(svglite)
 library(grid)
 library(gridExtra)
+
+library(tidyquant)
+library(ggdist)
+library(ggthemes)
+library(gghalves)
 ```
 
 ```{r reading data, include=FALSE}
@@ -190,35 +195,27 @@ rownames(b3) <- NULL
 df_merge <- merge(data,non_nav_data,by="Participant") 
 ya_data <- df_merge %>%
   filter(Age == "YA")
-ya_data$Cohort <- ifelse(ya_data$NARA>50.0, "ya_high", "ya_low")
+ya_data <- ya_data %>% mutate(Cohort = 'ya')
 oa_data <- df_merge %>%
   filter(Age == "OA")
 oa_data$Cohort <- ifelse(oa_data$NARA>50.0, "oa_high", "oa_low")
 
-df_final <- rbind(oa_data,ya_data) 
+df_final <- rbind(ya_data, oa_data) 
 oa_high <- subset(oa_data, Cohort == "oa_high")
-ya_high <- subset(ya_data, Cohort == "ya_high")
 oa_low <- subset(oa_data, Cohort == "oa_low")
-ya_low <- subset(ya_data, Cohort == "ya_low")
+ya <- subset(ya_data, Cohort == "ya")
 ```
+
 ```{r}
 df_final_drop <- select(df_final, c('Participant','Age','NARA', 'Cohort'))
 df_final_drop<- df_final_drop[!duplicated(df_final_drop), ]
-#TURN THIS INTO A RAINCLOUD AND REMOVE BLOCK
-# data_plot <- ggplot(df_final_drop, aes(x=Cohort, y=NARA, color = Cohort))+
-#   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-#   labs(color= "Participant", y="NARA Score", x="Cohort")+
-#   theme_classic()+
-#   theme(panel.background = element_rect(fill = "white", linewidth = .5, colour = "#242526"))+
-#   #theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
-#   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
-#   theme(plot.title = element_text(hjust = 0.5))+
-#   theme(legend.position = 'none')
-# data_plot
 
+desired_order <- c("ya", "oa_high", "oa_low")
+# Reorder the levels of Target_Name
+df_final_drop$Cohort <- factor(df_final_drop$Cohort, levels = desired_order)
 
 rain_nara <-ggplot(df_final_drop, aes(x = factor(Cohort), y=NARA, fill=Cohort)) +
-  scale_fill_manual(values =c('#9dff00','#5E7AFA','#fe9300', '#FF9FAF'))+
+  scale_fill_manual(values =c( '#FF9FAF', '#9dff00','#5E7AFA'))+
   scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
   labs(color= "Cohort", y="NARA Score (%)", x=" ")+
   theme_classic()+
@@ -246,12 +243,12 @@ rain_nara <-ggplot(df_final_drop, aes(x = factor(Cohort), y=NARA, fill=Cohort)) 
     alpha = 0.5
   )+
   geom_half_point(
-    aes(color = Age),
+    aes(color = Cohort),
     side = 'l',
     range_scale = .4,
     alpha = .3,
     position = position_jitter(seed = 1, width = .12)
-  ) +scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
+  ) 
 rain_nara
 ```
 
@@ -266,19 +263,13 @@ oa_high.summary <- oa_high %>%
     se = std.error(Total_Time),
     Total_Time = mean(Total_Time)
   )
-ya_high.summary <- ya_high %>%
-  group_by(Block_num) %>%
-  summarise(
-    se = std.error(Total_Time),
-    Total_Time = mean(Total_Time)
-  )
 oa_low.summary <- oa_low %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Total_Time),
     Total_Time = mean(Total_Time)
   )
-ya_low.summary <- ya_low %>%
+ya.summary <- ya %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Total_Time),
@@ -286,14 +277,12 @@ ya_low.summary <- ya_low %>%
   )
 #Total_time by Block_num
 p_ct <- ggplot(df_final, aes(x=Block_num, y=Total_Time, color= Cohort))+
-  scale_color_manual(values =c('#9dff00','#5E7AFA','#fe9300', '#FF9FAF'))+
+  scale_color_manual(values =c('#9dff00','#5E7AFA', '#FF9FAF'))+
   geom_line(df_final, mapping = aes(x= Block_num, y = Total_Time, group = Participant, color = Cohort), alpha = .2)+
   geom_point(df_final, mapping = aes(x= Block_num, y = Total_Time, group = Participant), color = 'white', size = 5)+
   geom_point(df_final, mapping = aes(x= Block_num, y = Total_Time, group = Participant, color = Cohort), size = 3, alpha = .2)+
-  geom_line(ya_high.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#FF9FAF')+
-  stat_summary(data = ya_high, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
-  geom_line(ya_low.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#fe9300')+
-  stat_summary(data = ya_low, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#fe9300', alpha = 1) +
+  geom_line(ya.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#FF9FAF')+
+  stat_summary(data = ya, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
   geom_line(oa_high.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#5E7AFA')+
   stat_summary(data = oa_high, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
   geom_line(oa_low.summary, mapping = aes(x= Block_num, y = Total_Time, group = 1), size = 1.5, color = '#9dff00')+
@@ -324,19 +313,13 @@ oa_high.summary <- oa_high %>%
     se = std.error(Orientation_Time),
     Orientation_Time = mean(Orientation_Time)
   )
-ya_high.summary <- ya_high %>%
-  group_by(Block_num) %>%
-  summarise(
-    se = std.error(Orientation_Time),
-    Orientation_Time = mean(Orientation_Time)
-  )
 oa_low.summary <- oa_low %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Orientation_Time),
     Orientation_Time = mean(Orientation_Time)
   )
-ya_low.summary <- ya_low %>%
+ya.summary <- ya %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Orientation_Time),
@@ -344,14 +327,12 @@ ya_low.summary <- ya_low %>%
   )
 #Orientation Time by Block_num
 p_orict <- ggplot(df_final, aes(x=Block_num, y=Orientation_Time, color=Cohort))+
-  scale_color_manual(values =c('#9dff00','#5E7AFA','#fe9300', '#FF9FAF'))+
+  scale_color_manual(values =c('#9dff00','#5E7AFA', '#FF9FAF'))+
   geom_line(df_final, mapping = aes(x= Block_num, y = Orientation_Time, group = Participant, color = Cohort), alpha = .2)+
   geom_point(df_final, mapping = aes(x= Block_num, y = Orientation_Time, group = Participant), color = 'white', size = 5)+
   geom_point(df_final, mapping = aes(x= Block_num, y = Orientation_Time, group = Participant, color = Cohort), size = 3, alpha = .2)+
-  geom_line(ya_high.summary, mapping = aes(x= Block_num, y = Orientation_Time, group = 1), size = 1.5, color = '#FF9FAF')+
-  stat_summary(data = ya_high, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
-  geom_line(ya_low.summary, mapping = aes(x= Block_num, y = Orientation_Time, group = 1), size = 1.5, color = '#fe9300')+
-  stat_summary(data = ya_low, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#fe9300', alpha = 1) +
+  geom_line(ya.summary, mapping = aes(x= Block_num, y = Orientation_Time, group = 1), size = 1.5, color = '#FF9FAF')+
+  stat_summary(data = ya, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
   geom_line(oa_high.summary, mapping = aes(x= Block_num, y = Orientation_Time, group = 1), size = 1.5, color = '#5E7AFA')+
   stat_summary(data = oa_high, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
   geom_line(oa_low.summary, mapping = aes(x= Block_num, y = Orientation_Time, group = 1), size = 1.5, color = '#9dff00')+
@@ -381,19 +362,13 @@ oa_high.summary <- oa_high %>%
     se = std.error(Navigation_Time),
     Navigation_Time = mean(Navigation_Time)
   )
-ya_high.summary <- ya_high %>%
-  group_by(Block_num) %>%
-  summarise(
-    se = std.error(Navigation_Time),
-    Navigation_Time = mean(Navigation_Time)
-  )
 oa_low.summary <- oa_low %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Navigation_Time),
     Navigation_Time = mean(Navigation_Time)
   )
-ya_low.summary <- ya_low %>%
+ya.summary <- ya %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Navigation_Time),
@@ -402,14 +377,12 @@ ya_low.summary <- ya_low %>%
 
 #Navigation Time by Block_num
 p_navct <- ggplot(df_final, aes(x=Block_num, y=Navigation_Time, color=Cohort))+
-  scale_color_manual(values =c('#9dff00','#5E7AFA','#fe9300', '#FF9FAF'))+
+  scale_color_manual(values =c('#9dff00','#5E7AFA', '#FF9FAF'))+
   geom_line(df_final, mapping = aes(x= Block_num, y = Navigation_Time, group = Participant, color = Cohort), alpha = .2)+
   geom_point(df_final, mapping = aes(x= Block_num, y = Navigation_Time, group = Participant), color = 'white', size = 5)+
   geom_point(df_final, mapping = aes(x= Block_num, y = Navigation_Time, group = Participant, color = Cohort), size = 3, alpha = .2)+
-  geom_line(ya_high.summary, mapping = aes(x= Block_num, y = Navigation_Time, group = 1), size = 1.5, color = '#FF9FAF')+
-  stat_summary(data = ya_high, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
-  geom_line(ya_low.summary, mapping = aes(x= Block_num, y = Navigation_Time, group = 1), size = 1.5, color = '#fe9300')+
-  stat_summary(data = ya_low, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#fe9300', alpha = 1) +
+  geom_line(ya.summary, mapping = aes(x= Block_num, y = Navigation_Time, group = 1), size = 1.5, color = '#FF9FAF')+
+  stat_summary(data = ya, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
   geom_line(oa_high.summary, mapping = aes(x= Block_num, y = Navigation_Time, group = 1), size = 1.5, color = '#5E7AFA')+
   stat_summary(data = oa_high, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
   geom_line(oa_low.summary, mapping = aes(x= Block_num, y = Navigation_Time, group = 1), size = 1.5, color = '#9dff00')+
@@ -439,19 +412,13 @@ oa_high.summary <- oa_high %>%
     se = std.error(Distance),
     Distance = mean(Distance)
   )
-ya_high.summary <- ya_high %>%
-  group_by(Block_num) %>%
-  summarise(
-    se = std.error(Distance),
-    Distance = mean(Distance)
-  )
 oa_low.summary <- oa_low %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Distance),
     Distance = mean(Distance)
   )
-ya_low.summary <- ya_low %>%
+ya.summary <- ya %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Distance),
@@ -459,14 +426,12 @@ ya_low.summary <- ya_low %>%
   )
 #Distance by Block_num
 p_dt <- ggplot(df_final, aes(x=Block_num, y=Distance, color=Cohort))+
-  scale_color_manual(values =c('#9dff00','#5E7AFA','#fe9300', '#FF9FAF'))+
+  scale_color_manual(values =c('#9dff00','#5E7AFA', '#FF9FAF'))+
   geom_line(df_final, mapping = aes(x= Block_num, y = Distance, group = Participant, color = Cohort), alpha = .2)+
   geom_point(df_final, mapping = aes(x= Block_num, y = Distance, group = Participant), color = 'white', size = 5)+
   geom_point(df_final, mapping = aes(x= Block_num, y = Distance, group = Participant, color = Cohort), size = 3, alpha = .2)+
-  geom_line(ya_high.summary, mapping = aes(x= Block_num, y = Distance, group = 1), size = 1.5, color = '#FF9FAF')+
-  stat_summary(data = ya_high, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
-  geom_line(ya_low.summary, mapping = aes(x= Block_num, y = Distance, group = 1), size = 1.5, color = '#fe9300')+
-  stat_summary(data = ya_low, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#fe9300', alpha = 1) +
+  geom_line(ya.summary, mapping = aes(x= Block_num, y = Distance, group = 1), size = 1.5, color = '#FF9FAF')+
+  stat_summary(data = ya, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
   geom_line(oa_high.summary, mapping = aes(x= Block_num, y = Distance, group = 1), size = 1.5, color = '#5E7AFA')+
   stat_summary(data = oa_high, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
   geom_line(oa_low.summary, mapping = aes(x= Block_num, y = Distance, group = 1), size = 1.5, color = '#9dff00')+
@@ -496,19 +461,13 @@ oa_high.summary <- oa_high %>%
     se = std.error(Speed),
     Speed = mean(Speed)
   )
-ya_high.summary <- ya_high %>%
-  group_by(Block_num) %>%
-  summarise(
-    se = std.error(Speed),
-    Speed = mean(Speed)
-  )
 oa_low.summary <- oa_low %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Speed),
     Speed = mean(Speed)
   )
-ya_low.summary <- ya_low %>%
+ya.summary <- ya %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Speed),
@@ -516,14 +475,12 @@ ya_low.summary <- ya_low %>%
   )
 #Speed by Block_num
 p_speed <- ggplot(df_final, aes(x=Block_num, y=Speed, color=Cohort))+
-  scale_color_manual(values =c('#9dff00','#5E7AFA','#fe9300', '#FF9FAF'))+
+  scale_color_manual(values =c('#9dff00','#5E7AFA', '#FF9FAF'))+
   geom_line(df_final, mapping = aes(x= Block_num, y = Speed, group = Participant, color = Cohort), alpha = .2)+
   geom_point(df_final, mapping = aes(x= Block_num, y = Speed, group = Participant), color = 'white', size = 5)+
   geom_point(df_final, mapping = aes(x= Block_num, y = Speed, group = Participant, color = Cohort), size = 3, alpha = .2)+
-  geom_line(ya_high.summary, mapping = aes(x= Block_num, y = Speed, group = 1), size = 1.5, color = '#FF9FAF')+
-  stat_summary(data = ya_high, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
-  geom_line(ya_low.summary, mapping = aes(x= Block_num, y = Speed, group = 1), size = 1.5, color = '#fe9300')+
-  stat_summary(data = ya_low, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#fe9300', alpha = 1) +
+  geom_line(ya.summary, mapping = aes(x= Block_num, y = Speed, group = 1), size = 1.5, color = '#FF9FAF')+
+  stat_summary(data = ya, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
   geom_line(oa_high.summary, mapping = aes(x= Block_num, y = Speed, group = 1), size = 1.5, color = '#5E7AFA')+
   stat_summary(data = oa_high, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
   geom_line(oa_low.summary, mapping = aes(x= Block_num, y = Speed, group = 1), size = 1.5, color = '#9dff00')+
@@ -553,19 +510,13 @@ oa_high.summary <- oa_high %>%
     se = std.error(Mean_Dwell),
     Mean_Dwell = mean(Mean_Dwell)
   )
-ya_high.summary <- ya_high %>%
-  group_by(Block_num) %>%
-  summarise(
-    se = std.error(Mean_Dwell),
-    Mean_Dwell = mean(Mean_Dwell)
-  )
 oa_low.summary <- oa_low %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Mean_Dwell),
     Mean_Dwell = mean(Mean_Dwell)
   )
-ya_low.summary <- ya_low %>%
+ya.summary <- ya %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Mean_Dwell),
@@ -573,14 +524,12 @@ ya_low.summary <- ya_low %>%
   )
 #Mean_Dwell by Block_num
 p_dwell <- ggplot(df_final, aes(x=Block_num, y=Mean_Dwell, color=Cohort))+
-  scale_color_manual(values =c('#9dff00','#5E7AFA','#fe9300', '#FF9FAF'))+
+  scale_color_manual(values =c('#9dff00','#5E7AFA', '#FF9FAF'))+
   geom_line(df_final, mapping = aes(x= Block_num, y = Mean_Dwell, group = Participant, color = Cohort), alpha = .2)+
   geom_point(df_final, mapping = aes(x= Block_num, y = Mean_Dwell, group = Participant), color = 'white', size = 5)+
   geom_point(df_final, mapping = aes(x= Block_num, y = Mean_Dwell, group = Participant, color = Cohort), size = 3, alpha = .2)+
-  geom_line(ya_high.summary, mapping = aes(x= Block_num, y = Mean_Dwell, group = 1), size = 1.5, color = '#FF9FAF')+
-  stat_summary(data = ya_high, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
-  geom_line(ya_low.summary, mapping = aes(x= Block_num, y = Mean_Dwell, group = 1), size = 1.5, color = '#fe9300')+
-  stat_summary(data = ya_low, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#fe9300', alpha = 1) +
+  geom_line(ya.summary, mapping = aes(x= Block_num, y = Mean_Dwell, group = 1), size = 1.5, color = '#FF9FAF')+
+  stat_summary(data = ya, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
   geom_line(oa_high.summary, mapping = aes(x= Block_num, y = Mean_Dwell, group = 1), size = 1.5, color = '#5E7AFA')+
   stat_summary(data = oa_high, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
   geom_line(oa_low.summary, mapping = aes(x= Block_num, y = Mean_Dwell, group = 1), size = 1.5, color = '#9dff00')+
@@ -610,19 +559,14 @@ oa_high.summary <- oa_high %>%
     se = std.error(Teleportations),
     Teleportations = mean(Teleportations)
   )
-ya_high.summary <- ya_high %>%
-  group_by(Block_num) %>%
-  summarise(
-    se = std.error(Teleportations),
-    Teleportations = mean(Teleportations)
-  )
+
 oa_low.summary <- oa_low %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Teleportations),
     Teleportations = mean(Teleportations)
   )
-ya_low.summary <- ya_low %>%
+ya.summary <- ya %>%
   group_by(Block_num) %>%
   summarise(
     se = std.error(Teleportations),
@@ -630,14 +574,12 @@ ya_low.summary <- ya_low %>%
   )
 #Teleportations by Block_num
 p_teleport <- ggplot(df_final, aes(x=Block_num, y=Teleportations, color=Cohort))+
-  scale_color_manual(values =c('#9dff00','#5E7AFA','#fe9300', '#FF9FAF'))+
+  scale_color_manual(values =c('#9dff00','#5E7AFA', '#FF9FAF'))+
   geom_line(df_final, mapping = aes(x= Block_num, y = Teleportations, group = Participant, color = Cohort), alpha = .2)+
   geom_point(df_final, mapping = aes(x= Block_num, y = Teleportations, group = Participant), color = 'white', size = 5)+
   geom_point(df_final, mapping = aes(x= Block_num, y = Teleportations, group = Participant, color = Cohort), size = 3, alpha = .2)+
-  geom_line(ya_high.summary, mapping = aes(x= Block_num, y = Teleportations, group = 1), size = 1.5, color = '#FF9FAF')+
-  stat_summary(data = ya_high, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
-  geom_line(ya_low.summary, mapping = aes(x= Block_num, y = Teleportations, group = 1), size = 1.5, color = '#fe9300')+
-  stat_summary(data = ya_low, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#fe9300', alpha = 1) +
+  geom_line(ya.summary, mapping = aes(x= Block_num, y = Teleportations, group = 1), size = 1.5, color = '#FF9FAF')+
+  stat_summary(data = ya, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#FF9FAF', alpha = 1) +
   geom_line(oa_high.summary, mapping = aes(x= Block_num, y = Teleportations, group = 1), size = 1.5, color = '#5E7AFA')+
   stat_summary(data = oa_high, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
   geom_line(oa_low.summary, mapping = aes(x= Block_num, y = Teleportations, group = 1), size = 1.5, color = '#9dff00')+
@@ -658,7 +600,6 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 ```
 ```{r fig8, fig.height = 16, fig.width = 20, fig.align = "center"}
 p<-grid.arrange(p_speed, p_ct, p_orict, p_navct, p_dt, p_dwell, p_teleport, ncol=4, nrow=3)
-p
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/composite_fig8.svg", height = 16, width =20, plot=p)
 
 ```
