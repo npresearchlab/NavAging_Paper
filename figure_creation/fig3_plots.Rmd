@@ -216,7 +216,7 @@ p_ct <- ggplot(data, aes(x=Block_num, y=Total_Time, color=Age))+
   stat_summary(data = oa_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
   labs(color= "Age", y="Total Time (s)", x="")+
   scale_x_discrete(labels = c( "Block 1","Block 2","Block 3"))+
-  #ylim(0,130)+
+  ylim(0,300)+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
@@ -301,7 +301,7 @@ p_navct <- ggplot(data, aes(x=Block_num, y=Navigation_Time, color=Age))+
   stat_summary(data = oa_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
   labs(color= "Age", y="Navigation Time (s)", x="")+
   scale_x_discrete(labels = c( "Block 1","Block 2","Block 3"))+
-  #ylim(0,120)+
+  ylim(0,300)+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+

@@ -199,3 +199,44 @@ data_plot <- ggplot(df_merge_drop, aes(x=Age, y=NARA, color = Age))+
   theme(legend.position = 'none')
 data_plot
 ```
+```{r}
+#df_merge_drop <- select(df_merge, c('Participant','Age','NARA'))
+#df_merge_drop<- df_merge_drop[!duplicated(df_merge_drop), ]
+rain_nara <-ggplot(df_merge_drop, aes(x = factor(Age), y=NARA, fill=Age)) +
+  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
+  labs(color= "Participant", y="NARA Score (%)", x = ' ')+
+  theme_classic()+
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = "none")+
+  theme(axis.text.x = element_text(size=20))+
+  theme(axis.text.y = element_text(size=20))+
+  theme(axis.title.y = element_text(size=20))+
+  stat_halfeye(
+    # adjust bandwidth
+    adjust = 0.5,
+    # move to the right
+    justification = -0.2,
+    # remove the slub interval
+    .width = 0,
+    point_colour = NA,
+    scale = 0.5 ##  <(**new parameter**)
+  ) +
+  geom_boxplot(
+    width = 0.12,
+    # removing outliers
+    outlier.color = NA,
+    alpha = 0.5
+  )+
+  geom_half_point(
+    aes(color = Age),
+    side = 'l',
+    range_scale = .4,
+    alpha = .3,
+    position = position_jitter(seed = 1, width = .12)
+  ) +scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
+rain_nara
+#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_ct.svg", height = 5, width = 5, plot=p_ct)
+```
