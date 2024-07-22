@@ -152,7 +152,7 @@ p_dt <- ggplot(df_merge, aes(x=Distance, y=NARA, color = Age, fill = Age))+
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
-  labs(color= "Participant", y="NARA Score", x = "Distance Travelled")+
+  labs(color= "Participant", y="NARA Score", x = "\u0394 Distance Traveled (VR Units)")+
   ylim(0, 100)+
   theme_classic()+
   theme(panel.background = element_rect(fill = "white", linewidth = .5, colour = "#242526"))+
@@ -183,7 +183,7 @@ p_ct <- ggplot(df_merge, aes(y=NARA, x=Total_Time, color = Age, fill = Age))+
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
-  labs(color= "Participant", x="Total Completion Time", y="NARA Score")+
+  labs(color= "Participant", x="\u0394 Total Time", y="NARA Score")+
   ylim(0, 100)+
   theme_classic()+
   theme(panel.background = element_rect(fill = "white", linewidth = .5, colour = "#242526"))+
@@ -214,7 +214,7 @@ p_orict <- ggplot(df_merge, aes(y=NARA, x=Orientation_Time, color = Age, fill = 
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
-  labs(color= "Participant", x="Orientation Time", y="NARA Score")+
+  labs(color= "Participant", x="\u0394 Orientation Time", y="NARA Score")+
   ylim(0, 100)+
   theme_classic()+
   theme(panel.background = element_rect(fill = "white", linewidth = .5, colour = "#242526"))+
@@ -244,7 +244,7 @@ p_navct <- ggplot(df_merge, aes(y=NARA, x=Navigation_Time,  color = Age, fill = 
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
-  labs(color= "Participant", x="Navigation Time", y="NARA Score")+
+  labs(color= "Participant", x="\u0394 Navigation Time", y="NARA Score")+
   ylim(0, 100)+
   theme_classic()+
   theme(panel.background = element_rect(fill = "white", linewidth = .5, colour = "#242526"))+
@@ -274,7 +274,7 @@ p_speed <- ggplot(df_merge, aes(y=NARA, x=Speed,  color = Age, fill = Age))+
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
-  labs(color= "Participant", x="Speed", y="NARA Score")+
+  labs(color= "Participant", x="\u0394 Speed", y="NARA Score")+
   ylim(0, 100)+
   theme_classic()+
   theme(panel.background = element_rect(fill = "white", linewidth = .5, colour = "#242526"))+
@@ -305,7 +305,7 @@ p_teleport <- ggplot(df_merge, aes(y=NARA, x=Teleportations,  color = Age, fill 
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
-  labs(color= "Participant", x="Teleportations", y="NARA Score")+
+  labs(color= "Participant", x="\u0394 Teleportations", y="NARA Score")+
   ylim(0, 100)+
   theme_classic()+
   theme(panel.background = element_rect(fill = "white", linewidth = .5, colour = "#242526"))+
@@ -337,7 +337,7 @@ p_dwell <- ggplot(df_merge, aes(y=NARA, x=Mean_Dwell, color = Age, fill = Age))+
   scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
-  labs(color= "Participant", x="Mean Dwell Time (s)", y="NARA Score")+
+  labs(color= "Participant", x="\u0394 Mean Dwell Time (s)", y="NARA Score")+
   ylim(0, 100)+
   theme_classic()+
   theme(panel.background = element_rect(fill = "white", linewidth = .5, colour = "#242526"))+
