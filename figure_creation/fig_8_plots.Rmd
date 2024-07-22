@@ -213,7 +213,9 @@ df_final_drop<- df_final_drop[!duplicated(df_final_drop), ]
 desired_order <- c("ya", "oa_high", "oa_low")
 # Reorder the levels of Target_Name
 df_final_drop$Cohort <- factor(df_final_drop$Cohort, levels = desired_order)
+```
 
+```{r}
 rain_nara <-ggplot(df_final_drop, aes(x = factor(Cohort), y=NARA, fill=Cohort)) +
   scale_fill_manual(values =c( '#FF9FAF', '#9dff00','#5E7AFA'))+
   scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
