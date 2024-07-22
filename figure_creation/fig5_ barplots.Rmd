@@ -292,7 +292,7 @@ ya_p_ct <-ggplot(allblocks_targets, aes(x = Target_Name, y = Total_Time_m, fill 
                    aes(pattern = Block_num), 
                    pattern_density = 0.05, 
                    pattern_spacing = 0.05,
-                   pattern_fill = "black",
+                   pattern_fill = "white",
                    pattern_angle = 45) +
   scale_fill_manual(values =c('#5E7AFA', '#FF9FAF')) +
   scale_pattern_manual(values = c("1" = "stripe", "2" = "circle", "3" = "crosshatch")) +
