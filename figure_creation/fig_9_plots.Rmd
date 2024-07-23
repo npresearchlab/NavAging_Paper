@@ -1,3 +1,9 @@
+---
+title: "Figure 8 Code"
+output: html_document
+date: "2023-11-01"
+---
+
 
 ```{r global-options, include=FALSE}
 knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
@@ -9,6 +15,8 @@ library(tidyverse)
 library(stringr)
 library(ez)
 library(cowplot)
+library(viridis)
+library(viridisLite)
 library("readxl")
 library("ggcorrplot")
 library(dplyr)
@@ -25,56 +33,63 @@ library(lmerTest)
 library('emmeans')
 #install.packages("svglite")
 library(svglite)
+library(grid)
+library(gridExtra)
+
 library(tidyquant)
 library(ggdist)
 library(ggthemes)
 library(gghalves)
-library(grid)
-library(gridExtra)
 ```
 
-```{r reading more data, include=FALSE}
-#This loads the data file as the variable "data"
-ya_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_averaged_results.csv')
+```{r reading data, include=FALSE}
+# This data chunk loads and tidies up the data
+
+# This loads the data file as the variable "data"
+ya_ndata <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_averaged_results.csv')
 # Tidying up the data
-ya_nav_data<- ya_nav_data %>% mutate(Age = 'YA')
-names(ya_nav_data)[1] <- 'index'
-names(ya_nav_data)[2] <- 'Participant'
-names(ya_nav_data)[3] <- 'Block_num'
-names(ya_nav_data)[4] <- 'Total_Time'
-names(ya_nav_data)[5] <- 'Orientation_Time'
-names(ya_nav_data)[6] <- 'Navigation_Time'
-names(ya_nav_data)[7] <- 'Distance'
-names(ya_nav_data)[8] <- 'Speed'
-names(ya_nav_data)[9] <- 'Mean_Dwell'
-names(ya_nav_data)[10] <- 'Teleportations'
-names(ya_nav_data)[11] <- 'Age'
-ya_nav_data <- ya_nav_data[ -c(1) ]
-ya_nav_data$Block_num <- as.factor(ya_nav_data$Block_num)
-sapply(ya_nav_data, class)
-
+ya_ndata<- ya_ndata %>% mutate(Age = 'YA')
+ya_ndata
+names(ya_ndata)[1] <- 'index'
+names(ya_ndata)[2] <- 'Participant'
+names(ya_ndata)[3] <- 'Block_num'
+names(ya_ndata)[4] <- 'Total_Time'
+names(ya_ndata)[5] <- 'Orientation_Time'
+names(ya_ndata)[6] <- 'Navigation_Time'
+names(ya_ndata)[7] <- 'Distance'
+names(ya_ndata)[8] <- 'Speed'
+names(ya_ndata)[9] <- 'Mean_Dwell'
+names(ya_ndata)[10] <- 'Teleportations'
+names(ya_ndata)[11] <- 'Age'
+ya_ndata <- ya_ndata[ -c(1) ]
+ya_ndata$Block_num <- as.factor(ya_ndata$Block_num)
+sapply(ya_ndata, class)
+ya_ndata
 
 #This loads the data file as the variable "data"
-oa_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_averaged_results.csv')
+oa_ndata <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_averaged_results.csv')
 # Tidying up the data
-oa_nav_data<- oa_nav_data %>% mutate(Age = 'OA')
-names(oa_nav_data)[1] <- 'index'
-names(oa_nav_data)[2] <- 'Participant'
-names(oa_nav_data)[3] <- 'Block_num'
-names(oa_nav_data)[4] <- 'Total_Time'
-names(oa_nav_data)[5] <- 'Orientation_Time'
-names(oa_nav_data)[6] <- 'Navigation_Time'
-names(oa_nav_data)[7] <- 'Distance'
-names(oa_nav_data)[8] <- 'Speed'
-names(oa_nav_data)[9] <- 'Mean_Dwell'
-names(oa_nav_data)[10] <- 'Teleportations'
-names(oa_nav_data)[11] <- 'Age'
-oa_nav_data <- oa_nav_data[ -c(1) ]
-oa_nav_data$Block_num <- as.factor(oa_nav_data$Block_num)
-sapply(oa_nav_data, class)
+oa_ndata<- oa_ndata %>% mutate(Age = 'OA')
+oa_ndata
+names(oa_ndata)[1] <- 'index'
+names(oa_ndata)[2] <- 'Participant'
+names(oa_ndata)[3] <- 'Block_num'
+names(oa_ndata)[4] <- 'Total_Time'
+names(oa_ndata)[5] <- 'Orientation_Time'
+names(oa_ndata)[6] <- 'Navigation_Time'
+names(oa_ndata)[7] <- 'Distance'
+names(oa_ndata)[8] <- 'Speed'
+names(oa_ndata)[9] <- 'Mean_Dwell'
+names(oa_ndata)[10] <- 'Teleportations'
+names(oa_ndata)[11] <- 'Age'
+oa_ndata <- oa_ndata[ -c(1) ]
+oa_ndata$Block_num <- as.factor(oa_ndata$Block_num)
+sapply(oa_ndata, class)
+oa_ndata
 
-nav_data <- rbind(ya_nav_data, oa_nav_data)
+nav_data <- rbind(ya_ndata, oa_ndata)
 ```
+
 
 ```{r reading more data, include=FALSE}
 #This loads the data file as the variable "data"
@@ -95,6 +110,7 @@ names(non_nav_data)[12] <- 'SSQ_Pre'
 names(non_nav_data)[13] <- 'SSQ_Post'
 names(non_nav_data)[14] <- 'NARA'
 non_nav_data <- select(non_nav_data, -Age) 
+
 ```
 
 
@@ -138,17 +154,33 @@ for (i in 1:nrow(b3)) {
 
 
 change$Age <- factor(change$Age, levels=c("YA", "OA"))
-df_merge <- merge(change,non_nav_data,by="Participant") 
-oa_data <- df_merge %>%
-  filter(Age == "OA") 
-ya_data <- df_merge %>%
+df_final <- merge(change,non_nav_data,by="Participant") 
+ya_data <- df_final %>%
   filter(Age == "YA")
+ya_data <- ya_data %>% mutate(Cohort = 'ya')
+oa_data <- df_final %>%
+  filter(Age == "OA")
+oa_data$Cohort <- ifelse(oa_data$NARA>50.0, "oa_high", "oa_low")
+
+df_final <- rbind(ya_data, oa_data) 
+oa_high <- subset(oa_data, Cohort == "oa_high")
+oa_low <- subset(oa_data, Cohort == "oa_low")
+ya <- subset(ya_data, Cohort == "ya")
+```
+
+```{r}
+df_final_drop <- select(df_final, c('Participant','Age','NARA', 'Cohort'))
+df_final_drop<- df_final_drop[!duplicated(df_final_drop), ]
+
+desired_order <- c("ya", "oa_high", "oa_low")
+# Reorder the levels of Target_Name
+df_final_drop$Cohort <- factor(df_final_drop$Cohort, levels = desired_order)
 ```
 
 
 
 ```{r}
-corr <- cor.test(df_merge$NARA, df_merge$Distance, 
+corr <- cor.test(df_final$NARA, df_final$Distance, 
                     method = "pearson")
 corr
 oa_corr <- cor.test(oa_data$NARA, oa_data$Distance, 
@@ -157,10 +189,10 @@ oa_corr
 ya_corr <- cor.test(ya_data$NARA, ya_data$Distance, 
                     method = "pearson")
 ya_corr
-p_dt <- ggplot(df_merge, aes(x=Distance, y=NARA, color = Age, fill = Age))+
+p_dt <- ggplot(df_final, aes(x=Distance, y=NARA, color = Cohort, fill = Cohort))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-  scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
-  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
+  scale_fill_manual(values =c(  'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", y="NARA Score", x = "\u0394 Distance Traveled (VR Units)")+
@@ -176,15 +208,16 @@ p_dt <- ggplot(df_merge, aes(x=Distance, y=NARA, color = Age, fill = Age))+
   theme(axis.title.x = element_text(size=20))+
   theme(legend.position = 'none')+
   stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
+# add the folloing to shift right:  label.x.npc = "right", label.y.npc = "top",hjust = 1
 p_dt
 
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_dt.svg", height = 5, width = 5, plot=p_dt)
 ```
 ```{r}
-p_ct <- ggplot(df_merge, aes(y=NARA, x=Total_Time, color = Age, fill = Age))+
+p_ct <- ggplot(df_final, aes(y=NARA, x=Total_Time, color = Cohort, fill = Cohort))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-  scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
-  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="\u0394 Total Time", y="NARA Score")+
@@ -201,7 +234,7 @@ p_ct <- ggplot(df_merge, aes(y=NARA, x=Total_Time, color = Age, fill = Age))+
   theme(legend.position = 'none')+
   stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 
-corr <- cor.test(df_merge$NARA, df_merge$Total_Time, 
+corr <- cor.test(df_final$NARA, df_final$Total_Time, 
                     method = "pearson")
 corr
 oa_corr <- cor.test(oa_data$NARA, oa_data$Total_Time, 
@@ -213,10 +246,10 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_ct.svg", height = 5, width = 5, plot=p_ct)
 ```
 ```{r}
-p_orict <- ggplot(df_merge, aes(y=NARA, x=Orientation_Time, color = Age, fill = Age))+
+p_orict <- ggplot(df_final, aes(y=NARA, x=Orientation_Time, color = Cohort, fill = Cohort))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-  scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
-  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="\u0394 Orientation Time", y="NARA Score")+
@@ -232,7 +265,7 @@ p_orict <- ggplot(df_merge, aes(y=NARA, x=Orientation_Time, color = Age, fill = 
   theme(axis.title.x = element_text(size=20))+
   theme(legend.position = 'none')+
   stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
-corr <- cor.test(df_merge$NARA, df_merge$Orientation_Time, 
+corr <- cor.test(df_final$NARA, df_final$Orientation_Time, 
                     method = "pearson")
 corr
 oa_corr <- cor.test(oa_data$NARA, oa_data$Orientation_Time, 
@@ -244,10 +277,10 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_orict.svg", height = 5, width = 5, plot=p_orict)
 ```
 ```{r}
-p_navct <- ggplot(df_merge, aes(y=NARA, x=Navigation_Time,  color = Age, fill = Age))+
+p_navct <- ggplot(df_final, aes(y=NARA, x=Navigation_Time,  color = Cohort, fill = Cohort))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-  scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
-  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="\u0394 Navigation Time", y="NARA Score")+
@@ -263,7 +296,7 @@ p_navct <- ggplot(df_merge, aes(y=NARA, x=Navigation_Time,  color = Age, fill = 
   theme(axis.title.x = element_text(size=20))+
   theme(legend.position = 'none')+
   stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
-corr <- cor.test(df_merge$NARA, df_merge$Navigation_Time, 
+corr <- cor.test(df_final$NARA, df_final$Navigation_Time, 
                     method = "pearson")
 corr
 oa_corr <- cor.test(oa_data$NARA, oa_data$Navigation_Time, 
@@ -275,10 +308,10 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_navct.svg", height = 5, width = 5, plot=p_navct)
 ```
 ```{r}
-p_speed <- ggplot(df_merge, aes(y=NARA, x=Speed,  color = Age, fill = Age))+
+p_speed <- ggplot(df_final, aes(y=NARA, x=Speed,  color = Cohort, fill = Cohort))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-  scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
-  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="\u0394 Speed", y="NARA Score")+
@@ -295,7 +328,7 @@ p_speed <- ggplot(df_merge, aes(y=NARA, x=Speed,  color = Age, fill = Age))+
   theme(legend.position = 'none')+
   stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 
-corr <- cor.test(df_merge$NARA, df_merge$Speed, 
+corr <- cor.test(df_final$NARA, df_final$Speed, 
                     method = "pearson")
 corr
 oa_corr <- cor.test(oa_data$NARA, oa_data$Speed, 
@@ -307,10 +340,10 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_speed.svg", height = 5, width = 5, plot=p_speed)
 ```
 ```{r}
-p_teleport <- ggplot(df_merge, aes(y=NARA, x=Teleportations,  color = Age, fill = Age))+
+p_teleport <- ggplot(df_final, aes(y=NARA, x=Teleportations,  color = Cohort, fill = Cohort))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-  scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
-  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="\u0394 Teleportations", y="NARA Score")+
@@ -327,7 +360,7 @@ p_teleport <- ggplot(df_merge, aes(y=NARA, x=Teleportations,  color = Age, fill 
   theme(legend.position = 'none')+
   stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 
-corr <- cor.test(df_merge$NARA, df_merge$Teleportations, 
+corr <- cor.test(df_final$NARA, df_final$Teleportations, 
                     method = "pearson")
 corr
 oa_corr <- cor.test(oa_data$NARA, oa_data$Teleportations, 
@@ -340,10 +373,10 @@ ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_teleport.svg", height = 5, width = 5, plot=p_teleport)
 ```
 ```{r}
-p_dwell <- ggplot(df_merge, aes(y=NARA, x=Mean_Dwell, color = Age, fill = Age))+
+p_dwell <- ggplot(df_final, aes(y=NARA, x=Mean_Dwell, color = Cohort, fill = Cohort))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-  scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
-  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
+  scale_fill_manual(values =c('ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="\u0394 Mean Dwell Time (s)", y="NARA Score")+
@@ -359,7 +392,7 @@ p_dwell <- ggplot(df_merge, aes(y=NARA, x=Mean_Dwell, color = Age, fill = Age))+
   theme(axis.title.x = element_text(size=20))+
   theme(legend.position = 'none')+
   stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
-corr <- cor.test(df_merge$NARA, df_merge$Mean_Dwell, 
+corr <- cor.test(df_final$NARA, df_final$Mean_Dwell, 
                     method = "pearson")
 corr
 oa_corr <- cor.test(oa_data$NARA, oa_data$Mean_Dwell, 
