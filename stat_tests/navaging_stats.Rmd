@@ -1,0 +1,1324 @@
+---
+title: "navaging_paper_stats"
+output: html_document
+date: "2024-04-23"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load Packages
+```{r}
+
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+library(stats)
+library(xfun)
+library(pwr)
+library(tidyverse)
+library(readr)
+library(psych)
+
+```
+
+# Read Data File
+```{r}
+
+# Read Non Nav Data Spreadsheet 
+
+alldata <- read.csv('/Users/emmafunderburg/Desktop/Lab/BORICH LAB/8_navaging/YB Non-Nav Behavioral Data Spreadsheet - All Data (1).csv')
+
+# Add Demographic Factors to Data Frame from Abbreviated Questionnaire Answers
+
+demographic_data <- read.csv('/Users/emmafunderburg/Desktop/Lab/BORICH LAB/8_navaging/YB Non-Nav Behavioral Data Spreadsheet - Abbreviated Questionnaire Answers.csv')
+
+# Sort Demographic Data by Participant ID
+
+demographic_sorted <- demographic_data[order(demographic_data$Participant),]
+
+# Add Demographic Data to Main Data Frame
+
+alldata$gender <- demographic_sorted$Gender
+
+alldata$handedness <- demographic_sorted$Handedness
+
+alldata$vr_exp_quantified <- demographic_sorted$VR.Experience.Quantified
+  
+alldata$vge <- demographic_sorted$Video.Game.Experience..hours.per.week.
+  
+alldata$exercise <- demographic_sorted$Exercise..hrs.week.
+
+alldata$sss_diff <- alldata$sss_post - alldata$sss_pre
+
+alldata$ssq_diff <- alldata$ssq_post - alldata$ssq_pre
+
+alldata$nara <- demographic_sorted$
+
+  
+# We are not running stats on sleep hours/night as we did not do that in paper 1
+
+
+```
+
+# Adding Speed to Data Frame
+```{r}
+
+# Adding Speed to alldata
+
+# Read YA Average Speed File
+
+ya_speed_avg <- read.csv('/Users/emmafunderburg/Desktop/Lab/BORICH LAB/8_navaging/1_speed/ya_averaged_results.csv')
+
+# Average YA Speeds & Create Data Frame
+
+df_speed_ya <- data.frame(ya_speed_avg %>%
+  group_by(Participant) %>%
+  summarise(mean = mean(Speed),
+            sd = sd(Speed)))
+
+# Read OA Average Speed File 
+
+oa_speed_avg <- read.csv('/Users/emmafunderburg/Desktop/Lab/BORICH LAB/8_navaging/1_speed/oa_averaged_results.csv')
+
+df_speed_oa <- data.frame(oa_speed_avg %>%
+  group_by(Participant) %>%
+  summarise(mean = mean(Speed),
+            sd = sd(Speed)))
+
+# Merge OA & YA Speed Data Frames
+
+all_speed <- rbind(df_speed_ya, df_speed_oa)
+
+# Alphabetize by Participant
+
+speed_sorted <- all_speed[order(all_speed$Participant),]
+
+# Add Speed Column to alldata
+
+alldata$speed <- speed_sorted$mean
+
+
+
+```
+
+
+# Calculating Mean Age for Study Participants
+```{r}
+
+# Create YA Data Frame
+ya_data <- data.frame(filter(alldata, group =="YA"))
+
+# Calculate Mean & SD of Age for YAs
+ya_data %>%
+  summarise(mean = mean(age),
+            sd = sd(age))
+
+# Mean Age (YA) = 24.50769
+# SD of Age (YA) = 3.022836
+
+# Calculate Range for YA Age
+
+range(ya_data$age)
+
+# Range = 18.8 to 30 years old 
+
+# Create OA Data Frame
+oa_data <- data.frame(filter(alldata, group =="OA"))
+
+# Calculate Mean & SD of Age for OAs
+oa_data %>%
+  summarise(mean = mean(age),
+            sd = sd(age))
+
+# Mean Age (OA) = 69.21429
+# SD of Age (OA) = 5.861168
+
+# Calculate Range for OA Age
+
+range(oa_data$age)
+
+# Range = 60.0 to 82.2 years old
+
+
+```
+
+# Age Stats
+```{r}
+
+## Running Shapiro-Wilks Test for Normality 
+
+# Shapiro-Wilks Test on YAs
+
+shapiro.test(ya_data$speed)
+
+# p = 0.8608, fail to reject H0
+
+# Shapiro-Wilks Test on OAs
+
+shapiro.test(oa_data$speed)
+
+# p = 0.1543, fail to reject H0
+
+## Bartlett's Test for Equal Variances
+
+bartlett.test(speed~group, data = alldata)
+
+# p = 0.001532, reject H0 & cannot assume equal variance
+
+## Due to violation of equal variance assumption, we cannot run a two-sample t test. Instead, we will run the non-parametric alternative of a Wilcoxon Rank Exact Sum Test (i.e. Mann Whitney U Test).
+
+## Running Wilcoxon Rank Sum Exact Test 
+
+wilcox.test(alldata$speed ~ alldata$group, data = alldata, alternative = "two.sided", paired = FALSE)
+
+# p = 2.749e-08, reject H0, significant difference in speed with age
+
+mean(oa_data$sbsod)
+
+mean(ya_data$sbsod)
+
+
+```
+
+
+# Gender Stats
+```{r}
+
+## Running Stats on Gender & NavCity Performance
+
+# Make Data Frame for Males
+
+df_male <- data.frame(filter(alldata, gender =="M"))
+
+# Make Data Frame for Females
+
+df_female <- data.frame(filter(alldata, gender =="W"))
+
+## Verifying Normal Distribution of Samples/Population
+
+# Shapiro-Wilks Test for Normality 
+
+shapiro.test(alldata$speed) 
+
+# p = 0.009188
+
+shapiro.test(ya_data$speed)
+
+# p = 0.8608
+
+shapiro.test(oa_data$speed)
+
+# p = 0.1543
+
+shapiro.test(df_male$speed)
+
+# p = 0.2073
+
+shapiro.test(df_female$speed)
+
+# p = 0.02397, reject H0 & technically cannot run two-way ANOVA
+
+## Test for Normality using QQ Plot
+
+mod <- aov(alldata$speed ~ group * gender,
+          data = alldata)
+
+plot(mod, which = 2)
+
+library(car)
+
+qqPlot(mod$residuals,
+       id = FALSE)
+
+# all points fall within confidence interval, likely can assume normality (check with YB about this)
+
+hist(mod$residuals)
+
+# actually not that bad, relative approximation of normal dist 
+
+## Check Equal Variance Assumption
+
+# can check graphically
+
+plot(mod, which = 3)
+
+# it doesn't look too too bad  
+
+# Verify Using Bartlett's Test for Equal Variances
+
+bartlett.test(speed ~ gender, data = alldata)
+
+# p = 0.1269, variances are equal 
+
+bartlett.test(speed ~ group, data = alldata)
+
+# p = 0.001532, variances are not equal 
+
+## Wilcoxon Rank Sum Test for Gender vs Speed 
+
+wilcox.test(alldata$speed ~ gender, data = alldata, exact = TRUE)
+
+# p = 0.09023, fail to reject H0, no difference by gender in overall sample
+
+## Running Two-Way ANOVA
+
+summary(mod)
+
+# group:gender not significant; age group & gender alone significant
+# however, violations make the gender significant result not really meaningful 
+# gender p = 0.00409
+# group p = 1.56e-09
+# gender:group p = 0.05983
+
+## Test for Difference in Gender between OA and YA groups
+
+chisq.test(table(alldata$gender, alldata$group), correct = TRUE)
+chisq.test(table(alldata$gender, alldata$group), correct = FALSE)
+
+# correct = TRUE for Yates' continuity correction, correct = FALSE to not use Yates' continuity correction
+# check expected values for cells - should be above the threshold of 5, I don't think we need continuity correction
+# for no continuity corection, p-value = 0.9265 & fail to reject H0
+
+```
+
+
+# Handedness Stats
+```{r}
+
+## Running Stats on Handedness & NavCity Performance
+
+# Create Data Frame for R Handedness
+
+df_right <- data.frame(filter(alldata, handedness =="R"))
+
+# Create Data Frame for O (L/M) Handedness
+
+# Replace L/M with O in Data Frame
+
+alldata[alldata == "L"] <- "O"
+
+alldata[alldata == "M"] <- "O"
+
+# Now, Create Data Frame of O Handedness
+
+df_other <- data.frame(filter(alldata, handedness == "O"))
+
+
+## Verifying Normality Assumption
+
+# Shapiro-Wilks Test for Normality 
+
+shapiro.test(alldata$speed) 
+
+# p = 0.009188
+
+shapiro.test(ya_data$speed)
+
+# p = 0.8608
+
+shapiro.test(oa_data$speed)
+
+# p = 0.1543
+
+shapiro.test(df_right$speed)
+
+# p = 0.01686, reject H0 & technically cannot run two-way ANOVA
+
+shapiro.test(df_other$speed)
+
+# p = 0.3687, fail to reject H0
+
+## Test for Normality using QQ Plot
+
+mod <- aov(alldata$speed ~ group * handedness,
+          data = alldata)
+
+plot(mod, which = 2)
+
+library(car)
+qqPlot(mod$residuals,
+       id = FALSE)
+
+# all points fall within confidence interval - may be able to assume normality
+
+hist(mod$residuals)
+
+# also looks relatively normally distributed!! 
+
+## Check Equal Variance Assumption
+
+# can check graphically
+
+plot(mod, which = 3)
+
+# looks somewhat close to equal variance! 
+
+# Verify Using Bartlett's Test for Equal Variances
+
+bartlett.test(speed ~ handedness, data = alldata)
+
+# p = 0.2173, variances are equal 
+
+bartlett.test(speed ~ group, data = alldata)
+
+# p = 0.001532, variances are not equal 
+
+# We cannot run two sample t-test as the R handedness group violates the normality assumption. We will use the non-parametric equivalent of the Wilcoxon Rank Sum Exact (i.e. Mann Whitney U Test) Test. 
+
+wilcox.test(alldata$speed ~ handedness, data = alldata, exact = TRUE)
+
+# p = 0.6416, fail to reject H0, no difference in speed by handedness in overall sample
+
+## Running Two-Way ANOVA
+
+summary(mod)
+
+# handedness & group:handedness not significant; age group significant
+# handedness p = 0.323
+# group p = 1.8e-08
+# handedness:group p = 0.206
+
+## Test for Difference in Handedness between OA and YA groups
+
+handedness_age <- data.frame(alldata$handedness,alldata$group)
+handedness_age <- table(alldata$handedness,alldata$group)
+print(handedness_age)
+
+chisq.test(table(alldata$group, alldata$handedness), correct = TRUE)
+chisq.test(table(alldata$group, alldata$handedness), correct = FALSE)
+
+# correct = TRUE for Yates' continuity correction, correct = FALSE to not use Yates' continuity correction
+# check expected values for cells - should be above the threshold of 5, I don't think we need continuity correction
+# for no continuity correction, p-value = 0.9873 & fail to reject H0
+
+```
+
+
+# VR Experience Stats
+```{r}
+
+##### NEED TO RERUN ALL OF THIS WITH CORRECTED AND VERIFIED DATA FROM YB NON NAV SPREADSDHEET 
+
+
+
+
+
+
+
+
+
+## Running Stats on VR Experience Quantified & NavCity Performance
+
+# Create Data Frame for Each Level of VR Experience
+
+df_vr0 <- data.frame(filter(alldata, vr_exp_quantified =="0"))
+
+mean(df_vr0$speed)
+
+# mean speed = 8.938549
+
+df_vr1 <- data.frame(filter(alldata, vr_exp_quantified =="1"))
+
+mean(df_vr1$speed)
+
+# mean speed = 10.84961 VR units/s
+
+df_vr2 <- data.frame(filter(alldata, vr_exp_quantified =="2"))
+
+mean(df_vr2$speed)
+
+# mean speed = 15.27513 VR units/s
+
+## Shapiro-Wilks Test for Normality
+
+shapiro.test(ya_data$speed)
+
+# p = 0.8608
+
+shapiro.test(oa_data$speed)
+
+# p = 0.1543
+
+shapiro.test(df_vr0$speed)
+
+# p = 0.06006
+
+shapiro.test(df_vr1$speed)
+
+# p = 0.242
+
+shapiro.test(df_vr2$speed)
+
+# p = 0.07268
+
+# Normality assumption satisfied  
+
+## Test for Normality using QQ Plot
+
+mod <- aov(alldata$speed ~ group * vr_exp_quantified,
+          data = alldata)
+
+plot(mod, which = 2)
+
+library(car)
+qqPlot(mod$residuals,
+       id = FALSE)
+
+# Some outliers outside of confidence interval - ask YB 
+
+# Look at Histogram
+
+hist(mod$residuals)
+
+# histogram looks left-skewed
+
+## Check Equal Variance Assumption
+
+# Running Bartlett's Test for Equal Variance
+
+bartlett.test(speed ~ vr_exp_quantified, data = alldata)
+
+# p = 0.1853, can assume equal variances 
+
+bartlett.test(speed ~ group, data = alldata)
+
+# p = 0.001532, variances are not equal 
+
+# Check Variance Graphically 
+
+plot(mod, which = 3)
+
+# Variance looks remotely equal 
+
+
+
+############# UPDATE BELOW
+
+
+
+# Cannot run two way ANOVA due to violation of the equal variance assumption. 
+# we are running one way ANOVA
+
+VR_exp_anova <- aov(speed~vr_exp_quantified, data = alldata)
+summary(VR_exp_anova)
+
+# p = 0.000254, speed is different across VR experience groups 
+
+VR_exp_anova_oa <- aov(speed~vr_exp_quantified, data = oa_data)
+summary(VR_exp_anova_oa)
+
+# p = 0.54, fail to reject H0
+
+VR_exp_anova_ya <- aov(speed~vr_exp_quantified, data = ya_data)
+summary(VR_exp_anova_ya)
+
+# p = 0.0284, reject H0
+
+## I'd be interested to see VR experience quantified's relationship to NARA score !! check on this 
+
+## Running Two-Way ANOVA
+
+summary(mod)
+
+# group:vr not significant
+# group & vr exp separately ARE significant
+# vr exp p = 0.0115
+# group p = 4.74e-09
+# vr exp:group p = 0.2918
+
+
+
+## Test for Difference in VR Experience Quantified between OA and YA groups
+
+vrexp_age <- data.frame(alldata$vr_exp_quantified,alldata$group)
+vrexp_age <- table(alldata$vr_exp_quantified,alldata$group)
+print(vrexp_age)
+
+chisq.test(table(alldata$group, alldata$vr_exp_quantified), correct = FALSE)
+
+# correct = TRUE for Yates' continuity correction, correct = FALSE to not use Yates' continuity correction
+# check expected values for cells - should be above the threshold of 5, I don't think we need continuity correction
+# for no continuity correction, p-value = 0.03451 & fail to reject H0
+# continuity correction not used because df = 2  
+
+```
+
+# Prepping for Correlation Tests
+```{r}
+
+# To run a Pearson correlation, both variable distributions must follow a normal distribution. 
+# As speed is the primary outcome measure for NavCity performance, we will run a Shapiro-Wilks test for normality on the overall speed dataset. 
+
+shapiro.test(alldata$speed)
+
+# p-value = 0.009188, all correlations run must be Spearman (non-parametric) correlations 
+
+```
+
+
+
+
+# Video Game Experience Stats
+```{r}
+
+# Running Stats on Video Game Experience & NavCity Performance
+
+# Run Spearman correlation for speed vs video game experience (hours/week)
+
+cor.test(alldata$vge, alldata$speed, method = "spearman", exact = FALSE)
+
+# exact = FALSE b/c cannot compute p-values with ties
+# p = 0.006742
+# rho = 0.389917
+# evidence of a significant correlation between video game hours/week & NavCity performance
+# This was not significant in YAs, may be that the effect is so strong in OAs that it shows up ?
+
+# Checking Normality of VGE in OA/YA Groups
+
+shapiro.test(oa_data$vge)
+
+# p = 4.731e-09, data does NOT follow a normal distribution, need to run non-parametric tests 
+
+shapiro.test(ya_data$vge)
+
+# p = 3.852e-05, data does NOT follow a normal distribution, need to run non-parametric tests 
+
+# Checking Equal Variance Assumption
+
+bartlett.test(vge ~ group, data = alldata)
+
+# p = 0.01024, does not meet equal variance assumption
+
+# Run Mann-Whitney U Test for VGE in YA vs OA
+
+wilcox.test(vge~group, data = alldata)
+
+# p = 0.004246, significant difference in video game hours/week for YA vs OA
+
+## As there is a significant difference in VGE between OA and YA, we will run correlations separately for OA and YA to get a better sense of the relationships. 
+
+# Check Normality of Variables
+
+# OA Normality of Speed 
+
+shapiro.test(oa_data$speed)
+
+# p = 0.1543
+
+# YA Normality of Speed 
+
+shapiro.test(ya_data$speed)
+
+# p = 0.8608, normality satisfied
+
+# However, as normality is not satisfied for the VGE distributions, we must use a Spearman correlation for both OA and YA data.
+
+# Run OA VGE vs Speed Correlation
+
+cor.test(oa_data$vge, oa_data$speed, method = "spearman", exact = FALSE)
+
+# rho = -0.1376047
+# p = 0.552
+# no evidence of a significant correlation 
+
+# Run YA VGE vs Speed Correlation
+
+cor.test(ya_data$vge, ya_data$speed, method = "spearman", exact = FALSE)
+
+# rho = 0.2270171
+# p = 0.2647
+# no evidence of a significant correlation 
+
+## Run Fischer Z-Transformation & Steiger's Test on OA and YA Correlations
+
+# Download Psych Package
+
+install.packages("psych")
+library(psych)
+
+# Use r.test function, which utilizes Steiger's rules to test difference between two independent correlations
+
+r.test(n = 21, -0.1376047, r34 = 0.2270171, n2 = 26,twotailed = TRUE)
+
+# p-value = 0.24, no significant evidence of difference between correlations
+
+
+
+```
+
+
+# Exercise Stats
+```{r}
+
+##### NEED TO RERUN ALL OF THIS WITH CORRECTED DATA FROM YB NON NAV SPREADSHEET 
+
+
+
+
+
+
+# Running Stats on Exercise & NavCity Performance 
+
+# Run Spearman correlation for speed vs exercise (hours/week)
+
+cor.test(alldata$exercise, alldata$speed, method = "spearman", exact = FALSE)
+
+# exact = FALSE b/c cannot compute p-values with ties
+# p = 0.3533
+# rho = 0.1384571
+# no evidence of a significant correlation 
+
+# Checking Normality of Exercise in OA/YA Groups
+
+shapiro.test(oa_data$exercise)
+
+# p = 0.758, data does follow a normal distribution
+
+shapiro.test(ya_data$exercise)
+
+# p = 0.0007332, data does NOT follow a normal distribution, need to run non-parametric tests 
+
+# Checking Equal Variance Assumption
+
+bartlett.test(exercise ~ group, data = alldata)
+
+# p = 0.01545, does not meet equal variance assumption
+
+# Run Mann-Whitney U Test for Exercise in YA vs OA
+
+wilcox.test(exercise~group, data = alldata)
+
+# p = 0.621, no significant difference in exercise hours/week for YA vs OA
+
+## We will now run correlations separately for OA and YA to get a better sense of the relationships. 
+
+# Check Normality of Variables
+
+# OA Normality of Speed 
+
+shapiro.test(oa_data$speed)
+
+# p = 0.1543
+
+# YA Normality of Speed 
+
+shapiro.test(ya_data$speed)
+
+# p = 0.8608, normality satisfied
+
+# However, as normality is not satisfied for the exercise distributions, we must use a Spearman correlation for both OA and YA data (will allow us to compare later).
+
+# Run OA Exercise vs Speed Correlation
+
+cor.test(oa_data$exercise, oa_data$speed, method = "pearson", exact = FALSE)
+
+# rho = -0.3783859
+# p = 0.09077
+# no evidence of a significant correlation 
+
+# Run YA Exercise vs Speed Correlation
+
+cor.test(ya_data$exercise, ya_data$speed, method = "spearman", exact = FALSE)
+
+# rho = 0.374038
+# p = 0.05978
+# no evidence of a significant correlation 
+
+## Run Fischer Z-Transformation & Steiger's Test on OA and YA Correlations
+
+# Use r.test function, which utilizes Steiger's rules to test difference between two independent correlations
+
+r.test(n = 21, -0.3783859, r34 = 0.374038, n2 = 26,twotailed = TRUE)
+
+# p-value = 0.01, evidence of significant difference in correlations of exercise/speed between OA and YA 
+
+
+
+```
+
+# SSQ Difference Stats
+```{r}
+
+# Running Stats on SSQ Difference & NavCity Performance 
+
+# Paired T-Test for OA
+
+# Check Normality of Differences
+
+shapiro.test(oa_data$ssq_diff)
+
+# p = 0.2545, data does follow a normal distribution
+
+# As the differences follow a normal distribution, we will use a paired samples t-test.
+
+t.test(oa_data$ssq_pre, oa_data$ssq_post, paired = TRUE, alternative = "two.sided")
+
+# p = 0.2841
+# no significant difference between SSQ pre and post for OAs
+
+# Paired T-Test for YA
+
+# Check Normality of Differences
+
+shapiro.test(ya_data$ssq_diff)
+
+# p = 0.1521
+
+# As the differences follow a normal distribution, we will use a paired samples t-test.
+
+t.test(ya_data$ssq_pre, ya_data$ssq_post, paired = TRUE, alternative = "two.sided")
+
+# p = 0.1278
+# no significant difference between SSQ pre and post for YAs
+
+# Run Spearman correlation for speed vs SSQ difference for Overall Sample
+
+cor.test(alldata$ssq_diff, alldata$speed, method = "spearman", exact = FALSE)
+
+# exact = FALSE b/c cannot compute p-values with ties
+# p = 0.8163
+# rho = 0.03481373
+# no evidence of a significant correlation 
+
+# Checking Normality of SSQ Difference in OA/YA Groups
+
+shapiro.test(oa_data$ssq_diff)
+
+# p = 0.2545, data does follow a normal distribution
+
+shapiro.test(ya_data$ssq_diff)
+
+# p = 0.1521, data does follow a normal distribution 
+
+# Checking Equal Variance Assumption
+
+bartlett.test(ssq_diff ~ group, data = alldata)
+
+# p = 0.1001, does meet equal variance assumption
+
+# Run Two Sample T-Test for SSQ Difference in OA vs YA
+
+t.test(ssq_diff~group, data = alldata)
+
+# p = 0.9298 
+# no significant difference in SSQ difference for OA vs YA 
+
+# We will now run correlations separately between SSQ difference and speed for OA and YA. 
+
+# Check Normality of Variables
+
+# OA Normality of Speed 
+
+shapiro.test(oa_data$speed)
+
+# p = 0.1543
+
+# YA Normality of Speed 
+
+shapiro.test(ya_data$speed)
+
+# p = 0.8608, normality satisfied
+
+## As both OA/YA speed and SSQ difference distributions followed normal distributions and met equal variance assumptions, we can use Pearson correlations. 
+
+# Run OA SSQ Difference vs Speed Correlation
+
+cor.test(oa_data$ssq_diff, oa_data$speed, method = "pearson")
+
+# r = 0.1754489
+# p = 0.4468
+# no evidence of a significant correlation 
+
+# Run YA SSQ Difference vs Speed Correlation
+
+cor.test(ya_data$ssq_diff, ya_data$speed, method = "pearson")
+
+# r = -0.05739604 
+# p = 0.7806
+# no evidence of a significant correlation 
+
+## Run Fischer Z-Transformation & Steiger's Test on OA and YA Correlations
+
+# Use r.test function, which utilizes Steiger's rules to test difference between two independent correlations
+
+r.test(n = 21, 0.1754489, r34 = -0.05739604, n2 = 26,twotailed = TRUE)
+
+# p-value = 0.46, no evidence of significant difference in correlations 
+
+
+```
+
+# SSS Difference Stats
+```{r}
+
+# Running Stats on SSS Difference & NavCity Performance 
+
+# Paired T-Test for OA
+
+# Check Normality of Differences
+
+shapiro.test(oa_data$sss_diff)
+
+# p = 0.000186, data does not follow a normal distribution
+
+# As the differences do not follow a normal distribution, we will use a Paired Sample Wilcoxon-Test as a nonparametric alternative
+
+wilcox.test(oa_data$sss_pre, oa_data$sss_post, paired = TRUE, alternative = "two.sided")
+
+# p = 0.1817
+# no significant difference between SSS pre and post for OAs
+
+# Paired T-Test for YA
+
+# Check Normality of Differences
+
+shapiro.test(ya_data$sss_diff)
+
+# p = 0.0007346
+
+# As the differences do not follow a normal distribution, we will use a Paired Sample Wilcoxon-Test as a nonparametric alternative
+
+wilcox.test(ya_data$ssq_pre, ya_data$ssq_post, paired = TRUE, alternative = "two.sided")
+
+# p = 0.1546
+# no significant difference between SSS pre and post for YAs
+
+# Run Spearman correlation for speed vs SSS difference
+
+cor.test(alldata$sss_diff, alldata$speed, method = "spearman", exact = FALSE)
+
+# exact = FALSE b/c cannot compute p-values with ties
+# p = 0.289
+# rho = -0.1579303 
+# no evidence of a significant correlation 
+
+# Checking Normality of SSS Difference in OA/YA Groups
+
+shapiro.test(oa_data$sss_diff)
+
+# p = 0.000186, data does NOT follow a normal distribution, need to run non-parametric tests 
+
+shapiro.test(ya_data$sss_diff)
+
+# p = 0.0007346, data does NOT follow a normal distribution, need to run non-parametric tests 
+
+# Checking Equal Variance Assumption
+
+bartlett.test(sss_diff ~ group, data = alldata)
+
+# p = 0.0001925, does not meet equal variance assumption
+
+# As the normality and equal variance assumptions are violated, we must use a Mann-Whitney U Test as a nonparametric alternative to a two sample t test 
+
+wilcox.test(sss_diff~group, data = alldata)
+
+# p = 0.3331
+# no significant difference in SSS difference between OAs and YAs
+
+# We will now run correlations separately between SSQ difference and speed for OA and YA. 
+
+# Check Normality of Variables
+
+# OA Normality of Speed 
+
+shapiro.test(oa_data$speed)
+
+# p = 0.1543
+
+# YA Normality of Speed 
+
+shapiro.test(ya_data$speed)
+
+# p = 0.8608, normality satisfied
+
+## As both OA/YA SSS difference distributions did not follow normal distributions or meet equal variance assumptions, we will use Spearman correlations. 
+
+# Run OA SSS Difference vs Speed Correlation
+
+cor.test(oa_data$sss_diff, oa_data$speed, method = "spearman", exact = FALSE)
+
+# rho = 0.02415112
+# p = 0.9172
+# no evidence of a significant correlation 
+
+# Run YA SSS Difference vs Speed Correlation
+
+cor.test(ya_data$sss_diff, ya_data$speed, method = "spearman", exact = FALSE)
+
+# rho = -0.1969353 
+# p = 0.3349
+# no evidence of a significant correlation 
+
+## Run Fischer Z-Transformation & Steiger's Test on OA and YA Correlations
+
+# Use r.test function, which utilizes Steiger's rules to test difference between two independent correlations
+
+r.test(n = 21, 0.02415112, r34 = -0.1969353, n2 = 26,twotailed = TRUE)
+
+# p-value = 0.48, no evidence of significant difference in correlations 
+
+```
+
+# PSQI Stats
+```{r}
+
+# Running Stats on PSQI & NavCity Performance 
+
+# Checking Normality of PSQI in OA/YA Groups
+
+shapiro.test(oa_data$psqi)
+
+# p = 0.1613, data does follow a normal distribution
+
+shapiro.test(ya_data$psqi)
+
+# p = 0.005512, data does NOT follow a normal distribution, need to run non-parametric tests 
+
+# Checking Equal Variance Assumption
+
+bartlett.test(psqi ~ group, data = alldata)
+
+# p = 0.06082, does meet equal variance assumption
+
+# As the normality and equal variance assumptions are not met, we will use a Mann-Whitney U Test for PSQI in YA vs OA
+
+# Run Mann-Whitney U Test for PSQI in YA vs OA
+
+wilcox.test(psqi~group, data = alldata, alternative = "two.sided")
+
+# p = 0.9656, no significant difference in PSQI for YA vs OA
+
+## We will run correlations separately for OA and YA to get a better sense of the relationships. 
+
+# Run Spearman correlation for speed vs PSQI
+
+cor.test(alldata$psqi, alldata$speed, method = "spearman", exact = FALSE)
+
+# exact = FALSE b/c cannot compute p-values with ties
+# p = 0.6923
+# rho = 0.05926934
+# no evidence of a significant correlation 
+
+# Check Normality of Variables
+
+# OA Normality of Speed 
+
+shapiro.test(oa_data$speed)
+
+# p = 0.1543
+
+# YA Normality of Speed 
+
+shapiro.test(ya_data$speed)
+
+# p = 0.8608, normality satisfied
+
+# However, as normality is not satisfied for the VGE distributions, we must use a Spearman correlation for both OA and YA data.
+
+# Run OA PSQI vs Speed Correlation
+
+cor.test(oa_data$psqi, oa_data$speed, method = "spearman", exact = FALSE)
+
+# rho = -0.04575261
+# p = 0.8439
+# no evidence of a significant correlation 
+
+# Run YA PSQI vs Speed Correlation
+
+cor.test(ya_data$psqi, ya_data$speed, method = "spearman", exact = FALSE)
+
+# rho = 0.1666773
+# p = 0.4158
+# no evidence of a significant correlation 
+
+## Run Fischer Z-Transformation & Steiger's Test on OA and YA Correlations
+
+# Use r.test function, which utilizes Steiger's rules to test difference between two independent correlations
+
+r.test(n = 21, -0.04575261, r34 = 0.1666773, n2 = 26,twotailed = TRUE)
+
+# p-value = 0.50, no evidence of significant difference in correlations 
+
+```
+
+# SBSOD Stats
+```{r}
+
+# Running Stats on SBSOD Difference & NavCity Performance 
+
+# Run Spearman correlation for speed vs SBSOD
+
+cor.test(alldata$sbsod, alldata$speed, method = "spearman", exact = FALSE)
+
+# exact = FALSE b/c cannot compute p-values with ties
+# p = 0.2443
+# rho = -0.1732238 
+# no evidence of a significant correlation 
+
+# Checking Normality of SBSOD in OA/YA Groups
+
+shapiro.test(oa_data$sbsod)
+
+# p = 0.5794, data does follow a normal distribution, need to run non-parametric tests 
+
+shapiro.test(ya_data$sbsod)
+
+# p = 0.1743, data does follow a normal distribution, need to run non-parametric tests 
+
+# Checking Equal Variance Assumption
+
+bartlett.test(sbsod ~ group, data = alldata)
+
+# p = 0.3358, does meet equal variance assumption
+
+# As normality and equal variance assumptions are met, we can use a two sample t test.
+
+# Run two sample t-test for VGE in YA vs OA
+
+t.test(sbsod~group, data = alldata, alternative = "two.sided")
+
+# p = 0.004355, significant difference in SBSOD for YA vs OA
+
+# Testing Mean SBSOD for YA vs OA
+
+mean(oa_data$sbsod)
+
+# mean for OA = 5.165238
+
+mean(ya_data$sbsod)
+
+# mean for YA = 4.269615
+
+# Mean SBSOD is higher for OA than YA. This indicates OAs may perceive themselves as more effective navigators than YAs. 
+
+## As there is a significant difference in SBSOD between OA and YA, we will run correlations separately for OA and YA to get a better sense of the relationships. 
+
+# Check Normality of Variables
+
+# OA Normality of Speed 
+
+shapiro.test(oa_data$speed)
+
+# p = 0.1543
+
+# YA Normality of Speed 
+
+shapiro.test(ya_data$speed)
+
+# p = 0.8608, normality satisfied
+
+# As normality and equal variance assumptions are satisfied, we can use Pearson correlations. 
+
+# Run OA SBSOD vs Speed Correlation
+
+cor.test(oa_data$sbsod, oa_data$speed, method = "pearson")
+
+# r = 0.2329955
+# p = 0.3094
+# no evidence of a significant correlation 
+
+# Run YA SBSOD vs Speed Correlation
+
+cor.test(ya_data$sbsod, ya_data$speed, method = "pearson")
+
+# r = 0.1195942
+# p = 0.5606
+# no evidence of a significant correlation 
+
+## Run Fischer Z-Transformation & Steiger's Test on OA and YA Correlations
+
+# Use r.test function, which utilizes Steiger's rules to test difference between two independent correlations
+
+r.test(n = 21, 0.2329955, r34 = 0.1195942, n2 = 26,twotailed = TRUE)
+
+# p-value = 0.71, no evidence of significant difference in correlations 
+
+```
+
+# Trails Making A Stats
+```{r}
+
+# Running Stats on Trails Making A & NavCity Performance 
+
+# Check Normality for Trails Making A & Speed
+
+shapiro.test(alldata$speed)
+
+# p = 0.009188, data is non-normal and Spearman correlation must be run
+
+shapiro.test(alldata$trails_a_ct)
+
+# p = 0.01396, data also non-normal and Spearman correlation will be best 
+
+# Run Spearman correlation for Speed vs Trails Making A Completion Time
+
+cor.test(alldata$trails_a_ct, alldata$speed, method = "spearman", exact = FALSE)
+
+# exact = FALSE b/c cannot calculate exact p-value with ties
+# p = 1.321e-05
+# rho = -0.5891401 
+# evidence of a significant negative correlation. Logically, this is what we would expect, as those with a lower completion time for Trails Making A will likely have greater speed in NavCity. 
+
+# Checking Normality of Trails A CT in OA/YA Groups
+
+shapiro.test(oa_data$trails_a_ct)
+
+# p = 0.2089, data does follow a normal distribution, need to run non-parametric tests 
+
+shapiro.test(ya_data$trails_a_ct)
+
+# p = 0.3793, data does follow a normal distribution, need to run non-parametric tests 
+
+# Checking Equal Variance Assumption
+
+bartlett.test(trails_a_ct ~ group, data = alldata)
+
+# p = 0.03473, does not meet equal variance assumption
+
+# As equal variance assumption is not met, we will use a Mann-Whitney U Test. 
+
+# Run Mann-Whitney U Test for Trails A CT in YA vs OA
+
+wilcox.test(trails_a_ct~group, data = alldata, alternative = "two.sided")
+
+# p = 0.0001222, significant difference in Trails A CT for YA vs OA
+
+## As there is a significant difference in Trails A CT between OA and YA, we will run correlations separately for OA and YA to get a better sense of the relationships. 
+
+# Check Normality of Variables
+
+# OA Normality of Speed 
+
+shapiro.test(oa_data$speed)
+
+# p = 0.1543
+
+# YA Normality of Speed 
+
+shapiro.test(ya_data$speed)
+
+# p = 0.8608, normality satisfied
+
+# As normality and equal variance assumptions are not satisfied, we can use Spearman correlations. 
+
+# Run OA Trails A CT vs Speed Correlation
+
+cor.test(oa_data$trails_a_ct, oa_data$speed, method = "spearman", exact = TRUE)
+
+# r = -0.3182852
+# p = 0.1597
+# no evidence of a significant correlation 
+
+# Run YA Trails A CT vs Speed Correlation
+
+cor.test(ya_data$trails_a_ct, ya_data$speed, method = "spearman", exact = TRUE)
+
+# r = -0.3379511
+# p = 0.0913
+# no evidence of a significant correlation 
+
+## Run Fischer Z-Transformation & Steiger's Test on OA and YA Correlations
+
+# Use r.test function, which utilizes Steiger's rules to test difference between two independent correlations
+
+r.test(n = 21, -0.3182852, r34 = -0.3379511, n2 = 26,twotailed = TRUE)
+
+# p-value = 0.94, no evidence of significant difference in correlations
+
+```
+
+# Corsi Blocks Stats
+```{r}
+
+# Running Stats on Corsi Span & NavCity Performance 
+
+# Check Normality for Corsi Span & Speed
+
+shapiro.test(alldata$speed)
+
+# p = 0.009188, data is non-normal and Spearman correlation must be run
+
+shapiro.test(alldata$corsi_span)
+
+# p = 0.0008118, data also non-normal and Spearman correlation will be best 
+
+# Run Spearman correlation for Speed vs Trails Making A Completion Time
+
+cor.test(alldata$corsi_span, alldata$speed, method = "spearman", exact = FALSE)
+
+# exact = FALSE b/c cannot compute exact p-value with ties
+# p = 0.0009147
+# rho = 0.4677876 
+# evidence of a significant positive correlation. Logically, this is what we would expect, as those with a higher Corsi block span will likely have greater speed in NavCity. 
+
+# Checking Normality of Corsi Span in OA/YA Groups
+
+shapiro.test(oa_data$corsi_span)
+
+# p = 0.01619, data is non-normal, need to run non-parametric tests 
+
+shapiro.test(ya_data$corsi_span)
+
+# p = 0.001419, data does not follow a normal distribution, need to run non-parametric tests 
+
+# Checking Equal Variance Assumption
+
+bartlett.test(corsi_span ~ group, data = alldata)
+
+# p = 0.4868, does meet equal variance assumption
+
+# As normality assumption is not met, we will use a Mann-Whitney U Test. 
+
+# Run Mann-Whitney U Test for Corsi Span in YA vs OA
+
+wilcox.test(corsi_span~group, data = alldata, alternative = "two.sided", exact = FALSE)
+
+# exact = FALSE b/c cannot compute exact p-value with ties
+# p = 0.0001222, significant difference in Trails A CT for YA vs OA
+
+## As there is a significant difference in Trails A CT between OA and YA, we will run correlations separately for OA and YA to get a better sense of the relationships. 
+
+# Check Normality of Variables
+
+# OA Normality of Speed 
+
+shapiro.test(oa_data$speed)
+
+# p = 0.1543
+
+# YA Normality of Speed 
+
+shapiro.test(ya_data$speed)
+
+# p = 0.8608, normality satisfied
+
+# As normality and equal variance assumptions are not satisfied, we can use Spearman correlations. 
+
+# Run OA Corsi Span vs Speed Correlation
+
+cor.test(oa_data$corsi_span, oa_data$speed, method = "spearman", exact = TRUE)
+
+# r = 0.3511508
+# p = 0.1186
+# no evidence of a significant correlation 
+
+# Run YA Corsi Span vs Speed Correlation
+
+cor.test(ya_data$corsi_span, ya_data$speed, method = "spearman", exact = TRUE)
+
+# r = 0.02195031
+# p = 0.9152
+# no evidence of a significant correlation 
+
+## Run Fischer Z-Transformation & Steiger's Test on OA and YA Correlations
+
+# Use r.test function, which utilizes Steiger's rules to test difference between two independent correlations
+
+r.test(n = 21, 0.3511508, r34 = 0.02195031, n2 = 26,twotailed = TRUE)
+
+# p-value = 0.27, no evidence of significant difference in correlations
+
+```
+

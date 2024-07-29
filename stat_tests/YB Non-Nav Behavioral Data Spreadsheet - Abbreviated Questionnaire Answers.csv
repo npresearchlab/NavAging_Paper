@@ -1,0 +1,49 @@
+Participant ID,Group,Age ,Gender,Medical History,Medical History Notes,Eyeglasses/Contacts,Handedness,Medications,Medications Notes,VR Experience,VR Experience Quantified,VR Experience Notes,Video Game Experience,Video Game Experience (hours per week),Video Game Experience Notes,Navigation Strategy,Exercise (hrs/week),Exercise Style,Sleep (hrs/night),"""Losing Your Way"" (0= NONE, # = count/3 months)",Occupation,Sleep (hrs/night)
+BNC01,0,24.7,W,N,,Y,R,N,,N,0,,N,0,,GPS,6.0,"run,bike,strength",8,0,Student,8
+BNC02,0,26.3,W,N,,N,R,N,,Y,2,"Recreationally: HIL VIVE, Occulus (archery)",Y,10,"Third person, turn based strategy, PPG",GPS,10.0,"Running, pilates",7,0,Student,7
+BNC03,0,19.7,M,N,,N,M,N,,Y,2,Occulus 2 at home,Y,2,"Sports games: Madden, NHC, NBA (1st person and 3rd person)",GPS,2.0,basketball,7,0,Student,7
+BNC04,0,22.7,W,N,,Y,R,N,,Y,1,"Once, Neuroanatomy VR Trial session",N,0,,GPS,4.4,"running, or strength training",6,0,Student,6
+BNC05,0,28.7,W,N,,Y,R,Y,Vitamin D,Y,1,"Once, demonstration at CSM",N,0,,GPS,2.3,weights & cardio,6.5,0,Student,6.5
+BNC07,0,27.3,M,N,,N,R,N,,Y,1,for 10 mins,Y,7,"first person: COD, Halo; Third person: GOW, Dark souls; RTS: Halowars","GPS, Landmarks",6.3,powerlifting/bodybuilding,6,1,Youth Adaptive Program Coordinator,6
+BNC08,0,30.0,M,N,,N,R,N,,N,0,,Y,5,1st person and 3rd person racing,GPS,4.5,weights & tennis,6.5,0,Tech consultant,6.5
+BNC09,0,25.3,W,N,,Y,L,N,,Y,1,"Once, first person game",N,0,,GPS,3.0,"Running, or strength",8,0,Student,8
+BNC11,0,25.6,W,N,,Y,M,N,,N,0,,N,0,,"GPS, Landmarks",2.5,"Walking, light jogging, basketball",6.5,0,Grad Student,6.5
+BNC12,0,28.8,M,Y,Visual Impariment (Cataracts removed),Y,R,N,,Y,2,Occulus,Y,3,first person shooter,GPS,2.0,"Running 2x per week (30 min), Biking 1x per week (1 hour)",7,0,Supply Chain Analyst,7
+BNC23,0,23.6,M,N,,Y,R,N,,Y ,2,Owns Occulus VR headset,Y,3,"3rd person, 1st person, rocket league, overwatch",GPS,3.0,Strength training,7,0,student,7
+BNC26,0,21.4,W,N,,N,R,N,,N,0,,Y,3,"clash of clans, league of legends, : wikd rift, solitaire, swipe brick breaker, all third person",GPS,0.0,,7,5,Student,7
+BNC27,0,26.2,W,N,,Y,R,Y,"Zyrtec, Abuterol",Y,1,Once for gaming,Y,1,"1st person, VR, beat saber",GPS,4.5,HIIT and running,7,0,DPT Student,7
+BNC28,0,24.5,M,N,,Y,R,N,,Y,2,Occulus Quest,Y,10,"1s person, 3rd person, apex legends, call of duty, PS5, switch",GPS,15.0,"Resistance training, cardio, sports",5.5,0,Student,5.5
+BNC29,0,21.4,W,N,,Y,M,N,,N,0,,N,0,,GPS,1.3,weight training,7,2,Student,7
+BNC30,0,26.5,W,N,,N,R,N,,N,0,,N,0,,GPS,11.0,"Pilates, Acro or social dance",7,0,Student,7
+BNC31,0,25.9,W,N,,N,R,Y,Birth control,N,0,,N,0,,GPS,3.5,Resistance training,6.5,0,Student,6.5
+BNC32,0,21.6,W,N,,Y,R,N,,N,0,,Y,7.5,3rd person nintendo switch,GPS,3.0,Full body,8,0,Student,8
+BNC33,0,24.3,M,N,,N,R,N,,Y,1,1st person video games,N,0,,GPS,3.2,2-3x/wk running 30-45 min; 1-2x/wk strength 40-50 min; 1x/wk yoga 30 min,7.25,0,Graduate student,7.25
+BNC34,0,26,W,N,,N,R,N,,N,0,,N,0,,GPS,3.5,"Cardio, strength training",8,0,Business,8
+BNC35,0,26.6,W,Y,"OCD, ADHD, 1 possible seizure",N,R,Y,Adderall (off during session),Y,2,video games,Y,3,"legend of zelda, stardew valley, 3rd person",GPS,0.5,walking,6.5,0,Neuroscience graduate student,6.5
+BNC36,0,27.8,M,N,,Y,R,N,,N,0,,Y,4,"1st person, fifa, god of war",GPS,4.0,Strength training,7,0,Student,7
+BNC37,0,22.3,W,N,,Y,R,N,,Y,1,VR ride (headset),N,0,,GPS,2.0,Free weights and abs,7,0,Student,7
+BNC50,0,20.9,W,Y,generalized anxiety,Y,R,Y,"Birth control, allergy medicine (Singulair, Zyrtec), Migraine medication (Nurtec)",Y,1,once,N,0,,GPS,3.8,spin/indoor cycling,8,0,student,8
+BNC51,0,20.3,W,N,,N,L,Y,Cryselle (birth control),N,0,,N,0,,GPS,5.0,"weightlifting, running, workout classes",7,0,student,7
+BNC52,0,18.8,M,N,,Y,R,N,,Y,2,owns a VR headset at home,Y,2.5,3rd person - different/varying games,GPS,7.5,"walking or running, treadmill or outside",7,0,student,7
+BNC06,1,61.4,M,Y,Sleep Apnea,N,R,Y,"atorvastatin, cog10, tamsulosin, ppi (reflux)",N,0,,N,0,,GPS,1.5,"walk or stationary bike, 45 min (2x week)",6,0,Safety Consultant,6
+BNC10,1,78.9,M,Y,Bilateral LE peripheral neuropathy,Y,M,N,,Y,2,Experiments in other labs and gaming,N,0,,GPS,7,"Strength training, walking",6,0,Academian,6
+BNC13,1,69.1,W,N,,Y,R,Y,"Simuastatin, Omega 3, 1Premarin, Raloxifine, Paxic, Probiotic, Vitamin D, multivitamin",N,0,Van ghogh exhibit (note: not HMD-VR),N,0,,GPS,4.5,"4-5x/wk. Strength Training (2x/wk, 30 min), Walking 2-3 miles/day 2-3",8.5,0,Physical Therapist,8.5
+BNC14,1,65.6,W,Y,Visual Impairment (Cataract),Y,R,Y,nose spray- allergy,N,0,"Briefly, entertainment and van ghogh exhibit first person",N,0,,GPS,4,"Treadmill/Walking, hiking",7,0,Physical Therapist/ Professor,7
+BNC15,1,60,W,N,,Y,R,Y,"amlodapene, valsartan",N,0,,N,0,,"GPS, Landmarks",2,Yard work,7,0,retired,7
+BNC16,1,65.8,W,N,,Y,R,Y,Adderall & Lunesta,N,0,,Y,8,Candy crush,GPS,0,,7,0,retired,7
+BNC17,1,74.4,W,Y,Sleep Apnea,Y,R,Y,"CoQ10, multivitamins, vitamin D, metformin, calcium",N,0,,N,0,,GPS,6,Walking,5.5,0,Nurse Practitioner,5.5
+BNC18,1,73.8,M,N,,Y,M,Y,"metropolal, amilodapine, aspirin",N,0,,N,0,,Landmarks,7,upper/lower endurance,9,0,Retired (Electrical Engineer),9
+BNC19,1,65.6,W,Y,Sleep Apnea,Y,R,Y,Trazadone,Y,1,once at social gathering,N,0,,GPS,5,Swimming,6.5,0,Retired (Teacher),6.5
+BNC20,1,65.4,M,N,,Y,L,Y,Simvastatin,N,0,,N,0,,GPS,3,"Walking, Gardening",8,0,Retired (CDC Epidemiologist),8
+BNC24,1,64.7,W,N,,Y,R,Y,"Euthyroid, Alendronate, Ctestor 5mg",N,0,,N,0,,GPS,3,,7.5,0,IT Consultant,7.5
+BNC25,1,70.3,M,N,,Y,L,Y,"Alopurinol, crestor, aspirin 81mg",N,0,,N,0,,GPS,3,Walking,7.5,0,security consultant,7.5
+BNC39,1,71.1,M,Y,"Sleep Apnea, CPAP",Y,R,Y,"Levimir, Victosa, Jaridance",N,0,,N,0,,GPS,2.5,Stationary bike,8.5,0,Hospital Administrator,8.5
+BNC40,1,82.2,W,N,,Y,R,N,,N,0,,N,0,,Landmarks,3.5,"Stretching, Walking, Swimming",6,0,Real estate investor,6
+BNC41,1,69.9,W,N,,Y,R,Y,Synthroid,N,0,,Y,2,Stardew,GPS,2,"gardening, biking, taichi, walking",8,0,Director- Countertrade- Barter,8
+BNC42,1,61.7,M,N,,N,R,N,,Y,1,tour of building through VR,N,0,,GPS,0,,7,0,CPA,7
+BNC43,1,65.4,W,Y,"Depression, visual impairment",Y,R,Y,Buproprion,Y,1,2Post art tour <10 mins,N,0,,GPS,2.8,"walking, yard work",7.5,0,New retiree,7.5
+BNC44,1,76.2,W,N,,Y,R,Y,blood pressure meds,N,0,,N,0,,GPS,8,"back to back dance classes 1x/wk, functions 4x/wk",8,0,Fitness trainer and actor,8
+BNC45,1,74.5,W,N,,Y,R,N,,N,0,,N,0,,GPS,5,walk  ,5.5,0,retired,5.5
+BNC46,1,70.9,M,N,,Y,R,Y,Omeprazole 40mg,N,0,,N,0,,GPS,5.25,"upper body, walk",8,0,Training,8
+BNC47,1,67.2,W,N,,Y,R,Y,"Trazodone, cold sore medication",N,0,Bridgerton experience,N,0,,GPS,5,"yoga, walking",7.5,0,"retired, government",7.5
+NAV053,1,69.3,M,N,,Y,R,Y,"Glipaside, blood pressure medication",N,0,,N,0,,GPS,5,walking,6,0,retired,6

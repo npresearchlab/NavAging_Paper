@@ -1,0 +1,1317 @@
+---
+title: "navaging_demographic_nara"
+output: html_document
+date: "2024-07-24"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load Packages
+```{r}
+
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+library(stats)
+library(xfun)
+library(pwr)
+library(tidyverse)
+library(readr)
+library(psych)
+
+```
+
+# Read Data 
+```{r}
+
+# Read Non Nav Data Spreadsheet 
+# CHANGE FILE PATH TO READ FROM GITHUB REPOSITORY
+
+alldata <- read.csv('/Users/emmafunderburg/Desktop/Lab/BORICH LAB/8_navaging/YB Non-Nav Behavioral Data Spreadsheet - All Data (1).csv')
+
+# Add Demographic Factors to Data Frame from Abbreviated Questionnaire Answers
+# CHANGE FILE PATH TO READ FROM GITHUB REPOSITORY
+
+demographic_data <- read.csv('/Users/emmafunderburg/Desktop/Lab/BORICH LAB/8_navaging/YB Non-Nav Behavioral Data Spreadsheet - Abbreviated Questionnaire Answers.csv')
+
+# Sort Demographic Data by Participant ID
+
+demographic_sorted <- demographic_data[order(demographic_data$Participant),]
+
+# Add Demographic Data to Main Data Frame
+
+alldata$gender <- demographic_sorted$Gender
+
+alldata$handedness <- demographic_sorted$Handedness
+
+alldata$vr_exp_quantified <- demographic_sorted$VR.Experience.Quantified
+  
+alldata$vge <- demographic_sorted$Video.Game.Experience..hours.per.week.
+  
+alldata$exercise <- demographic_sorted$Exercise..hrs.week.
+
+alldata$sss_diff <- alldata$sss_post - alldata$sss_pre
+
+alldata$ssq_diff <- alldata$ssq_post - alldata$ssq_pre
+
+```
+
+# Create YA and OA Data Frames
+```{r}
+
+# Create YA Data Frame
+ya_data <- data.frame(filter(alldata, group =="YA"))
+
+# Create OA Data Frame
+oa_data <- data.frame(filter(alldata, group =="OA"))
+
+# Create OA NARA High Data Frame
+
+oa_nara_high <- data.frame(filter(oa_data, nara > 50))
+
+# Create OA NARA High Data Frame
+
+oa_nara_low <- data.frame(filter(oa_data, nara < 50))
+
+oa_data$nara_score <- cut(oa_data$nara,
+              breaks=c(0,50,100),
+              labels=c('Low', 'High'))
+
+```
+
+# Gender vs NARA Score in YA & OA 
+```{r}
+
+## NARA AS CONTINUOUS
+
+# Create Data Frames
+
+# Create Data Frame for M Gender
+
+df_male <- data.frame(filter(oa_data, gender =="M"))
+
+# Create Data Frame for F Gender
+
+df_female <- data.frame(filter(oa_data, gender == "W"))
+
+shapiro.test(df_female$nara)
+
+# p = 0.08883, fail to reject H0 & can assume normality
+
+shapiro.test(df_male$nara)
+
+# p = 0.04497, reject H0 & cannot assume normality
+
+# Bartlett's Test for Equal Variance
+
+bartlett.test(oa_data$nara ~ oa_data$gender)
+
+# p = 0.8894, fail to reject H0 & can assume equal variance 
+
+kruskal.test(nara~gender, data = oa_data)
+
+# p = 0.8136, fail to reject H0
+
+## NARA AS CATEGORICAL HIGH VS LOW 
+
+## chi-square test for gender vs nara category
+
+gender_nara <- data.frame(oa_data$gender,oa_data$nara_score)
+gender_nara <- table(oa_data$gender,oa_data$nara_score)
+print(gender_nara)
+print(chisq.test(age_presence))
+
+# running chi square with/without Yates correction
+
+chisq.test(table(oa_data$gender, oa_data$nara_score), correct = TRUE)
+chisq.test(table(oa_data$gender, oa_data$nara_score), correct = FALSE)
+
+# p = 1, fail to reject H0
+# chi square approx may be incorrect
+# we want Yates' correction (correct = TRUE) due to small sample size
+
+```
+
+# Exercise vs NARA Score in YA & OA 
+```{r}
+
+## Does exercise differ in YA vs OA? 
+
+# Run Shapiro-Wilks Test for Normality in YA/OA Dataset for Exercise
+
+shapiro.test(ya_data$exercise)
+
+# p = 0.001254, reject H0 & does not follow normal distribution
+
+shapiro.test(oa_data$exercise)
+
+# p = 0.7801, fail to reject H0
+
+# Run Bartlett's Test for Equal Variance
+
+bartlett.test(alldata$exercise ~ alldata$group)
+
+# p = 0.03912, reject H0 & does not exhibit equal variance
+
+# Run Mann-Whitney U Test as Nonparametric Alternative to Two Sample T Test
+
+wilcox.test(alldata$exercise ~ group, data = alldata, exact = FALSE)
+
+# exact = FALSE because ties in dataset
+# p = 0.9586, no difference in exercise for YA vs OA
+
+# Run Correlation Test for Exercise & NARA in OAs
+
+# Test Each Dataset for Normality
+
+shapiro.test(oa_data$exercise)
+
+# p = 0.7801, fail to reject H0 & can assume normality
+
+shapiro.test(oa_data$nara)
+
+# p = 0.005657, reject H0 & cannot assume normality
+
+# need to run Spearman correlation as nonparametric alternative
+
+# Generate Scatterplot
+
+exercise_nara <- ggplot(oa_data, aes(x=exercise, y=nara), cor_method = "spearman") + 
+  geom_point(color = "#FF6EC7")+
+  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
+  xlab("Exercise (hours/week)")+
+  ylab("NARA Score (%)")+
+  xlim(0,10) +
+  ylim(0, 100) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+exercise_nara
+
+# most of scatterplot outside confidence interval, not a great representation
+
+cor.test(oa_data$exercise, oa_data$nara, method = "spearman", exact = FALSE)
+
+# rho = -0.2123048, p = 0.3429
+# no significant association between exercise & NARA score in OAs
+
+
+# Does exercise differ across NARA high and NARA low groups? 
+
+# Shapiro-Wilks Test for Normality
+
+shapiro.test(oa_nara_high$exercise)
+
+# p = 0.9777, fail to reject H0
+
+shapiro.test(oa_nara_low$exercise)
+
+# p = 0.8735, fail to reject H0 
+
+# Bartlett's Test for Equal Variance
+
+bartlett.test(exercise~nara_score, data = oa_data)
+
+# p = 0.5447, fail to reject H0
+
+# As all assumptions are met, we can run a two sample t-test to test for differences in exercise between the NARA High and NARA low groups. 
+
+t.test(oa_data$exercise ~ oa_data$nara_score, var.equal = TRUE, data = oa_data, alternative = "two.sided")
+
+# p = 0.1747, no significant difference in exercise
+
+```
+
+# Trails Making A CT vs NARA Score in YA & OA 
+```{r}
+
+## Does Trails Making A CT differ in YA vs OA? 
+
+# Run Shapiro-Wilks Test for Normality in YA/OA Dataset for Trails Making A CT
+
+shapiro.test(ya_data$trails_a_ct)
+
+# p = 0.3793, fail to reject H0 & can assume normality
+
+shapiro.test(oa_data$trails_a_ct)
+
+# p = 0.132, fail to reject H0 & can assume normality
+
+# Run Bartlett's Test for Equal Variance
+
+bartlett.test(alldata$trails_a_ct ~ alldata$group)
+
+# p = 0.01567, reject H0 & does not exhibit equal variance
+
+# Run Mann-Whitney U Test as Nonparametric Alternative to Two Sample T Test
+
+wilcox.test(alldata$trails_a_ct ~ group, data = alldata, exact = TRUE)
+
+# exact = FALSE because ties in dataset
+# p = 6.783e-05, significant difference in trails making A for YA vs OA
+
+# Run Correlation Test for Trails Making A CT & NARA in OAs
+
+# Test Each Dataset for Normality
+
+shapiro.test(oa_data$trails_a_ct)
+
+# p = 0.7381, fail to reject H0 & can assume normality
+
+shapiro.test(oa_data$nara)
+
+# p = 0.005657, reject H0 & cannot assume normality
+
+# need to run Spearman correlation as nonparametric alternative
+
+# Generate Scatterplot
+
+trailsa_nara <- ggplot(oa_data, aes(x=trails_a_ct, y=nara), cor_method = "spearman") + 
+  geom_point(color = "#FF6EC7")+
+  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
+  xlab("Trails A Completion Time (s)")+
+  ylab("NARA Score (%)")+
+  xlim(20,60) +
+  ylim(0, 100) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+trailsa_nara
+
+# most of scatterplot outside confidence interval, not a great representation
+
+cor.test(oa_data$trails_a_ct, oa_data$nara, method = "spearman", exact = FALSE)
+
+# rho = -0.09997493, p = 0.658
+# no significant association between Trails A CT & NARA score in OAs
+
+
+# Does Trails Making A CT differ across NARA high and NARA low groups? 
+
+# Shapiro-Wilks Test for Normality
+
+shapiro.test(oa_nara_high$trails_a_ct)
+
+# p = 0.2006, fail to reject H0
+
+shapiro.test(oa_nara_low$trails_a_ct)
+
+# p = 0.03524, reject H0 
+
+# Must use non-parametric Mann-Whitney U Test as an alternative to a two-sample t test. 
+
+# Bartlett's Test for Equal Variance
+
+bartlett.test(trails_a_ct~nara_score, data = oa_data)
+
+# p = 0.5382, fail to reject H0
+
+# As all assumptions are NOT met, we will run a Mann-Whitney U Test to test for differences in Trails A CT between the NARA High and NARA low groups. 
+
+wilcox.test(oa_data$trails_a_ct ~ oa_data$nara_score, var.equal = TRUE, data = oa_data, alternative = "two.sided", exact = FALSE)
+
+# p = 0.3732, no significant difference in exercise
+
+```
+
+# Trails Making A Dwell Time vs NARA Score in YA & OA 
+```{r}
+
+
+### RUN ONCE YOU GET ALL OF THIS ENTERED FROM KINARM 
+
+
+## Does Trails Making A Dwell Time differ in YA vs OA? 
+
+# Run Shapiro-Wilks Test for Normality in YA/OA Dataset for Trails Making A Dwell
+
+shapiro.test(ya_data$trails_a_dwell)
+
+# p = 0.3793, fail to reject H0 & can assume normality
+
+shapiro.test(oa_data$trails_a_dwell)
+
+# p = 0.132, fail to reject H0 & can assume normality
+
+# Run Bartlett's Test for Equal Variance
+
+bartlett.test(alldata$trails_a_dwell ~ alldata$group)
+
+# p = 0.01567, reject H0 & does not exhibit equal variance
+
+# Run Mann-Whitney U Test as Nonparametric Alternative to Two Sample T Test
+
+wilcox.test(alldata$trails_a_dwell ~ group, data = alldata, exact = TRUE)
+
+# exact = FALSE because ties in dataset
+# p = 6.783e-05, significant difference in trails making A for YA vs OA
+
+# Run Correlation Test for Trails Making A Dwell & NARA in OAs
+
+# Test Each Dataset for Normality
+
+shapiro.test(oa_data$trails_a_dwell)
+
+# p = 0.7381, fail to reject H0 & can assume normality
+
+shapiro.test(oa_data$nara)
+
+# p = 0.005657, reject H0 & cannot assume normality
+
+# need to run Spearman correlation as nonparametric alternative
+
+# Generate Scatterplot
+
+trailsad_nara <- ggplot(oa_data, aes(x=trails_a_dwell, y=nara), cor_method = "spearman") + 
+  geom_point(color = "#FF6EC7")+
+  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
+  xlab("Trails A Dwell Time (s)")+
+  ylab("NARA Score (%)")+
+  xlim(20,60) +
+  ylim(0, 100) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+trailsad_nara
+
+# most of scatterplot outside confidence interval, not a great representation
+
+cor.test(oa_data$trails_a_dwell, oa_data$nara, method = "spearman", exact = FALSE)
+
+# rho = -0.09997493, p = 0.658
+# no significant association between Trails A CT & NARA score in OAs
+
+
+# Does Trails Making A DT differ across NARA high and NARA low groups? 
+
+# Shapiro-Wilks Test for Normality
+
+shapiro.test(oa_nara_high$trails_a_dwell)
+
+# p = 0.7263, fail to reject H0
+
+shapiro.test(oa_nara_low$trails_a_dwell)
+
+# p = 0.07776, fail to reject H0 
+
+# Bartlett's Test for Equal Variance
+
+bartlett.test(trails_a_dwell~nara_score, data = oa_data)
+
+# p = 0.6348, fail to reject H0
+
+# As all assumptions are met, we will run a 2 sample t-test to test for differences in Trails A Dwell between the NARA High and NARA low groups. 
+
+t.test(oa_data$trails_a_dwell ~ oa_data$nara_score, var.equal = TRUE, data = oa_data, alternative = "two.sided")
+
+# p = 0.347, no significant difference in exercise
+
+```
+
+# Trails Making B CT vs NARA Score in YA & OA 
+```{r}
+
+## Does Trails Making B CT differ in YA vs OA? 
+
+# Run Shapiro-Wilks Test for Normality in YA/OA Dataset for Trails Making A CT
+
+shapiro.test(ya_data$trails_b)
+
+# p = 0.003169, reject H0 & cannot assume normality
+
+shapiro.test(oa_data$trails_b)
+
+# p = 2.957e-05, reject H0 & cannot assume normality
+
+# Run Bartlett's Test for Equal Variance
+
+bartlett.test(alldata$trails_b ~ alldata$group)
+
+# p = 6.588e-06, reject H0 & does not exhibit equal variance
+
+# Run Mann-Whitney U Test as Nonparametric Alternative to Two Sample T Test
+
+wilcox.test(alldata$trails_b ~ group, data = alldata, exact = FALSE)
+
+# exact = FALSE because ties in dataset
+# p = 9.055e-06, significant difference in trails making A for YA vs OA
+
+# Run Correlation Test for Trails Making A CT & NARA in OAs
+
+# Test Each Dataset for Normality
+
+shapiro.test(oa_data$trails_b)
+
+# p = 2.957e-05, fail to reject H0 & can assume normality
+
+shapiro.test(oa_data$nara)
+
+# p = 0.005657, reject H0 & cannot assume normality
+
+# need to run Spearman correlation as nonparametric alternative
+
+# Generate Scatterplot
+
+trailsb_nara <- ggplot(oa_data, aes(x=trails_b, y=nara), cor_method = "spearman") + 
+  geom_point(color = "#FF6EC7")+
+  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
+  xlab("Trails B Completion Time (s)")+
+  ylab("NARA Score (%)")+
+  xlim(20,170) +
+  ylim(0, 100) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+trailsb_nara
+
+# most of scatterplot outside confidence interval, poor representation
+
+cor.test(oa_data$trails_b, oa_data$nara, method = "spearman", exact = FALSE)
+
+# rho = -0.3086673, p = 0.1622
+# no significant association between exercise & NARA score in OAs
+
+
+# Does Trails Making B CT differ across NARA high and NARA low groups? 
+
+# Shapiro-Wilks Test for Normality
+
+shapiro.test(oa_nara_high$trails_b_ct)
+
+# p = 0.0006132, reject H0
+
+shapiro.test(oa_nara_low$trails_b_ct)
+
+# p = 0.002642, reject H0 
+
+# need non-parametric test
+
+# Bartlett's Test for Equal Variance
+
+bartlett.test(trails_b_ct~nara_score, data = oa_data)
+
+# p = 0.27, fail to reject H0
+
+# As all assumptions are NOT met, we will run a Mann-Whitney U Test to test for differences in Trails B Dwell between the NARA High and NARA low groups. 
+
+wilcox.test(oa_data$trails_b_ct ~ oa_data$nara_score, var.equal = TRUE, data = oa_data, alternative = "two.sided")
+
+# p = 0.3136, no significant difference in exercise
+
+
+```
+# Trails Making B Dwell Time vs NARA Score in YA & OA 
+```{r}
+
+
+### RUN ONCE YOU GET ALL OF THIS ENTERED FROM KINARM 
+
+
+## Does Trails Making B Dwell Time differ in YA vs OA? 
+
+# Run Shapiro-Wilks Test for Normality in YA/OA Dataset for Trails Making B Dwell
+
+shapiro.test(ya_data$trails_b_dwell)
+
+# p = 0.3793, fail to reject H0 & can assume normality
+
+shapiro.test(oa_data$trails_b_dwell)
+
+# p = 0.132, fail to reject H0 & can assume normality
+
+# Run Bartlett's Test for Equal Variance
+
+bartlett.test(alldata$trails_b_dwell ~ alldata$group)
+
+# p = 0.01567, reject H0 & does not exhibit equal variance
+
+# Run Mann-Whitney U Test as Nonparametric Alternative to Two Sample T Test
+
+wilcox.test(alldata$trails_b_dwell ~ group, data = alldata, exact = TRUE)
+
+# exact = FALSE because ties in dataset
+# p = 6.783e-05, significant difference in trails making A for YA vs OA
+
+# Run Correlation Test for Trails Making A Dwell & NARA in OAs
+
+# Test Each Dataset for Normality
+
+shapiro.test(oa_data$trails_b_dwell)
+
+# p = 0.7381, fail to reject H0 & can assume normality
+
+shapiro.test(oa_data$nara)
+
+# p = 0.005657, reject H0 & cannot assume normality
+
+# need to run Spearman correlation as nonparametric alternative
+
+# Generate Scatterplot
+
+trailsbd_nara <- ggplot(oa_data, aes(x=trails_b_dwell, y=nara), cor_method = "spearman") + 
+  geom_point(color = "#FF6EC7")+
+  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
+  xlab("Trails B Dwell Time (s)")+
+  ylab("NARA Score (%)")+
+  xlim(20,60) +
+  ylim(0, 100) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+trailsbd_nara
+
+# most of scatterplot outside confidence interval, not a great representation
+
+cor.test(oa_data$trails_b_dwell, oa_data$nara, method = "spearman", exact = FALSE)
+
+# rho = -0.09997493, p = 0.658
+# no significant association between Trails A CT & NARA score in OAs
+
+
+#  Does Trails Making B DT differ across NARA high and NARA low groups? 
+
+# Shapiro-Wilks Test for Normality
+
+shapiro.test(oa_nara_high$trails_b_dwell)
+
+# p = 0.9806, fail to reject H0
+
+shapiro.test(oa_nara_low$trails_b_dwell)
+
+# p = 0.003436, reject H0 
+
+# need non-parametric test
+
+# Bartlett's Test for Equal Variance
+
+bartlett.test(trails_b_dwell~nara_score, data = oa_data)
+
+# p = 0.001175, fail to reject H0
+
+# As all assumptions are NOT met, we will run a Mann-Whitney U Test to test for differences in Trails B Dwell between the NARA High and NARA low groups. 
+
+wilcox.test(oa_data$trails_b_dwell ~ oa_data$nara_score, var.equal = FALSE, data = oa_data, alternative = "two.sided", exact = FALSE)
+
+# p = 0.7998, no significant difference in exercise
+
+```
+
+# Set Shifting vs NARA Score in YA & OA 
+```{r}
+
+## Does Set Shifting Time differ in YA vs OA? 
+
+# Run Shapiro-Wilks Test for Normality in YA/OA Dataset for Set Shifting
+
+shapiro.test(ya_data$setshifting)
+
+# p = 0.00212, reject H0 & cannot assume normality
+
+shapiro.test(oa_data$setshifting)
+
+# p = 1.594e-05, reject H0 & cannot assume normality
+
+# Run Bartlett's Test for Equal Variance
+
+bartlett.test(alldata$setshifting ~ alldata$group)
+
+# p = 4.429e-06, reject H0 & does not exhibit equal variance
+
+# Run Mann-Whitney U Test as Nonparametric Alternative to Two Sample T Test
+
+wilcox.test(alldata$setshifting ~ group, data = alldata, exact = FALSE)
+
+# exact = FALSE because ties in dataset
+# p = 0.0005701, significant difference in trails making A for YA vs OA
+
+# Run Correlation Test for Set Shifting & NARA in OAs
+
+# Test Each Dataset for Normality
+
+shapiro.test(oa_data$setshifting)
+
+# p = 1.594e-05, fail to reject H0 & can assume normality
+
+shapiro.test(oa_data$nara)
+
+# p = 0.005657, reject H0 & cannot assume normality
+
+# need to run Spearman correlation as nonparametric alternative
+
+# Generate Scatterplot
+
+setshift_nara <- ggplot(oa_data, aes(x=setshifting, y=nara), cor_method = "spearman") + 
+  geom_point(color = "#FF6EC7")+
+  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
+  xlab("Set Shifting Time (s)")+
+  ylab("NARA Score (%)")+
+  xlim(-10,115) +
+  ylim(0, 100) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+setshift_nara
+
+# most of scatterplot outside confidence interval, not a great representation
+
+cor.test(oa_data$setshifting, oa_data$nara, method = "spearman", exact = FALSE)
+
+# rho = -0.3018333, p = 0.1722
+# no significant association between set shifting & NARA score in OAs
+
+
+
+# Does set shifting differ across NARA high and NARA low groups? 
+
+# Shapiro-Wilks Test for Normality
+
+shapiro.test(oa_nara_high$setshifting)
+
+# p = 0.000308, reject H0
+
+shapiro.test(oa_nara_low$setshifting)
+
+# p = 0.001265, reject H0 
+
+# need nonparametric test
+
+# Bartlett's Test for Equal Variance
+
+bartlett.test(setshifting~nara_score, data = oa_data)
+
+# p = 0.6528, fail to reject H0
+
+# As all assumptions are NOT met, we will run a Mann Whitney U Test to test for differences in SSS difference between the NARA High and NARA low groups. 
+
+wilcox.test(oa_data$setshifting ~ oa_data$nara_score, var.equal = TRUE, data = oa_data, alternative = "two.sided", exact = FALSE)
+
+# p = 0.3734, no significant difference in set shifting 
+
+
+```
+
+# SBSOD vs NARA Score in YA & OA 
+```{r}
+
+## Does SBSOD differ in YA vs OA? 
+
+# SBSOD is nonparametric, so we need to use nonparametric tests
+
+# Run Mann-Whitney U Test as Nonparametric Alternative to Two Sample T Test
+
+wilcox.test(alldata$sbsod ~ group, data = alldata, exact = FALSE)
+
+# exact = FALSE because ties in dataset
+# p = 0.02337, significant difference in SBSOD for YA vs OA
+
+# Run Correlation Test for SBSOD & NARA in OAs
+
+# need to run Spearman correlation as nonparametric alternative
+
+# Generate Scatterplot
+
+sbsod_nara <- ggplot(oa_data, aes(x=sbsod, y=nara), cor_method = "spearman") + 
+  geom_point(color = "#FF6EC7")+
+  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
+  xlab("SBSOD")+
+  ylab("NARA Score (%)")+
+  xlim(3,7) +
+  ylim(0, 100) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+sbsod_nara
+
+# most of scatterplot outside confidence interval, poor representation
+
+cor.test(oa_data$sbsod, oa_data$nara, method = "spearman", exact = FALSE)
+
+# rho = 0.4112524, p = 0.05724
+# no significant association between exercise & NARA score in OAs
+
+
+
+# Does SBSOD differ across NARA high and NARA low groups? 
+
+# Shapiro-Wilks Test for Normality
+
+shapiro.test(oa_nara_high$sbsod)
+
+# p = 0.7868, fail to reject H0
+
+shapiro.test(oa_nara_low$sbsod)
+
+# p = 0.5261, reject H0 
+
+# Bartlett's Test for Equal Variance
+
+bartlett.test(sbsod~nara_score, data = oa_data)
+
+# p = 0.532, fail to reject H0
+
+# As all assumptions are met, we will run a two-sample t test to test for differences in SBSOD between the NARA High and NARA low groups. 
+
+t.test(oa_data$sbsod ~ oa_data$nara_score, var.equal = FALSE, data = oa_data, alternative = "two.sided")
+
+# p = 0.2357, no significant difference in exercise
+
+```
+
+# PSQI vs NARA Score in YA & OA 
+```{r}
+
+## Does PSQI differ in YA vs OA? 
+
+# PSQI is nonparametric, so we need to use nonparametric tests
+
+# Run Mann-Whitney U Test as Nonparametric Alternative to Two Sample T Test
+
+wilcox.test(alldata$psqi ~ group, data = alldata, exact = FALSE)
+
+# exact = FALSE because ties in dataset
+# p = 0.8922, significant difference in PSQI for YA vs OA
+
+# Run Correlation Test for SBSOD & NARA in OAs
+
+# need to run Spearman correlation as nonparametric alternative
+
+# Generate Scatterplot
+
+psqi_nara <- ggplot(oa_data, aes(x=psqi, y=nara), cor_method = "spearman") + 
+  geom_point(color = "#FF6EC7")+
+  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
+  xlab("PSQI")+
+  ylab("NARA Score (%)")+
+  xlim(0,12) +
+  ylim(0, 100) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+psqi_nara
+
+# most of scatterplot outside confidence interval, poor representation
+
+cor.test(oa_data$psqi, oa_data$nara, method = "spearman", exact = FALSE)
+
+# rho = -0.02868619, p = 0.8992
+# no significant association between PSQI & NARA score in OAs
+
+
+# Does PSQI differ across NARA high and NARA low groups? 
+
+# Shapiro-Wilks Test for Normality
+
+shapiro.test(oa_nara_high$psqi)
+
+# p = 0.7868, fail to reject H0
+
+shapiro.test(oa_nara_low$psqi)
+
+# p = 0.3837, reject H0 
+
+# Bartlett's Test for Equal Variance
+
+bartlett.test(psqi~nara_score, data = oa_data)
+
+# p = 0.7337, fail to reject H0
+
+# As all assumptions are met, we will run a two-sample t test to test for differences in PSQI between the NARA High and NARA low groups. 
+
+t.test(oa_data$psqi ~ oa_data$nara_score, var.equal = FALSE, data = oa_data, alternative = "two.sided")
+
+# p = 0.9803, no significant difference in exercise
+
+```
+
+# Video Game Experience vs NARA Score in YA & OA 
+```{r}
+
+## Does VGE differ in YA vs OA? 
+
+# Run Shapiro-Wilks Test for Normality in YA/OA Dataset for Trails Making A CT
+
+shapiro.test(ya_data$vge)
+
+# p = 3.852e-05, reject H0 & cannot assume normality
+
+shapiro.test(oa_data$vge)
+
+# p = 2.454e-09, reject H0 & cannot assume normality
+
+# Run Bartlett's Test for Equal Variance
+
+bartlett.test(alldata$vge ~ alldata$group)
+
+# p = 0.006726, reject H0 & does not exhibit equal variance
+
+# Run Mann-Whitney U Test as Nonparametric Alternative to Two Sample T Test
+
+wilcox.test(alldata$vge ~ group, data = alldata, exact = FALSE)
+
+# exact = FALSE because ties in dataset
+# p = 0.003202, significant difference in PSQI for YA vs OA
+
+# Run Correlation Test for SBSOD & NARA in OAs
+
+# need to run Spearman correlation as nonparametric alternative
+
+# Generate Scatterplot
+
+vge_nara <- ggplot(oa_data, aes(x=psqi, y=nara), cor_method = "spearman") + 
+  geom_point(color = "#FF6EC7")+
+  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
+  xlab("Video Game Experience (Hrs/Wk)")+
+  ylab("NARA Score (%)")+
+  xlim(0,12) +
+  ylim(0, 100) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+vge_nara
+
+# most of scatterplot outside confidence interval, poor representation
+
+cor.test(oa_data$vge, oa_data$nara, method = "spearman", exact = FALSE)
+
+# rho = -0.1797471, p = 0.4235
+# no significant association between VGE & NARA score in OAs
+
+
+# Does VGE differ across NARA high and NARA low groups? 
+
+# Shapiro-Wilks Test for Normality
+
+shapiro.test(oa_nara_high$vge)
+
+# p = 1.207e-06, reject H0
+
+shapiro.test(oa_nara_low$vge)
+
+# p = 1.004e-07, reject H0 
+
+# need nonparametric test
+
+# Bartlett's Test for Equal Variance
+
+bartlett.test(vge~nara_score, data = oa_data)
+
+# p = 3.917e-05, fail to reject H0
+
+# As all assumptions are NOT met, we will run a Mann-Whitney U test to test for differences in VGE between the NARA High and NARA low groups. 
+
+wilcox.test(oa_data$vge ~ oa_data$nara_score, var.equal = FALSE, data = oa_data, alternative = "two.sided", exact = FALSE)
+
+# p = 0.8949, no significant difference in exercise
+
+```
+
+# VR Experience vs NARA Score in OAs
+```{r}
+
+vr_nara <- ggplot(oa_data, aes(x=vr_exp_quantified, y=nara), cor_method = "spearman") + 
+  geom_point(color = "#FF6EC7")+
+  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
+  xlab("VR Experience")+
+  ylab("NARA Score (%)")+
+  xlim(0,3) +
+  ylim(0, 100) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+vr_nara
+
+# doesn't appear significant at all based on scatterplot 
+
+
+
+## chi-square test for vr experience vs nara category
+
+vr_nara <- data.frame(oa_data$vr_exp_quantified,oa_data$nara_score)
+vr_nara <- table(oa_data$vr_exp_quantified,oa_data$nara_score)
+print(vr_nara)
+
+# running chi square with/without Yates correction
+
+chisq.test(table(oa_data$vr_exp_quantified, oa_data$nara_score), correct = TRUE)
+chisq.test(table(oa_data$vr_exp_quantified, oa_data$nara_score), correct = FALSE)
+
+# p = 0.5003, fail to reject H0
+# chi square approx may be incorrect
+# we want Yates' correction (correct = TRUE) due to small sample size
+
+```
+
+# Corsi Span vs NARA Score in OAs
+```{r}
+
+corsi_nara <- ggplot(oa_data, aes(x=corsi_span, y=nara), cor_method = "spearman") + 
+  geom_point(color = "#FF6EC7")+
+  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
+  xlab("Corsi Span")+
+  ylab("NARA Score (%)")+
+  xlim(2,9) +
+  ylim(0, 100) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+corsi_nara
+
+# doesn't appear significant at all based on scatterplot 
+
+cor.test(oa_data$corsi_span, oa_data$nara, method = "spearman", exact = FALSE)
+
+# p = 0.1554
+
+
+
+# Does Corsi Span differ across NARA high and NARA low groups? 
+
+# Shapiro-Wilks Test for Normality
+
+shapiro.test(oa_nara_high$corsi_span)
+
+# p = 0.1227, fail to reject H0
+
+shapiro.test(oa_nara_low$corsi_span)
+
+# p = 0.01541, reject H0 
+
+# need nonparametric test
+
+# Bartlett's Test for Equal Variance
+
+bartlett.test(corsi_span~nara_score, data = oa_data)
+
+# p = 0.3226, fail to reject H0
+
+# As all assumptions are NOT met, we will run a Mann-Whitney U test to test for differences in VGE between the NARA High and NARA low groups. 
+
+wilcox.test(oa_data$corsi_span ~ oa_data$nara_score, var.equal = FALSE, data = oa_data, alternative = "two.sided", exact = FALSE)
+
+# p = 0.1501, no significant difference in exercise
+
+```
+
+# Corsi Mean Score vs NARA Score in OAs
+```{r}
+
+corsi_mean_nara <- ggplot(oa_data, aes(x=corsi_score_mean, y=nara), cor_method = "spearman") + 
+  geom_point(color = "#FF6EC7")+
+  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
+  xlab("Corsi Mean Score")+
+  ylab("NARA Score (%)")+
+  xlim(2,9) +
+  ylim(0, 100) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+corsi_mean_nara
+
+# doesn't appear significant at all based on scatterplot 
+
+cor.test(oa_data$corsi_score_mean, oa_data$nara, method = "spearman", exact = FALSE)
+
+# p = 0.1554
+
+
+# Does Corsi Mean Score differ across NARA high and NARA low groups? 
+
+# Shapiro-Wilks Test for Normality
+
+shapiro.test(oa_nara_high$corsi_mean_score)
+
+# p = 0.1227, fail to reject H0
+
+shapiro.test(oa_nara_low$corsi_mean_score)
+
+# p = 0.01541, reject H0 
+
+# need nonparametric test
+
+# Bartlett's Test for Equal Variance
+
+bartlett.test(corsi_mean_score~nara_score, data = oa_data)
+
+# p = 0.3226, fail to reject H0
+
+# As all assumptions are NOT met, we will run a Mann-Whitney U test to test for differences in VGE between the NARA High and NARA low groups. 
+
+wilcox.test(oa_data$corsi_mean_score ~ oa_data$nara_score, var.equal = FALSE, data = oa_data, alternative = "two.sided", exact = FALSE)
+
+# p = 0.1501, no significant difference in exercise
+
+```
+
+# Corsi Total Score vs NARA Score in OAs
+```{r}
+
+corsi_total_nara <- ggplot(oa_data, aes(x=corsi_score_total, y=nara), cor_method = "spearman") + 
+  geom_point(color = "#FF6EC7")+
+  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
+  xlab("Corsi Total Score")+
+  ylab("NARA Score (%)")+
+  xlim(2,9) +
+  ylim(0, 100) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+corsi_total_nara
+
+# doesn't appear significant at all based on scatterplot 
+
+cor.test(oa_data$corsi_score_total, oa_data$nara, method = "spearman", exact = FALSE)
+
+# p = 0.1554
+
+```
+
+# Handedness vs NARA Score in OAs
+```{r}
+
+# Create Data Frames
+
+# Create Data Frame for R Handedness
+
+df_right <- data.frame(filter(oa_data, handedness =="R"))
+
+# Create Data Frame for O (L/M) Handedness
+
+# Replace L/M with O in Data Frame
+
+oa_data[oa_data == "L"] <- "O"
+
+oa_data[oa_data == "M"] <- "O"
+
+# Now, Create Data Frame of O Handedness
+
+df_other <- data.frame(filter(oa_data, handedness == "O"))
+
+shapiro.test(df_right$nara)
+
+# p = 0.0187, need Kruskal-Wallis
+
+kruskal.test(nara~handedness, data = oa_data)
+
+# p = 0.8637, fail to reject H0
+
+
+
+## chi-square test for handedness vs nara category
+
+handedness_nara <- data.frame(oa_data$vr_exp_quantified,oa_data$nara_score)
+handedness_nara <- table(oa_data$vr_exp_quantified,oa_data$nara_score)
+print(handedness_nara)
+
+# running chi square with/without Yates correction
+
+chisq.test(table(oa_data$handedness, oa_data$nara_score), correct = TRUE)
+chisq.test(table(oa_data$handedness, oa_data$nara_score), correct = FALSE)
+
+# p = 0.9798, fail to reject H0
+# chi square approx may be incorrect
+# we want Yates' correction (correct = TRUE) due to small sample size
+
+```
+
+# SSQ Difference vs NARA Score 
+```{r}
+
+## Does SSQ difference differ in YA vs OA? 
+
+# Run Shapiro-Wilks Test for Normality in YA/OA Dataset for SSQ Difference
+
+shapiro.test(ya_data$ssq_diff)
+
+# p = 0.2226, fail to reject H0 & can assume normality
+
+shapiro.test(oa_data$ssq_diff)
+
+# p = 0.1747, fail to reject H0 & can assume normality
+
+# Run Bartlett's Test for Equal Variance
+
+bartlett.test(alldata$ssq_diff ~ alldata$group)
+
+# p = 0.1083, fail to reject H0 & can assume equal variance
+
+# Run Two Sample T Test
+
+t.test(alldata$ssq_diff ~ group, data = alldata)
+
+# p = 0.9715, no difference in SSQ difference for YA vs OA
+
+# Run Correlation Test for SSQ Difference & NARA in OAs
+
+# Test Each Dataset for Normality
+
+shapiro.test(oa_data$ssq_diff)
+
+# p = 0.7381, fail to reject H0 & can assume normality
+
+shapiro.test(oa_data$nara)
+
+# p = 0.005657, reject H0 & cannot assume normality
+
+# need to run Spearman correlation as nonparametric alternative
+
+# Generate Scatterplot
+
+ssqdiff_nara <- ggplot(oa_data, aes(x=ssq_diff, y=nara), cor_method = "spearman") + 
+  geom_point(color = "#FF6EC7")+
+  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
+  xlab("SSQ Difference (post - pre)")+
+  ylab("NARA Score (%)")+
+  xlim(-7,15) +
+  ylim(0, 100) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+ssqdiff_nara
+
+# most of scatterplot outside confidence interval, poor representation
+
+cor.test(oa_data$ssq_diff, oa_data$nara, method = "spearman", exact = FALSE)
+
+# rho = 0.05284319, p = 0.8153
+# no significant association between SSQ difference & NARA score in OAs
+
+
+
+# Does SSQ difference differ across NARA high and NARA low groups? 
+
+# Shapiro-Wilks Test for Normality
+
+shapiro.test(oa_nara_high$ssq_diff)
+
+# p = 0.3936, fail to reject H0
+
+shapiro.test(oa_nara_low$ssq_diff)
+
+# p = 0.06968, fail to reject H0 
+
+# Bartlett's Test for Equal Variance
+
+bartlett.test(ssq_diff~nara_score, data = oa_data)
+
+# p = 0.9645, fail to reject H0
+
+# As all assumptions are met, we will run a 2 sample t test to test for differences in VGE between the NARA High and NARA low groups. 
+
+t.test(oa_data$ssq_diff ~ oa_data$nara_score, var.equal = TRUE, data = oa_data, alternative = "two.sided")
+
+# p = 0.9638, no significant difference in ssq difference
+
+```
+
+# SSS Difference vs NARA Score
+```{r}
+
+## Does SSS difference differ in YA vs OA? 
+
+# Run Shapiro-Wilks Test for Normality in YA/OA Dataset for SSS Difference
+
+shapiro.test(ya_data$sss_diff)
+
+# p = 0.0007346, reject H0 & cannot assume normality
+
+shapiro.test(oa_data$sss_diff)
+
+# p = 0.0003588, reject H0 & cannot assume normality
+
+# Run Bartlett's Test for Equal Variance
+
+bartlett.test(alldata$sss_diff ~ alldata$group)
+
+# p = 0.003573, reject H0 & cannot assume equal variance
+
+# Run Mann Whitney U Test as nonparametric alternative to two sample t test
+
+wilcox.test(alldata$sss_diff ~ group, data = alldata, exact = FALSE)
+
+# p = 0.4963, no difference in SSS difference for YA vs OA
+
+# Run Correlation Test for SSS Difference & NARA in OAs
+
+# Test Each Dataset for Normality
+
+shapiro.test(oa_data$sss_diff)
+
+# p = 0.0003588, reject H0 & cannot assume normality
+
+shapiro.test(oa_data$nara)
+
+# p = 0.005657, reject H0 & cannot assume normality
+
+# need to run Spearman correlation as nonparametric alternative
+
+# Generate Scatterplot
+
+sssdiff_nara <- ggplot(oa_data, aes(x=sss_diff, y=nara), cor_method = "spearman") + 
+  geom_point(color = "#FF6EC7")+
+  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
+  xlab("SSS Difference (post - pre)")+
+  ylab("NARA Score (%)")+
+  xlim(-3,3) +
+  ylim(0, 100) +
+  theme(text = element_text(size = 20),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
+sssdiff_nara
+
+# most of scatterplot outside confidence interval, poor representation
+
+cor.test(oa_data$sss_diff, oa_data$nara, method = "spearman", exact = FALSE)
+
+# rho = -0.03754135, p = 0.8683
+# no significant association between SSS difference & NARA score in OAs
+
+
+
+# Does SSS difference differ across NARA high and NARA low groups? 
+
+# Shapiro-Wilks Test for Normality
+
+shapiro.test(oa_nara_high$sss_diff)
+
+# p = 9.811e-06, reject H0
+
+shapiro.test(oa_nara_low$sss_diff)
+
+# p = 0.07391, fail to reject H0 
+
+# need nonparametric test
+
+# Bartlett's Test for Equal Variance
+
+bartlett.test(sss_diff~nara_score, data = oa_data)
+
+# p = 0.003373, reject H0
+
+# As all assumptions are NOT met, we will run a Mann Whitney U Test to test for differences in SSS difference between the NARA High and NARA low groups. 
+
+wilcox.test(oa_data$sss_diff ~ oa_data$nara_score, var.equal = FALSE, data = oa_data, alternative = "two.sided", exact = FALSE)
+
+# p = 0.9701, no significant difference in ssq difference
+
+```
+
+
+
+
