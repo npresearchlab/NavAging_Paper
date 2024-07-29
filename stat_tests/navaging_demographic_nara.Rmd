@@ -29,13 +29,13 @@ library(psych)
 # Read Non Nav Data Spreadsheet 
 # CHANGE FILE PATH TO READ FROM GITHUB REPOSITORY
 
-alldata <- read.csv('/Users/emmafunderburg/Desktop/Lab/BORICH LAB/8_navaging/YB Non-Nav Behavioral Data Spreadsheet - All Data (1).csv')
-
+alldata <- read.csv('/Users/emmafunderburg/Desktop/Lab/BORICH LAB/8_navaging/NavAging_Paper/stat_tests/YB Non-Nav Behavioral Data Spreadsheet - All Data (1).csv')
+  
 # Add Demographic Factors to Data Frame from Abbreviated Questionnaire Answers
 # CHANGE FILE PATH TO READ FROM GITHUB REPOSITORY
 
-demographic_data <- read.csv('/Users/emmafunderburg/Desktop/Lab/BORICH LAB/8_navaging/YB Non-Nav Behavioral Data Spreadsheet - Abbreviated Questionnaire Answers.csv')
-
+demographic_data <- read.csv('/Users/emmafunderburg/Desktop/Lab/BORICH LAB/8_navaging/NavAging_Paper/stat_tests/YB Non-Nav Behavioral Data Spreadsheet - Abbreviated Questionnaire Answers.csv')
+  
 # Sort Demographic Data by Participant ID
 
 demographic_sorted <- demographic_data[order(demographic_data$Participant),]
