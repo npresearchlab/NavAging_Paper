@@ -465,6 +465,8 @@ kruskal.test(corsi_span~nara_group, data = alldata)
 # Corsi Mean Score vs NARA Category
 ```{r}
 
+# resume here 
+
 ## Does Corsi Mean Score differ in YA vs OA high/low? 
 
 # Run Shapiro-Wilks Test for Normality in YA/OA high/OA low Dataset for Corsi Span 
