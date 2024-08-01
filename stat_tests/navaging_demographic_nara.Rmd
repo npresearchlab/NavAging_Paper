@@ -332,75 +332,40 @@ bartlett.test(alldata$setshifting ~ alldata$nara_group)
 
 kruskal.test(setshifting~nara_group, data = alldata)
 
-# p = 0.0016, significant difference in trails making B dwell time for YA vs OA high vs OA low
+# p = 0.0016, significant difference in set shifting time for YA vs OA high vs OA low
 
 ```
 
-# SBSOD vs NARA Score in YA & OA 
+# SBSOD vs NARA Category
 ```{r}
 
-## Does SBSOD differ in YA vs OA? 
+## Does SBSOD differ in YA vs OA high/low? 
 
-# SBSOD is nonparametric, so we need to use nonparametric tests
+# Run Shapiro-Wilks Test for Normality in YA/OA high/OA low Dataset for Set Shifting
 
-# Run Mann-Whitney U Test as Nonparametric Alternative to Two Sample T Test
+shapiro.test(ya_data$sbsod)
 
-wilcox.test(alldata$sbsod ~ group, data = alldata, exact = FALSE)
-
-# exact = FALSE because ties in dataset
-# p = 0.02337, significant difference in SBSOD for YA vs OA
-
-# Run Correlation Test for SBSOD & NARA in OAs
-
-# need to run Spearman correlation as nonparametric alternative
-
-# Generate Scatterplot
-
-sbsod_nara <- ggplot(oa_data, aes(x=sbsod, y=nara), cor_method = "spearman") + 
-  geom_point(color = "#FF6EC7")+
-  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
-  xlab("SBSOD")+
-  ylab("NARA Score (%)")+
-  xlim(3,7) +
-  ylim(0, 100) +
-  theme(text = element_text(size = 20),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
-sbsod_nara
-
-# most of scatterplot outside confidence interval, poor representation
-
-cor.test(oa_data$sbsod, oa_data$nara, method = "spearman", exact = FALSE)
-
-# rho = 0.4112524, p = 0.05724
-# no significant association between exercise & NARA score in OAs
-
-
-
-# Does SBSOD differ across NARA high and NARA low groups? 
-
-# Shapiro-Wilks Test for Normality
+# p = 0.1743, fail to reject H0
 
 shapiro.test(oa_nara_high$sbsod)
 
-# p = 0.7868, fail to reject H0
+# p = 0.7868, fail to reject H0 
 
 shapiro.test(oa_nara_low$sbsod)
 
-# p = 0.5261, reject H0 
+# p = 0.5261, fail to reject H0
 
-# Bartlett's Test for Equal Variance
+# Run Bartlett's Test for Equal Variance
 
-bartlett.test(sbsod~nara_score, data = oa_data)
+bartlett.test(alldata$sbsod ~ alldata$nara_group)
 
-# p = 0.532, fail to reject H0
+# p = 0.5438, fail to reject H0 & does exhibit equal variance
 
-# As all assumptions are met, we will run a two-sample t test to test for differences in SBSOD between the NARA High and NARA low groups. 
+# Run Kruskal-Wallis Test as Nonparametric Alternative to One Way ANOVA
 
-t.test(oa_data$sbsod ~ oa_data$nara_score, var.equal = FALSE, data = oa_data, alternative = "two.sided")
+kruskal.test(sbsod~nara_group, data = alldata)
 
-# p = 0.2357, no significant difference in exercise
+# p = 0.04696, significant difference in SBSOD for YA vs OA high vs OA low
 
 ```
 
