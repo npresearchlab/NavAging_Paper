@@ -85,8 +85,10 @@ alldata <- rbind(oa_data, ya_data)
 
 ```
 
-# Gender vs NARA Score in YA & OA 
+# Gender vs NARA Group
 ```{r}
+
+# archive -- not using these stats (using chi square)
 
 ## Create Data Frames
 
@@ -100,37 +102,38 @@ df_female <- data.frame(filter(alldata, gender == "W"))
 
 shapiro.test(df_female$nara)
 
-# p = 0.08883, fail to reject H0 & can assume normality
+# p = 0.02739, reject H0 & cannot assume normality
 
 shapiro.test(df_male$nara)
 
-# p = 0.04497, reject H0 & cannot assume normality
+# p = 0.09569, fail to reject H0 & can assume normality
 
 # Bartlett's Test for Equal Variance
 
 bartlett.test(alldata$nara ~ alldata$gender)
 
-# p = 0.8894, fail to reject H0 & can assume equal variance 
+# p = 0.7428, fail to reject H0 & can assume equal variance 
 
 kruskal.test(nara~gender, data = alldata)
 
-# p = 0.8136, fail to reject H0
+# p = 0.9149, fail to reject H0
 
 ## NARA AS CATEGORICAL HIGH VS LOW 
 
 ## chi-square test for gender vs nara category
 
-gender_nara <- data.frame(alldata$gender,alldata$nara_score)
-gender_nara <- table(alldata$gender,alldata$nara_score)
+gender_nara <- data.frame(alldata$gender,alldata$nara_group)
+gender_nara <- table(alldata$gender,alldata$nara_group)
 print(gender_nara)
-print(chisq.test(age_presence))
 
 # running chi square with/without Yates correction
 
-chisq.test(table(alldata$gender, alldata$nara_score), correct = TRUE)
-chisq.test(table(alldata$gender, alldata$nara_score), correct = FALSE)
+chisq.test(table(alldata$gender, alldata$nara_group), correct = TRUE)
+chisq.test(table(alldata$gender, alldata$nara_group), correct = FALSE)
 
-# p = 1, fail to reject H0
+chisq.test(gender_nara, correct = TRUE)
+
+# p = 0.9013, fail to reject H0
 # chi square approx may be incorrect
 # we want Yates' correction (correct = TRUE) due to small sample size
 
