@@ -429,55 +429,36 @@ chisq.test(vr_nara, correct = TRUE)
 
 ```
 
-# Corsi Span vs NARA Score in OAs
+# Corsi Span vs NARA Category
 ```{r}
 
-corsi_nara <- ggplot(oa_data, aes(x=corsi_span, y=nara), cor_method = "spearman") + 
-  geom_point(color = "#FF6EC7")+
-  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
-  xlab("Corsi Span")+
-  ylab("NARA Score (%)")+
-  xlim(2,9) +
-  ylim(0, 100) +
-  theme(text = element_text(size = 20),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
-corsi_nara
+## Does Video Game Experience (hours/week) differ in YA vs OA high/low? 
 
-# doesn't appear significant at all based on scatterplot 
+# Run Shapiro-Wilks Test for Normality in YA/OA high/OA low Dataset for Corsi Span 
 
-cor.test(oa_data$corsi_span, oa_data$nara, method = "spearman", exact = FALSE)
+shapiro.test(ya_data$corsi_span)
 
-# p = 0.1554
-
-
-
-# Does Corsi Span differ across NARA high and NARA low groups? 
-
-# Shapiro-Wilks Test for Normality
+# p = 0.001419, reject H0 & cannot assume normality
 
 shapiro.test(oa_nara_high$corsi_span)
 
-# p = 0.1227, fail to reject H0
+# p = 0.1227, fail to reject H0 & can assume normality
 
 shapiro.test(oa_nara_low$corsi_span)
 
-# p = 0.01541, reject H0 
+# p = 0.01541, reject H0 & cannot assume normality
 
-# need nonparametric test
+# Run Bartlett's Test for Equal Variance
 
-# Bartlett's Test for Equal Variance
+bartlett.test(alldata$corsi_span ~ alldata$nara_group)
 
-bartlett.test(corsi_span~nara_score, data = oa_data)
+# p = 0.538, fail to reject H0 & does exhibit equal variance
 
-# p = 0.3226, fail to reject H0
+# Run Kruskal-Wallis Test as Nonparametric Alternative to One Way ANOVA
 
-# As all assumptions are NOT met, we will run a Mann-Whitney U test to test for differences in VGE between the NARA High and NARA low groups. 
+kruskal.test(corsi_span~nara_group, data = alldata)
 
-wilcox.test(oa_data$corsi_span ~ oa_data$nara_score, var.equal = FALSE, data = oa_data, alternative = "two.sided", exact = FALSE)
-
-# p = 0.1501, no significant difference in exercise
+# p = 0.0002137, significant difference in video game experience (in hours/week) for YA vs OA high vs OA low
 
 ```
 
