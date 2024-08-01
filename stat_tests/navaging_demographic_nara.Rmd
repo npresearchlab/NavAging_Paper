@@ -208,75 +208,13 @@ kruskal.test(trails_a_ct~nara_group, data = alldata)
 # Trails Making A Dwell Time vs NARA Score in YA & OA 
 ```{r}
 
+## Does Trails Making A Dwell Time differ in YA vs OA high/low? 
 
-### RUN ONCE YOU GET ALL OF THIS ENTERED FROM KINARM 
-
-
-## Does Trails Making A Dwell Time differ in YA vs OA? 
-
-# Run Shapiro-Wilks Test for Normality in YA/OA Dataset for Trails Making A Dwell
+# Run Shapiro-Wilks Test for Normality in YA/OA high/OA low Dataset for Trails A DT
 
 shapiro.test(ya_data$trails_a_dwell)
 
-# p = 0.3793, fail to reject H0 & can assume normality
-
-shapiro.test(oa_data$trails_a_dwell)
-
-# p = 0.132, fail to reject H0 & can assume normality
-
-# Run Bartlett's Test for Equal Variance
-
-bartlett.test(alldata$trails_a_dwell ~ alldata$group)
-
-# p = 0.01567, reject H0 & does not exhibit equal variance
-
-# Run Mann-Whitney U Test as Nonparametric Alternative to Two Sample T Test
-
-wilcox.test(alldata$trails_a_dwell ~ group, data = alldata, exact = TRUE)
-
-# exact = FALSE because ties in dataset
-# p = 6.783e-05, significant difference in trails making A for YA vs OA
-
-# Run Correlation Test for Trails Making A Dwell & NARA in OAs
-
-# Test Each Dataset for Normality
-
-shapiro.test(oa_data$trails_a_dwell)
-
-# p = 0.7381, fail to reject H0 & can assume normality
-
-shapiro.test(oa_data$nara)
-
-# p = 0.005657, reject H0 & cannot assume normality
-
-# need to run Spearman correlation as nonparametric alternative
-
-# Generate Scatterplot
-
-trailsad_nara <- ggplot(oa_data, aes(x=trails_a_dwell, y=nara), cor_method = "spearman") + 
-  geom_point(color = "#FF6EC7")+
-  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
-  xlab("Trails A Dwell Time (s)")+
-  ylab("NARA Score (%)")+
-  xlim(20,60) +
-  ylim(0, 100) +
-  theme(text = element_text(size = 20),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
-trailsad_nara
-
-# most of scatterplot outside confidence interval, not a great representation
-
-cor.test(oa_data$trails_a_dwell, oa_data$nara, method = "spearman", exact = FALSE)
-
-# rho = -0.09997493, p = 0.658
-# no significant association between Trails A CT & NARA score in OAs
-
-
-# Does Trails Making A DT differ across NARA high and NARA low groups? 
-
-# Shapiro-Wilks Test for Normality
+# p = 0.06561, reject H0 & does not follow normal distribution
 
 shapiro.test(oa_nara_high$trails_a_dwell)
 
@@ -284,19 +222,19 @@ shapiro.test(oa_nara_high$trails_a_dwell)
 
 shapiro.test(oa_nara_low$trails_a_dwell)
 
-# p = 0.07776, fail to reject H0 
+# p = 0.03385, reject H0 & cannot assume normality 
 
-# Bartlett's Test for Equal Variance
+# Run Bartlett's Test for Equal Variance
 
-bartlett.test(trails_a_dwell~nara_score, data = oa_data)
+bartlett.test(alldata$trails_a_dwell ~ alldata$nara_group)
 
-# p = 0.6348, fail to reject H0
+# p = 0.0159, reject H0 & does not exhibit equal variance
 
-# As all assumptions are met, we will run a 2 sample t-test to test for differences in Trails A Dwell between the NARA High and NARA low groups. 
+# Run Kruskal-Wallis Test as Nonparametric Alternative to One Way ANOVA
 
-t.test(oa_data$trails_a_dwell ~ oa_data$nara_score, var.equal = TRUE, data = oa_data, alternative = "two.sided")
+kruskal.test(trails_a_dwell~nara_group, data = alldata)
 
-# p = 0.347, no significant difference in exercise
+# p = 3.084e-05, significant difference in trails making A dwell time for YA vs OA high vs OA low
 
 ```
 
