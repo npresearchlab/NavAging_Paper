@@ -88,11 +88,7 @@ alldata <- rbind(oa_data, ya_data)
 # Gender vs NARA Group
 ```{r}
 
-# archive -- not using these stats (using chi square)
-
-## Create Data Frames
-
-## NARA AS CATEGORICAL HIGH VS LOW 
+## Does gender differ in YA vs OA high/low groups? 
 
 ## chi-square test for gender vs nara category
 
