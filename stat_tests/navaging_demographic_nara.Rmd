@@ -341,7 +341,7 @@ kruskal.test(setshifting~nara_group, data = alldata)
 
 ## Does SBSOD differ in YA vs OA high/low? 
 
-# Run Shapiro-Wilks Test for Normality in YA/OA high/OA low Dataset for Set Shifting
+# Run Shapiro-Wilks Test for Normality in YA/OA high/OA low Dataset for SBSOD
 
 shapiro.test(ya_data$sbsod)
 
@@ -372,67 +372,33 @@ kruskal.test(sbsod~nara_group, data = alldata)
 # PSQI vs NARA Score in YA & OA 
 ```{r}
 
-## Does PSQI differ in YA vs OA? 
+## Does PSQI differ in YA vs OA high/low? 
 
-# PSQI is nonparametric, so we need to use nonparametric tests
+# Run Shapiro-Wilks Test for Normality in YA/OA high/OA low Dataset for PSQI
 
-# Run Mann-Whitney U Test as Nonparametric Alternative to Two Sample T Test
+shapiro.test(ya_data$psqi)
 
-wilcox.test(alldata$psqi ~ group, data = alldata, exact = FALSE)
-
-# exact = FALSE because ties in dataset
-# p = 0.8922, significant difference in PSQI for YA vs OA
-
-# Run Correlation Test for SBSOD & NARA in OAs
-
-# need to run Spearman correlation as nonparametric alternative
-
-# Generate Scatterplot
-
-psqi_nara <- ggplot(oa_data, aes(x=psqi, y=nara), cor_method = "spearman") + 
-  geom_point(color = "#FF6EC7")+
-  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
-  xlab("PSQI")+
-  ylab("NARA Score (%)")+
-  xlim(0,12) +
-  ylim(0, 100) +
-  theme(text = element_text(size = 20),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
-psqi_nara
-
-# most of scatterplot outside confidence interval, poor representation
-
-cor.test(oa_data$psqi, oa_data$nara, method = "spearman", exact = FALSE)
-
-# rho = -0.02868619, p = 0.8992
-# no significant association between PSQI & NARA score in OAs
-
-
-# Does PSQI differ across NARA high and NARA low groups? 
-
-# Shapiro-Wilks Test for Normality
+# p = 0.005512, reject H0 & cannot assume normality
 
 shapiro.test(oa_nara_high$psqi)
 
-# p = 0.7868, fail to reject H0
+# p = 0.2617, fail to reject H0 
 
 shapiro.test(oa_nara_low$psqi)
 
-# p = 0.3837, reject H0 
+# p = 0.3837, fail to reject H0
 
-# Bartlett's Test for Equal Variance
+# Run Bartlett's Test for Equal Variance
 
-bartlett.test(psqi~nara_score, data = oa_data)
+bartlett.test(alldata$psqi ~ alldata$nara_group)
 
-# p = 0.7337, fail to reject H0
+# p = 0.1538, fail to reject H0 & does exhibit equal variance
 
-# As all assumptions are met, we will run a two-sample t test to test for differences in PSQI between the NARA High and NARA low groups. 
+# Run Kruskal-Wallis Test as Nonparametric Alternative to One Way ANOVA
 
-t.test(oa_data$psqi ~ oa_data$nara_score, var.equal = FALSE, data = oa_data, alternative = "two.sided")
+kruskal.test(psqi~nara_group, data = alldata)
 
-# p = 0.9803, no significant difference in exercise
+# p = 0.9792, no significant difference in PSQI for YA vs OA high vs OA low
 
 ```
 
