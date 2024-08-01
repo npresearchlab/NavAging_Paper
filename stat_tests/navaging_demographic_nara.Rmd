@@ -487,35 +487,46 @@ bartlett.test(alldata$corsi_score_mean ~ alldata$nara_group)
 
 # p = 0.3711, fail to reject H0 & does exhibit equal variance
 
-# Run Kruskal-Wallis Test as Nonparametric Alternative to One Way ANOVA
+# Run One Way ANOVA
+
+### NEED TO RERUN 
 
 kruskal.test(corsi_score_mean~nara_group, data = alldata)
 
-# p = 1.02e-06, significant difference in video game experience (in hours/week) for YA vs OA high vs OA low
+# p = 1.02e-06, significant difference in corsi mean score for YA vs OA high vs OA low
 
 ```
 
 # Corsi Total Score vs NARA Score in OAs
 ```{r}
 
-corsi_total_nara <- ggplot(oa_data, aes(x=corsi_score_total, y=nara), cor_method = "spearman") + 
-  geom_point(color = "#FF6EC7")+
-  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
-  xlab("Corsi Total Score")+
-  ylab("NARA Score (%)")+
-  xlim(2,9) +
-  ylim(0, 100) +
-  theme(text = element_text(size = 20),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
-corsi_total_nara
+## Does Corsi Total Score differ in YA vs OA high/low? 
 
-# doesn't appear significant at all based on scatterplot 
+# Run Shapiro-Wilks Test for Normality in YA/OA high/OA low Dataset for Corsi Span 
 
-cor.test(oa_data$corsi_score_total, oa_data$nara, method = "spearman", exact = FALSE)
+shapiro.test(ya_data$corsi_score_total)
 
-# p = 0.1554
+# p = 0.7951, fail to reject H0 & can assume normality
+
+shapiro.test(oa_nara_high$corsi_score_total)
+
+# p = 0.6382, fail to reject H0 & can assume normality
+
+shapiro.test(oa_nara_low$corsi_score_total)
+
+# p = 0.7782, fail to reject H0 & can assume normality
+
+# Run Bartlett's Test for Equal Variance
+
+bartlett.test(alldata$corsi_score_total ~ alldata$nara_group)
+
+# p = 0.3711, fail to reject H0 & does exhibit equal variance
+
+# Run Kruskal-Wallis Test as Nonparametric Alternative to One Way ANOVA
+
+kruskal.test(corsi_score_total~nara_group, data = alldata)
+
+# p = 1.02e-06, significant difference in corsi mean score for YA vs OA high vs OA low
 
 ```
 
