@@ -172,74 +172,16 @@ kruskal.test(exercise~nara_group, data = alldata)
 
 ```
 
-# Trails Making A CT vs NARA Score in YA & OA 
+# Trails Making A CT vs NARA Group 
 ```{r}
 
-## Does Trails Making A CT differ in YA vs OA? 
+## Does Trails Making A Completion Time differ in YA vs OA high/low? 
 
-# Run Shapiro-Wilks Test for Normality in YA/OA Dataset for Trails Making A CT
+# Run Shapiro-Wilks Test for Normality in YA/OA high/OA low Dataset for Trails A CT
 
 shapiro.test(ya_data$trails_a_ct)
 
-# p = 0.3793, fail to reject H0 & can assume normality
-
-shapiro.test(oa_data$trails_a_ct)
-
-# p = 0.132, fail to reject H0 & can assume normality
-
-# Run Bartlett's Test for Equal Variance
-
-bartlett.test(alldata$trails_a_ct ~ alldata$group)
-
-# p = 0.01567, reject H0 & does not exhibit equal variance
-
-# Run Mann-Whitney U Test as Nonparametric Alternative to Two Sample T Test
-
-wilcox.test(alldata$trails_a_ct ~ group, data = alldata, exact = TRUE)
-
-# exact = FALSE because ties in dataset
-# p = 6.783e-05, significant difference in trails making A for YA vs OA
-
-# Run Correlation Test for Trails Making A CT & NARA in OAs
-
-# Test Each Dataset for Normality
-
-shapiro.test(oa_data$trails_a_ct)
-
-# p = 0.7381, fail to reject H0 & can assume normality
-
-shapiro.test(oa_data$nara)
-
-# p = 0.005657, reject H0 & cannot assume normality
-
-# need to run Spearman correlation as nonparametric alternative
-
-# Generate Scatterplot
-
-trailsa_nara <- ggplot(oa_data, aes(x=trails_a_ct, y=nara), cor_method = "spearman") + 
-  geom_point(color = "#FF6EC7")+
-  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
-  xlab("Trails A Completion Time (s)")+
-  ylab("NARA Score (%)")+
-  xlim(20,60) +
-  ylim(0, 100) +
-  theme(text = element_text(size = 20),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
-trailsa_nara
-
-# most of scatterplot outside confidence interval, not a great representation
-
-cor.test(oa_data$trails_a_ct, oa_data$nara, method = "spearman", exact = FALSE)
-
-# rho = -0.09997493, p = 0.658
-# no significant association between Trails A CT & NARA score in OAs
-
-
-# Does Trails Making A CT differ across NARA high and NARA low groups? 
-
-# Shapiro-Wilks Test for Normality
+# p = 0.3793, reject H0 & does not follow normal distribution
 
 shapiro.test(oa_nara_high$trails_a_ct)
 
@@ -247,21 +189,19 @@ shapiro.test(oa_nara_high$trails_a_ct)
 
 shapiro.test(oa_nara_low$trails_a_ct)
 
-# p = 0.03524, reject H0 
+# p = 0.03524, reject H0 & cannot assume normality 
 
-# Must use non-parametric Mann-Whitney U Test as an alternative to a two-sample t test. 
+# Run Bartlett's Test for Equal Variance
 
-# Bartlett's Test for Equal Variance
+bartlett.test(alldata$trails_a_ct ~ alldata$nara_group)
 
-bartlett.test(trails_a_ct~nara_score, data = oa_data)
+# p = 0.05834, fail to reject H0 & does exhibit equal variance
 
-# p = 0.5382, fail to reject H0
+# Run Kruskal-Wallis Test as Nonparametric Alternative to One Way ANOVA
 
-# As all assumptions are NOT met, we will run a Mann-Whitney U Test to test for differences in Trails A CT between the NARA High and NARA low groups. 
+kruskal.test(trails_a_ct~nara_group, data = alldata)
 
-wilcox.test(oa_data$trails_a_ct ~ oa_data$nara_score, var.equal = TRUE, data = oa_data, alternative = "two.sided", exact = FALSE)
-
-# p = 0.3732, no significant difference in exercise
+# p = 0.0002268, significant difference in trails making A completion time for YA vs OA high vs OA low
 
 ```
 
