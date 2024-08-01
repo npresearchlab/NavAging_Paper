@@ -409,37 +409,23 @@ kruskal.test(vge~nara_group, data = alldata)
 # VR Experience vs NARA Category
 ```{r}
 
-vr_nara <- ggplot(oa_data, aes(x=vr_exp_quantified, y=nara), cor_method = "spearman") + 
-  geom_point(color = "#FF6EC7")+
-  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
-  xlab("VR Experience")+
-  ylab("NARA Score (%)")+
-  xlim(0,3) +
-  ylim(0, 100) +
-  theme(text = element_text(size = 20),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
-vr_nara
+## Does VR experience differ in YA vs OA high/low groups? 
 
-# doesn't appear significant at all based on scatterplot 
+## chi-square test for VR experience quantified vs nara category
 
-
-
-## chi-square test for vr experience vs nara category
-
-vr_nara <- data.frame(oa_data$vr_exp_quantified,oa_data$nara_score)
-vr_nara <- table(oa_data$vr_exp_quantified,oa_data$nara_score)
+vr_nara <- data.frame(alldata$vr_exp_quantified,alldata$nara_group)
+vr_nara <- table(alldata$vr_exp_quantified,alldata$nara_group)
 print(vr_nara)
 
 # running chi square with/without Yates correction
 
-chisq.test(table(oa_data$vr_exp_quantified, oa_data$nara_score), correct = TRUE)
-chisq.test(table(oa_data$vr_exp_quantified, oa_data$nara_score), correct = FALSE)
+chisq.test(table(alldata$vr_exp_quantified, alldata$nara_group), correct = TRUE)
+chisq.test(table(alldata$vr_exp_quantified, alldata$nara_group), correct = FALSE)
 
-# p = 0.5003, fail to reject H0
+chisq.test(vr_nara, correct = TRUE)
+
+# p = 0.07107, fail to reject H0
 # chi square approx may be incorrect
-# we want Yates' correction (correct = TRUE) due to small sample size
 
 ```
 
