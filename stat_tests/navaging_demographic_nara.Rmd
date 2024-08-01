@@ -432,7 +432,7 @@ chisq.test(vr_nara, correct = TRUE)
 # Corsi Span vs NARA Category
 ```{r}
 
-## Does Video Game Experience (hours/week) differ in YA vs OA high/low? 
+## Does Corsi Span differ in YA vs OA high/low? 
 
 # Run Shapiro-Wilks Test for Normality in YA/OA high/OA low Dataset for Corsi Span 
 
@@ -462,54 +462,36 @@ kruskal.test(corsi_span~nara_group, data = alldata)
 
 ```
 
-# Corsi Mean Score vs NARA Score in OAs
+# Corsi Mean Score vs NARA Category
 ```{r}
 
-corsi_mean_nara <- ggplot(oa_data, aes(x=corsi_score_mean, y=nara), cor_method = "spearman") + 
-  geom_point(color = "#FF6EC7")+
-  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
-  xlab("Corsi Mean Score")+
-  ylab("NARA Score (%)")+
-  xlim(2,9) +
-  ylim(0, 100) +
-  theme(text = element_text(size = 20),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
-corsi_mean_nara
+## Does Corsi Mean Score differ in YA vs OA high/low? 
 
-# doesn't appear significant at all based on scatterplot 
+# Run Shapiro-Wilks Test for Normality in YA/OA high/OA low Dataset for Corsi Span 
 
-cor.test(oa_data$corsi_score_mean, oa_data$nara, method = "spearman", exact = FALSE)
+shapiro.test(ya_data$corsi_score_mean)
 
-# p = 0.1554
+# p = 0.7147, fail to reject H0 & can assume normality
 
+shapiro.test(oa_nara_high$corsi_score_mean)
 
-# Does Corsi Mean Score differ across NARA high and NARA low groups? 
+# p = 0.6382, fail to reject H0 & can assume normality
 
-# Shapiro-Wilks Test for Normality
+shapiro.test(oa_nara_low$corsi_score_mean)
 
-shapiro.test(oa_nara_high$corsi_mean_score)
+# p = 0.7782, fail to reject H0 & can assume normality
 
-# p = 0.1227, fail to reject H0
+# Run Bartlett's Test for Equal Variance
 
-shapiro.test(oa_nara_low$corsi_mean_score)
+bartlett.test(alldata$corsi_score_mean ~ alldata$nara_group)
 
-# p = 0.01541, reject H0 
+# p = 0.3711, fail to reject H0 & does exhibit equal variance
 
-# need nonparametric test
+# Run Kruskal-Wallis Test as Nonparametric Alternative to One Way ANOVA
 
-# Bartlett's Test for Equal Variance
+kruskal.test(corsi_score_mean~nara_group, data = alldata)
 
-bartlett.test(corsi_mean_score~nara_score, data = oa_data)
-
-# p = 0.3226, fail to reject H0
-
-# As all assumptions are NOT met, we will run a Mann-Whitney U test to test for differences in VGE between the NARA High and NARA low groups. 
-
-wilcox.test(oa_data$corsi_mean_score ~ oa_data$nara_score, var.equal = FALSE, data = oa_data, alternative = "two.sided", exact = FALSE)
-
-# p = 0.1501, no significant difference in exercise
+# p = 1.02e-06, significant difference in video game experience (in hours/week) for YA vs OA high vs OA low
 
 ```
 
