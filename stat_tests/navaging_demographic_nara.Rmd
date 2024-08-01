@@ -139,74 +139,16 @@ chisq.test(gender_nara, correct = TRUE)
 
 ```
 
-# Exercise vs NARA Score in YA & OA 
+# Exercise vs NARA Category 
 ```{r}
 
-## Does exercise differ in YA vs OA? 
+## Does exercise differ in YA vs OA high/low? 
 
-# Run Shapiro-Wilks Test for Normality in YA/OA Dataset for Exercise
+# Run Shapiro-Wilks Test for Normality in YA/OA high/OA low Dataset for Exercise
 
 shapiro.test(ya_data$exercise)
 
 # p = 0.001254, reject H0 & does not follow normal distribution
-
-shapiro.test(oa_data$exercise)
-
-# p = 0.7801, fail to reject H0
-
-# Run Bartlett's Test for Equal Variance
-
-bartlett.test(alldata$exercise ~ alldata$group)
-
-# p = 0.03912, reject H0 & does not exhibit equal variance
-
-# Run Mann-Whitney U Test as Nonparametric Alternative to Two Sample T Test
-
-wilcox.test(alldata$exercise ~ group, data = alldata, exact = FALSE)
-
-# exact = FALSE because ties in dataset
-# p = 0.9586, no difference in exercise for YA vs OA
-
-# Run Correlation Test for Exercise & NARA in OAs
-
-# Test Each Dataset for Normality
-
-shapiro.test(oa_data$exercise)
-
-# p = 0.7801, fail to reject H0 & can assume normality
-
-shapiro.test(oa_data$nara)
-
-# p = 0.005657, reject H0 & cannot assume normality
-
-# need to run Spearman correlation as nonparametric alternative
-
-# Generate Scatterplot
-
-exercise_nara <- ggplot(oa_data, aes(x=exercise, y=nara), cor_method = "spearman") + 
-  geom_point(color = "#FF6EC7")+
-  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
-  xlab("Exercise (hours/week)")+
-  ylab("NARA Score (%)")+
-  xlim(0,10) +
-  ylim(0, 100) +
-  theme(text = element_text(size = 20),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
-exercise_nara
-
-# most of scatterplot outside confidence interval, not a great representation
-
-cor.test(oa_data$exercise, oa_data$nara, method = "spearman", exact = FALSE)
-
-# rho = -0.2123048, p = 0.3429
-# no significant association between exercise & NARA score in OAs
-
-
-# Does exercise differ across NARA high and NARA low groups? 
-
-# Shapiro-Wilks Test for Normality
 
 shapiro.test(oa_nara_high$exercise)
 
@@ -214,19 +156,19 @@ shapiro.test(oa_nara_high$exercise)
 
 shapiro.test(oa_nara_low$exercise)
 
-# p = 0.8735, fail to reject H0 
+# p = 0.8735, fail to reject H0
 
-# Bartlett's Test for Equal Variance
+# Run Bartlett's Test for Equal Variance
 
-bartlett.test(exercise~nara_score, data = oa_data)
+bartlett.test(alldata$exercise ~ alldata$nara_group)
 
-# p = 0.5447, fail to reject H0
+# p = 0.08932, fail to reject H0 & does exhibit equal variance
 
-# As all assumptions are met, we can run a two sample t-test to test for differences in exercise between the NARA High and NARA low groups. 
+# Run Kruskal-Wallis Test as Nonparametric Alternative to One Way ANOVA
 
-t.test(oa_data$exercise ~ oa_data$nara_score, var.equal = TRUE, data = oa_data, alternative = "two.sided")
+kruskal.test(exercise~nara_group, data = alldata)
 
-# p = 0.1747, no significant difference in exercise
+# p = 0.3359, no difference in exercise for YA vs OA high vs OA low
 
 ```
 
