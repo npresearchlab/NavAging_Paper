@@ -303,98 +303,36 @@ kruskal.test(trails_b_dwell~nara_group, data = alldata)
 
 ```
 
-# Set Shifting vs NARA Score in YA & OA 
+# Set Shifting vs NARA Category
 ```{r}
 
-## Does Set Shifting Time differ in YA vs OA? 
+## Does Set Shifting Time differ in YA vs OA high/low? 
 
-# Run Shapiro-Wilks Test for Normality in YA/OA Dataset for Set Shifting
+# Run Shapiro-Wilks Test for Normality in YA/OA high/OA low Dataset for Set Shifting
 
 shapiro.test(ya_data$setshifting)
 
 # p = 0.00212, reject H0 & cannot assume normality
 
-shapiro.test(oa_data$setshifting)
-
-# p = 1.594e-05, reject H0 & cannot assume normality
-
-# Run Bartlett's Test for Equal Variance
-
-bartlett.test(alldata$setshifting ~ alldata$group)
-
-# p = 4.429e-06, reject H0 & does not exhibit equal variance
-
-# Run Mann-Whitney U Test as Nonparametric Alternative to Two Sample T Test
-
-wilcox.test(alldata$setshifting ~ group, data = alldata, exact = FALSE)
-
-# exact = FALSE because ties in dataset
-# p = 0.0005701, significant difference in trails making A for YA vs OA
-
-# Run Correlation Test for Set Shifting & NARA in OAs
-
-# Test Each Dataset for Normality
-
-shapiro.test(oa_data$setshifting)
-
-# p = 1.594e-05, fail to reject H0 & can assume normality
-
-shapiro.test(oa_data$nara)
-
-# p = 0.005657, reject H0 & cannot assume normality
-
-# need to run Spearman correlation as nonparametric alternative
-
-# Generate Scatterplot
-
-setshift_nara <- ggplot(oa_data, aes(x=setshifting, y=nara), cor_method = "spearman") + 
-  geom_point(color = "#FF6EC7")+
-  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
-  xlab("Set Shifting Time (s)")+
-  ylab("NARA Score (%)")+
-  xlim(-10,115) +
-  ylim(0, 100) +
-  theme(text = element_text(size = 20),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
-setshift_nara
-
-# most of scatterplot outside confidence interval, not a great representation
-
-cor.test(oa_data$setshifting, oa_data$nara, method = "spearman", exact = FALSE)
-
-# rho = -0.3018333, p = 0.1722
-# no significant association between set shifting & NARA score in OAs
-
-
-
-# Does set shifting differ across NARA high and NARA low groups? 
-
-# Shapiro-Wilks Test for Normality
-
 shapiro.test(oa_nara_high$setshifting)
 
-# p = 0.000308, reject H0
+# p = 0.000308, reject H0 & cannot assume normality 
 
 shapiro.test(oa_nara_low$setshifting)
 
-# p = 0.001265, reject H0 
+# p = 0.001265, reject H0 & cannot assume normality 
 
-# need nonparametric test
+# Run Bartlett's Test for Equal Variance
 
-# Bartlett's Test for Equal Variance
+bartlett.test(alldata$setshifting ~ alldata$nara_group)
 
-bartlett.test(setshifting~nara_score, data = oa_data)
+# p = 2.635e-05, reject H0 & does not exhibit equal variance
 
-# p = 0.6528, fail to reject H0
+# Run Kruskal-Wallis Test as Nonparametric Alternative to One Way ANOVA
 
-# As all assumptions are NOT met, we will run a Mann Whitney U Test to test for differences in SSS difference between the NARA High and NARA low groups. 
+kruskal.test(setshifting~nara_group, data = alldata)
 
-wilcox.test(oa_data$setshifting ~ oa_data$nara_score, var.equal = TRUE, data = oa_data, alternative = "two.sided", exact = FALSE)
-
-# p = 0.3734, no significant difference in set shifting 
-
+# p = 0.0016, significant difference in trails making B dwell time for YA vs OA high vs OA low
 
 ```
 
