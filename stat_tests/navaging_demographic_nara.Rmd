@@ -73,11 +73,15 @@ oa_nara_high <- data.frame(filter(oa_data, nara > 50))
 
 oa_nara_low <- data.frame(filter(oa_data, nara < 50))
 
-oa_data$nara_score <- cut(oa_data$nara,
+oa_data$nara_group <- cut(oa_data$nara,
               breaks=c(0,50,100),
               labels=c('OA Low', 'OA High'))
 
-ya_data$nara_score <- labels=('YA')
+ya_data$nara_group <- factor(c('YA'))
+
+# Merge OA and YA Data Frames
+
+alldata <- rbind(oa_data, ya_data)
 
 ```
 
