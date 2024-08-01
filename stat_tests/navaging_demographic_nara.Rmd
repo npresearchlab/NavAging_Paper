@@ -275,125 +275,31 @@ kruskal.test(trails_b_ct~nara_group, data = alldata)
 
 ## Does Trails Making B Dwell Time differ in YA vs OA high/low? 
 
-# Run Shapiro-Wilks Test for Normality in YA/OA high/OA low Dataset for Trails A CT
-
-shapiro.test(ya_data$trails_b_ct)
-
-# p = 0.003169, reject H0 & cannot assume normality
-
-shapiro.test(oa_nara_high$trails_b_ct)
-
-# p = 0.0006132, reject H0 & cannot assume normality
-
-shapiro.test(oa_nara_low$trails_b_ct)
-
-# p = 0.002642, reject H0 & cannot assume normality 
-
-# Run Bartlett's Test for Equal Variance
-
-bartlett.test(alldata$trails_b_ct ~ alldata$nara_group)
-
-# p = 2.77e-05, reject H0 & does not exhibit equal variance
-
-# Run Kruskal-Wallis Test as Nonparametric Alternative to One Way ANOVA
-
-kruskal.test(trails_b_ct~nara_group, data = alldata)
-
-# p = 3.865e-05, significant difference in trails making B completion time for YA vs OA high vs OA low
-
-
-
-
-### RUN ONCE YOU GET ALL OF THIS ENTERED FROM KINARM 
-
-
-## Does Trails Making B Dwell Time differ in YA vs OA? 
-
-# Run Shapiro-Wilks Test for Normality in YA/OA Dataset for Trails Making B Dwell
+# Run Shapiro-Wilks Test for Normality in YA/OA high/OA low Dataset for Trails B DT
 
 shapiro.test(ya_data$trails_b_dwell)
 
-# p = 0.3793, fail to reject H0 & can assume normality
-
-shapiro.test(oa_data$trails_b_dwell)
-
-# p = 0.132, fail to reject H0 & can assume normality
-
-# Run Bartlett's Test for Equal Variance
-
-bartlett.test(alldata$trails_b_dwell ~ alldata$group)
-
-# p = 0.01567, reject H0 & does not exhibit equal variance
-
-# Run Mann-Whitney U Test as Nonparametric Alternative to Two Sample T Test
-
-wilcox.test(alldata$trails_b_dwell ~ group, data = alldata, exact = TRUE)
-
-# exact = FALSE because ties in dataset
-# p = 6.783e-05, significant difference in trails making A for YA vs OA
-
-# Run Correlation Test for Trails Making A Dwell & NARA in OAs
-
-# Test Each Dataset for Normality
-
-shapiro.test(oa_data$trails_b_dwell)
-
-# p = 0.7381, fail to reject H0 & can assume normality
-
-shapiro.test(oa_data$nara)
-
-# p = 0.005657, reject H0 & cannot assume normality
-
-# need to run Spearman correlation as nonparametric alternative
-
-# Generate Scatterplot
-
-trailsbd_nara <- ggplot(oa_data, aes(x=trails_b_dwell, y=nara), cor_method = "spearman") + 
-  geom_point(color = "#FF6EC7")+
-  geom_smooth(method=lm, color = "black", fill = "#FF6EC7") +
-  xlab("Trails B Dwell Time (s)")+
-  ylab("NARA Score (%)")+
-  xlim(20,60) +
-  ylim(0, 100) +
-  theme(text = element_text(size = 20),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black"))
-trailsbd_nara
-
-# most of scatterplot outside confidence interval, not a great representation
-
-cor.test(oa_data$trails_b_dwell, oa_data$nara, method = "spearman", exact = FALSE)
-
-# rho = -0.09997493, p = 0.658
-# no significant association between Trails A CT & NARA score in OAs
-
-
-#  Does Trails Making B DT differ across NARA high and NARA low groups? 
-
-# Shapiro-Wilks Test for Normality
+# p = 0.03843, reject H0 & cannot assume normality
 
 shapiro.test(oa_nara_high$trails_b_dwell)
 
-# p = 0.9806, fail to reject H0
+# p = 0.9806, fail to reject H0 
 
 shapiro.test(oa_nara_low$trails_b_dwell)
 
-# p = 0.003436, reject H0 
+# p = 0.001046, reject H0 & cannot assume normality 
 
-# need non-parametric test
+# Run Bartlett's Test for Equal Variance
 
-# Bartlett's Test for Equal Variance
+bartlett.test(alldata$trails_b_dwell ~ alldata$nara_group)
 
-bartlett.test(trails_b_dwell~nara_score, data = oa_data)
+# p = 7.688e-08, reject H0 & does not exhibit equal variance
 
-# p = 0.001175, fail to reject H0
+# Run Kruskal-Wallis Test as Nonparametric Alternative to One Way ANOVA
 
-# As all assumptions are NOT met, we will run a Mann-Whitney U Test to test for differences in Trails B Dwell between the NARA High and NARA low groups. 
+kruskal.test(trails_b_dwell~nara_group, data = alldata)
 
-wilcox.test(oa_data$trails_b_dwell ~ oa_data$nara_score, var.equal = FALSE, data = oa_data, alternative = "two.sided", exact = FALSE)
-
-# p = 0.7998, no significant difference in exercise
+# p = 1.777e-05, significant difference in trails making B dwell time for YA vs OA high vs OA low
 
 ```
 
