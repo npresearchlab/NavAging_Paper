@@ -27,5 +27,39 @@ library(ggplot2)
 ```
 
 ```{r}
-
+#This loads the data file as the variable "data"
+non_nav_data <- read.csv('/Users/emilycui/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/data_analysis/non_nav_data.csv')
+# Tidying up the data
+names(non_nav_data)[1] <- 'Participant'
+names(non_nav_data)[2] <- 'Age'
+names(non_nav_data)[3] <- 'PSQI'
+names(non_nav_data)[4] <- 'SSS_Pre'
+names(non_nav_data)[5] <- 'SSS_Post'
+names(non_nav_data)[6] <- 'SBSOD'
+names(non_nav_data)[7] <- 'MiniCog'
+names(non_nav_data)[8] <- 'TrailsA'
+names(non_nav_data)[9] <- 'TrailsB'
+names(non_nav_data)[10] <- 'SetShifting'
+names(non_nav_data)[11] <- 'CorsiBlocks'
+names(non_nav_data)[12] <- 'SSQ_Pre'
+names(non_nav_data)[13] <- 'SSQ_Post'
+names(non_nav_data)[14] <- 'NARA'
+non_nav_data <- select(non_nav_data, -Age) 
+non_nav_data <- non_nav_data[-c(1:20),]
 ```
+
+```{r}
+NARA_ymaze <- ggplot(non_nav_data, aes(x=ymaze_class_age_presence, y=NARA, color=Participant))+
+ geom_point(size=4)+
+  stat_summary(fun.args = list(mult=1), 
+                geom="crossbar", 
+                width=0.2, 
+                color="purple")+
+  labs(color= "Participant", y="NARA", x="Age-Reference Frame")+
+  scale_x_discrete("Age Group",limits = c("YA-allo","YA-ego","OA-allo","OA-ego"), labels = c("OA-ego"="OA-Ego", "OA-allo"="OA-Allo","YA-ego"="YA-Ego","YA-allo"="YA-Allo"))+
+  ggtitle("X")
+
+NARA_ymaze
+```
+
+
