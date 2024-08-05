@@ -1,0 +1,31 @@
+---
+title: "ymaze_class_age_presence vs. NARA"
+output: html_document
+date: "2024-08-05"
+---
+
+```{r global-options, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r}
+install.packages("readr")
+install.packages("dplyr")
+install.packages("tidyverse")
+install.packages("ggplot2")
+#install.packages("ggpubr", "broom", "AICcmodavg")
+```
+
+```{r}
+library(readr)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+#library(ggpubr)
+#library(broom)
+#library(AICcmodavg)
+```
+
+```{r}
+
+```
