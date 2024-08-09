@@ -409,3 +409,4 @@ p<-grid.arrange(p_speed, p_ct, p_orict, p_navct, p_dt, p_dwell, p_teleport, ncol
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/composite_fig7.svg", height = 16, width =20, plot=p)
 
 ```
+
