@@ -9,10 +9,10 @@ knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
 ```
 
 ```{r}
-install.packages("readr")
-install.packages("dplyr")
-install.packages("tidyverse")
-install.packages("ggplot2")
+#install.packages("readr")
+#install.packages("dplyr")
+#install.packages("tidyverse")
+#install.packages("ggplot2")
 #install.packages("ggpubr", "broom", "AICcmodavg")
 ```
 
@@ -58,10 +58,27 @@ NARA_ymaze <- ggplot(non_nav_data, aes(x=ymaze_class_age_presence, y=NARA, color
                 width=0.2, 
                 color="purple")+
   labs(color= "Participant", y="NARA", x="Age-Reference Frame")+
-  scale_x_discrete("Age-YMaze Class",limits = c("YA-allo","YA-ego","OA-allo","OA-ego"), labels = c("OA-ego"="OA-Ego", "OA-allo"="OA-Allo","YA-ego"="YA-Ego","YA-allo"="YA-Allo"))+
+  scale_x_discrete("Age-YMaze Class",limits = c("YA-allo","YA-ego","OA-allo","OA-ego"))+
   ggtitle("X")
 
 NARA_ymaze
+```
+
+```{r}
+NARA_ymaze_oa <- ggplot(non_nav_data, aes(x=ymaze_class_oa_presence, y=NARA, color=Participant))+
+ geom_point(size=4)+
+  stat_summary(fun.args = list(mult=1), 
+                geom="crossbar", 
+                width=0.2, 
+                color="purple")+
+  labs(color= "Participant", y="NARA", x="Age-Reference Frame")+
+  scale_x_discrete("Age-YMaze Class OA",limits = c("YA","OA-allo","OA-ego"))+
+  scale_color_manual(values =c( '#FF9FAF', '#5E7AFA','#9dff00'))+
+  ggtitle("X")
+
+NARA_ymaze_oa 
+                                   
+                  
 ```
 
 
