@@ -51,12 +51,18 @@ non_nav_data <- non_nav_data[-c(1:20),]
 ```
 
 ```{r}
+# Filtering Ego Pres Data
+ymaze_ego <- non_nav_data %>% filter(ymaze_class == 'ego')
+ymaze_allo <- non_nav_data %>% filter(ymaze_class == 'allo')
+```
+
+```{r}
 NARA_ymaze_class_age <- ggplot(non_nav_data, aes(x=ymaze_class_age_presence, y=NARA, color=nara_class))+
  geom_point(size=4)+
   stat_summary(fun.args = list(mult=1), 
                 geom="crossbar", 
                 width=0.2, 
-                color="purple")+
+                color="black")+
   labs(color= "Participant", y="NARA", x="Age-Reference Frame")+
   scale_x_discrete("Age-YMaze Class",limits = c("YA-allo","YA-ego","OA-allo","OA-ego"))+
   scale_color_manual(values =c( 'YA' ='#FF9FAF', 'OA-low' = '#9dff00', 'OA-high' = '#5E7AFA'))+
@@ -71,7 +77,7 @@ NARA_ymaze_oa <- ggplot(non_nav_data, aes(x=ymaze_class_oa_presence, y=NARA, col
   stat_summary(fun.args = list(mult=1), 
                 geom="crossbar", 
                 width=0.2, 
-                color="purple")+
+                color="black")+
   labs(color= "Participant", y="NARA", x="Age-Reference Frame")+
   scale_x_discrete("Age-YMaze Class OA",limits = c("YA","OA-allo","OA-ego"))+
   scale_color_manual(values =c( 'YA' ='#FF9FAF', 'OA-low' = '#9dff00', 'OA-high' = '#5E7AFA'))+
@@ -79,19 +85,27 @@ NARA_ymaze_oa <- ggplot(non_nav_data, aes(x=ymaze_class_oa_presence, y=NARA, col
 
 NARA_ymaze_oa 
 ```
+
 ```{r}
 NARA_ymaze_class <- ggplot(non_nav_data, aes(x=ymaze_class, y=NARA, color=nara_class))+
  geom_point(size=4)+
   stat_summary(fun.args = list(mult=1), 
                 geom="crossbar", 
                 width=0.2, 
-                color="purple")+
+                color="black")+
   labs(color= "Participant", y="NARA", x="Age-Reference Frame")+
   scale_x_discrete("Y-Maze Class",limits = c("ego","allo"))+
   scale_color_manual(values =c( 'YA' ='#FF9FAF', 'OA-low' = '#9dff00', 'OA-high' = '#5E7AFA'))+
   ggtitle("X")
 
 NARA_ymaze_class
+```
+
+```{r}
+# T-Test for Ego vs. Allo NARA scores
+ttest_ymaze_class_nara <- t.test(ymaze_ego$NARA, ymaze_allo$NARA, p.adjust="none")
+
+ttest_ymaze_class_nara
 ```
 
 
