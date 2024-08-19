@@ -51,7 +51,7 @@ non_nav_data <- non_nav_data[-c(1:20),]
 ```
 
 ```{r}
-NARA_ymaze_class_age <- ggplot(non_nav_data, aes(x=ymaze_class_age_presence, y=NARA, color=Participant))+
+NARA_ymaze_class_age <- ggplot(non_nav_data, aes(x=ymaze_class_age_presence, y=NARA, color=nara_class))+
  geom_point(size=4)+
   stat_summary(fun.args = list(mult=1), 
                 geom="crossbar", 
@@ -59,13 +59,14 @@ NARA_ymaze_class_age <- ggplot(non_nav_data, aes(x=ymaze_class_age_presence, y=N
                 color="purple")+
   labs(color= "Participant", y="NARA", x="Age-Reference Frame")+
   scale_x_discrete("Age-YMaze Class",limits = c("YA-allo","YA-ego","OA-allo","OA-ego"))+
+  scale_color_manual(values =c( 'YA' ='#FF9FAF', 'OA-low' = '#9dff00', 'OA-high' = '#5E7AFA'))+
   ggtitle("X")
 
 NARA_ymaze_class_age
 ```
 
 ```{r}
-NARA_ymaze_oa <- ggplot(non_nav_data, aes(x=ymaze_class_oa_presence, y=NARA, color=Participant))+
+NARA_ymaze_oa <- ggplot(non_nav_data, aes(x=ymaze_class_oa_presence, y=NARA, color=nara_class))+
  geom_point(size=4)+
   stat_summary(fun.args = list(mult=1), 
                 geom="crossbar", 
@@ -73,21 +74,21 @@ NARA_ymaze_oa <- ggplot(non_nav_data, aes(x=ymaze_class_oa_presence, y=NARA, col
                 color="purple")+
   labs(color= "Participant", y="NARA", x="Age-Reference Frame")+
   scale_x_discrete("Age-YMaze Class OA",limits = c("YA","OA-allo","OA-ego"))+
-  #scale_color_manual(values =c( '#FF9FAF', '#5E7AFA','#9dff00'))+
+  scale_color_manual(values =c( 'YA' ='#FF9FAF', 'OA-low' = '#9dff00', 'OA-high' = '#5E7AFA'))+
   ggtitle("X")
 
 NARA_ymaze_oa 
 ```
 ```{r}
-NARA_ymaze_class <- ggplot(non_nav_data, aes(x=ymaze_class, y=NARA, color=Participant))+
+NARA_ymaze_class <- ggplot(non_nav_data, aes(x=ymaze_class, y=NARA, color=nara_class))+
  geom_point(size=4)+
   stat_summary(fun.args = list(mult=1), 
                 geom="crossbar", 
                 width=0.2, 
                 color="purple")+
   labs(color= "Participant", y="NARA", x="Age-Reference Frame")+
-  scale_x_discrete("X",limits = c("ego","allo"))+
-  #scale_color_manual(values =c( '#FF9FAF', '#5E7AFA','#9dff00'))+
+  scale_x_discrete("Y-Maze Class",limits = c("ego","allo"))+
+  scale_color_manual(values =c( 'YA' ='#FF9FAF', 'OA-low' = '#9dff00', 'OA-high' = '#5E7AFA'))+
   ggtitle("X")
 
 NARA_ymaze_class
