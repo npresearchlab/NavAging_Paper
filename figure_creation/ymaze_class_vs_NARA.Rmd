@@ -70,7 +70,7 @@ NARA_ymaze_class_age <- ggplot(non_nav_data, aes(x=ymaze_class_age_presence, y=N
 
 NARA_ymaze_class_age
 
-ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/ymaze_class_age_nara.svg", height = 5, width = 5, plot=NARA_ymaze_class_age)
+#ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/ymaze_class_age_nara.svg", height = 5, width = 5, plot=NARA_ymaze_class_age)
 ```
 
 ```{r}
@@ -87,7 +87,7 @@ NARA_ymaze_oa <- ggplot(non_nav_data, aes(x=ymaze_class_oa_presence, y=NARA, col
 
 NARA_ymaze_oa 
 
-ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/ymaze_class_oa_nara.svg", height = 5, width = 5, plot=NARA_ymaze_oa)
+#ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/ymaze_class_oa_nara.svg", height = 5, width = 5, plot=NARA_ymaze_oa)
 ```
 
 ```{r}
@@ -104,7 +104,7 @@ NARA_ymaze_class <- ggplot(non_nav_data, aes(x=ymaze_class, y=NARA, color=nara_c
 
 NARA_ymaze_class
 
-ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/ymaze_class_nara.svg", height = 5, width = 5, plot=NARA_ymaze_class)
+#ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/ymaze_class_nara.svg", height = 5, width = 5, plot=NARA_ymaze_class)
 ```
 
 ```{r}
