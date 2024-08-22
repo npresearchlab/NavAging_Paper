@@ -212,7 +212,7 @@ df_final$Cohort <- factor(df_final$Cohort, levels = desired_order)
 ```{r ct}
 #Total_time by Block_num
 p_ct <-ggplot(df_final, aes(x = factor(Cohort), y=Total_Time, fill=factor(Cohort))) +
-  scale_fill_manual(values =c('#FF9FAF', '#b512e6','#5E7AFA'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
   scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
   ylim (0,168)+
   labs(color= "Cohort", y="Mean Total Time (s)", x="")+
@@ -246,7 +246,7 @@ p_ct <-ggplot(df_final, aes(x = factor(Cohort), y=Total_Time, fill=factor(Cohort
     range_scale = .4,
     alpha = .3,
     position = position_jitter(seed = 1, width = .12)
-  ) +scale_color_manual(values =c('#FF9FAF', '#b512e6','#5E7AFA'))
+  ) +scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))
 p_ct
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_ct.svg", height = 5, width = 5, plot=p_ct)
 ```
@@ -257,7 +257,7 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 ```{r orict}
 #Orientation Time by Block_num
 p_orict <- ggplot(df_final, aes(x = factor(Cohort), y=Orientation_Time, fill=Cohort)) +
-  scale_fill_manual(values =c('#FF9FAF', '#b512e6','#5E7AFA'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
   scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
   ylim (0,30)+
   labs(color= "Cohort", y="Mean Orientation Time (s)", x="")+
@@ -292,7 +292,7 @@ p_orict <- ggplot(df_final, aes(x = factor(Cohort), y=Orientation_Time, fill=Coh
     range_scale = .4,
     alpha = .3,
     position = position_jitter(seed = 1, width = .12)
-  ) + scale_color_manual(values =c('#FF9FAF', '#b512e6','#5E7AFA'))
+  ) + scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))
 p_orict
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_orict.svg", height = 5, width = 5, plot=p_orict)
 ```
@@ -302,7 +302,7 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 ```{r navct}
 #Navigation Time by Block_num
 p_navct <- ggplot(df_final, aes(x = factor(Cohort), y=Navigation_Time, fill=Cohort)) +
-  scale_fill_manual(values =c('#FF9FAF', '#b512e6','#5E7AFA'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
   scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
   ylim (0,168)+
   labs(color= "Cohort", y="Mean Navigation Time (s)", x="")+
@@ -337,7 +337,7 @@ p_navct <- ggplot(df_final, aes(x = factor(Cohort), y=Navigation_Time, fill=Coho
     range_scale = .4,
     alpha = .3,
     position = position_jitter(seed = 1, width = .12)
-  ) + scale_color_manual(values =c('#FF9FAF', '#b512e6','#5E7AFA'))
+  ) + scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))
 p_navct
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_navct.svg", height = 5, width = 5, plot=p_navct)
 ```
@@ -347,7 +347,7 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 ```{r dt}
 #Distance by Block_num
 p_dt <- ggplot(df_final, aes(x = factor(Cohort), y=Distance, fill=Cohort)) +
-  scale_fill_manual(values =c('#FF9FAF', '#b512e6','#5E7AFA'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
   scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
   #ylim (0,160)+
   labs(color= "Cohort", y="Mean Distance Traveled (VR Units)", x="")+
@@ -382,7 +382,7 @@ p_dt <- ggplot(df_final, aes(x = factor(Cohort), y=Distance, fill=Cohort)) +
     range_scale = .4,
     alpha = .3,
     position = position_jitter(seed = 1, width = .12)
-  ) + scale_color_manual(values =c('#FF9FAF', '#b512e6','#5E7AFA'))
+  ) + scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))
 p_dt
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_dt.svg", height = 5, width = 5, plot=p_dt)
 ```
@@ -392,7 +392,7 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 ```{r speed}
 #Speed by Block_num
 p_speed <- ggplot(df_final, aes(x = factor(Cohort), y=Speed, fill=Cohort)) +
-  scale_fill_manual(values =c('#FF9FAF', '#b512e6','#5E7AFA'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
   scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
   ylim(0,30)+
   labs(color= "Cohort", y="Mean Speed (VR Unit/s)", x="")+
@@ -427,7 +427,7 @@ p_speed <- ggplot(df_final, aes(x = factor(Cohort), y=Speed, fill=Cohort)) +
     range_scale = .4,
     alpha = .3,
     position = position_jitter(seed = 1, width = .12)
-  ) + scale_color_manual(values =c('#FF9FAF', '#b512e6','#5E7AFA'))
+  ) + scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))
 p_speed
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_speed.svg", height = 5, width = 5, plot=p_speed)
 ```
@@ -437,7 +437,7 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 ```{r dwell}
 #Mean_Dwell by Block_num
 p_dwell <- ggplot(df_final, aes(x = factor(Cohort), y=Mean_Dwell, fill=Cohort)) +
-  scale_fill_manual(values =c('#FF9FAF', '#b512e6','#5E7AFA'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
   labs(color= "Cohort", y="Mean Dwell Time (s)", x="")+
   scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
   ylim(0,3)+
@@ -472,7 +472,7 @@ p_dwell <- ggplot(df_final, aes(x = factor(Cohort), y=Mean_Dwell, fill=Cohort)) 
     range_scale = .4,
     alpha = .3,
     position = position_jitter(seed = 1, width = .12)
-  )+ scale_color_manual(values =c('#FF9FAF', '#b512e6','#5E7AFA'))
+  )+ scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))
 p_dwell
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_dwell.svg", height = 5, width = 5, plot=p_dwell)
 ``` 
@@ -482,7 +482,7 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 ```{r teleport}
 #Teleportations by Block_num
 p_teleport <- ggplot(df_final, aes(x = factor(Cohort), y=Teleportations, fill=Cohort)) +
-  scale_fill_manual(values =c('#FF9FAF', '#b512e6','#5E7AFA'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
   scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
   ylim(0,150)+
   labs(color= "Cohort", y="Mean Teleportations (count)", x="")+
@@ -517,7 +517,7 @@ p_teleport <- ggplot(df_final, aes(x = factor(Cohort), y=Teleportations, fill=Co
     range_scale = .4,
     alpha = .3,
     position = position_jitter(seed = 1, width = .12)
-  ) + scale_color_manual(values =c('#FF9FAF', '#b512e6','#5E7AFA'))
+  ) + scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))
 p_teleport
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_teleport.svg", height = 5, width = 5, plot=p_teleport)
 ```
