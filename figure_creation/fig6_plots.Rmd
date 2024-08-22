@@ -198,6 +198,7 @@ data_plot <- ggplot(df_merge_drop, aes(x=Age, y=NARA, color = Age))+
   theme(plot.title = element_text(hjust = 0.5))+
   theme(legend.position = 'none')
 data_plot
+#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig6_nara.svg", height = 5, width = 5, plot=p_ct)
 ```
 ```{r}
 #df_merge_drop <- select(df_merge, c('Participant','Age','NARA'))
@@ -238,5 +239,5 @@ rain_nara <-ggplot(df_merge_drop, aes(x = factor(Age), y=NARA, fill=Age)) +
     position = position_jitter(seed = 1, width = .12)
   ) +scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
 rain_nara
-#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_ct.svg", height = 5, width = 5, plot=p_ct)
+#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig6_rain_nara.svg", height = 5, width = 5, plot=p_ct)
 ```
