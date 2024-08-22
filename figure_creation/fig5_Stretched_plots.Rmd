@@ -31,6 +31,8 @@ library(lme4)
 library(lmerTest)
 #install.packages('emmeans')
 library('emmeans')
+library(grid)
+library(gridExtra)
 ```
 
 ```{r reading data, include=FALSE}
@@ -280,18 +282,25 @@ oa_b3_targets$Block_num <- as.factor(3)
 oa_test_allblocks_targets <- rbind(oa_b1_targets, oa_b2_targets, oa_b3_targets)
 #oa_allblocks_targets <- distinct(oa_test_allblocks_targets)
 allblocks_targets <- rbind(ya_test_allblocks_targets, oa_test_allblocks_targets)
+
+pseudonym_map <- c("Automobile shop" = 'T1', "Police station "= 'T2', "Fire Station"= 'T3', "Bank"= 'T4', "Pawn Shop"= 'T5', "Pizzeria"= 'T6', "Quattroki Restaurant"= 'T7', "High School"= 'T8')
+
+# Apply the mapping to the data frame
+allblocks_targets <- allblocks_targets %>%
+  mutate(Target_Name = recode(Target_Name, !!!pseudonym_map))
 ```
 
 ```{r ct, fig.height = 5, fig.width = 15, fig.align = "center"}
 #Data.summary for Total_Time for all blocks
 # Total Time
+  
 p_ct <- ggplot(allblocks_targets, aes(x=Block_num, y=Total_Time_m, color=Age)) + 
   scale_color_manual(values=c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
-  geom_point() + 
-  geom_line(mapping = aes(group = Age, color = Age)) + 
+  geom_point(size = 3) + 
+  geom_line(mapping = aes(group = Age, color = Age),   size = 1.5) + 
   geom_errorbar(allblocks_targets, mapping = aes(x=Block_num, ymin=Total_Time_m-Total_Time_se, 
                     ymax=Total_Time_m+Total_Time_se, group = Age, color = Age), 
-                width=0.1, alpha=0.7)+
+                width=0.2, size=1)+
   facet_grid(. ~ Target_Name) + 
   stat_smooth(method = "lm") +
   theme_classic() +
@@ -305,7 +314,8 @@ p_ct <- ggplot(allblocks_targets, aes(x=Block_num, y=Total_Time_m, color=Age)) +
     axis.text.x = element_text(size = 20),
     axis.text.y = element_text(size = 20),
     axis.title.y = element_text(size = 20),
-    axis.title.x = element_text(size = 20)
+    axis.title.x = element_text(size = 20),
+    strip.text = element_text(size = 20)
   ) +
   panel_border()
 p_ct
@@ -317,11 +327,11 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 ```{r orict, fig.height = 5, fig.width = 10, fig.align = "center"}
 p_orict <- ggplot(allblocks_targets, aes(x=Block_num, y=Orientation_Time_m, color=Age)) + 
   scale_color_manual(values=c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
-  geom_point() + 
+  geom_point(size = 3) + 
   geom_line(mapping = aes(group = Age, color = Age)) + 
   geom_errorbar(allblocks_targets, mapping = aes(x=Block_num, ymin=Orientation_Time_m-Orientation_Time_se, 
                     ymax=Orientation_Time_m+Orientation_Time_se, group = Age, color = Age), 
-                width=0.1, alpha=0.7)+
+                width=0.2, size=1)+
   facet_grid(. ~ Target_Name) + 
   stat_smooth(method = "lm") +
   theme_classic() +
@@ -335,7 +345,8 @@ p_orict <- ggplot(allblocks_targets, aes(x=Block_num, y=Orientation_Time_m, colo
     axis.text.x = element_text(size = 20),
     axis.text.y = element_text(size = 20),
     axis.title.y = element_text(size = 20),
-    axis.title.x = element_text(size = 20)
+    axis.title.x = element_text(size = 20),
+    strip.text = element_text(size = 20)
   ) +
   panel_border()
 p_orict
@@ -349,11 +360,11 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 
 p_navct <- ggplot(allblocks_targets, aes(x=Block_num, y=Navigation_Time_m, color=Age)) + 
   scale_color_manual(values=c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
-  geom_point() + 
+  geom_point(size = 3) + 
   geom_line(mapping = aes(group = Age, color = Age)) + 
   geom_errorbar(allblocks_targets, mapping = aes(x=Block_num, ymin=Navigation_Time_m-Navigation_Time_se, 
                     ymax=Navigation_Time_m+Navigation_Time_se, group = Age, color = Age), 
-                width=0.1, alpha=0.7)+
+                width=0.2, size=1)+
   facet_grid(. ~ Target_Name) + 
   stat_smooth(method = "lm") +
   theme_classic() +
@@ -367,7 +378,8 @@ p_navct <- ggplot(allblocks_targets, aes(x=Block_num, y=Navigation_Time_m, color
     axis.text.x = element_text(size = 20),
     axis.text.y = element_text(size = 20),
     axis.title.y = element_text(size = 20),
-    axis.title.x = element_text(size = 20)
+    axis.title.x = element_text(size = 20),
+    strip.text = element_text(size = 20)
   ) +
   panel_border()
 p_navct
@@ -379,11 +391,11 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 ```{r dt, fig.height = 5, fig.width = 10, fig.align = "center"}
 p_dt <- ggplot(allblocks_targets, aes(x=Block_num, y=Distance_m, color=Age)) + 
   scale_color_manual(values=c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
-  geom_point() + 
+  geom_point(size =3) + 
   geom_line(mapping = aes(group = Age, color = Age)) + 
   geom_errorbar(allblocks_targets, mapping = aes(x=Block_num, ymin=Distance_m-Distance_se, 
                     ymax=Distance_m+Distance_se, group = Age, color = Age), 
-                width=0.1, alpha=0.7)+
+                width=0.2, size=1)+
   facet_grid(. ~ Target_Name) + 
   stat_smooth(method = "lm") +
   theme_classic() +
@@ -397,7 +409,8 @@ p_dt <- ggplot(allblocks_targets, aes(x=Block_num, y=Distance_m, color=Age)) +
     axis.text.x = element_text(size = 20),
     axis.text.y = element_text(size = 20),
     axis.title.y = element_text(size = 20),
-    axis.title.x = element_text(size = 20)
+    axis.title.x = element_text(size = 20),
+    strip.text = element_text(size = 20)
   ) +
   panel_border()
 p_dt
@@ -411,11 +424,11 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 
 p_speed <- ggplot(allblocks_targets, aes(x=Block_num, y=Speed_m, color=Age)) + 
   scale_color_manual(values=c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
-  geom_point() + 
+  geom_point(size =3) + 
   geom_line(mapping = aes(group = Age, color = Age)) + 
   geom_errorbar(allblocks_targets, mapping = aes(x=Block_num, ymin=Speed_m-Speed_se, 
                     ymax=Speed_m+Speed_se, group = Age, color = Age), 
-                width=0.1, alpha=0.7)+
+                width=0.2, size=1)+
   facet_grid(. ~ Target_Name) + 
   stat_smooth(method = "lm") +
   theme_classic() +
@@ -429,7 +442,8 @@ p_speed <- ggplot(allblocks_targets, aes(x=Block_num, y=Speed_m, color=Age)) +
     axis.text.x = element_text(size = 20),
     axis.text.y = element_text(size = 20),
     axis.title.y = element_text(size = 20),
-    axis.title.x = element_text(size = 20)
+    axis.title.x = element_text(size = 20),
+    strip.text = element_text(size = 20)
   ) +
   panel_border()
 p_speed
@@ -443,11 +457,11 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 
 p_dwell <- ggplot(allblocks_targets, aes(x=Block_num, y=Mean_Dwell_m, color=Age)) + 
   scale_color_manual(values=c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
-  geom_point() + 
+  geom_point(size = 3) + 
   geom_line(mapping = aes(group = Age, color = Age)) + 
   geom_errorbar(allblocks_targets, mapping = aes(x=Block_num, ymin=Mean_Dwell_m-Mean_Dwell_se, 
                     ymax=Mean_Dwell_m+Mean_Dwell_se, group = Age, color = Age), 
-                width=0.1, alpha=0.7)+
+                width=0.2, size=1)+
   facet_grid(. ~ Target_Name) + 
   stat_smooth(method = "lm") +
   theme_classic() +
@@ -461,7 +475,8 @@ p_dwell <- ggplot(allblocks_targets, aes(x=Block_num, y=Mean_Dwell_m, color=Age)
     axis.text.x = element_text(size = 20),
     axis.text.y = element_text(size = 20),
     axis.title.y = element_text(size = 20),
-    axis.title.x = element_text(size = 20)
+    axis.title.x = element_text(size = 20),
+    strip.text = element_text(size = 20)
   ) +
   panel_border()
 p_dwell
@@ -473,11 +488,11 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 ```{r teleport, fig.height = 5, fig.width = 10, fig.align = "center"}
 p_teleport <- ggplot(allblocks_targets, aes(x=Block_num, y=Teleportations_m, color=Age)) + 
   scale_color_manual(values=c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
-  geom_point() + 
+  geom_point(size = 3) + 
   geom_line(mapping = aes(group = Age, color = Age)) + 
   geom_errorbar(allblocks_targets, mapping = aes(x=Block_num, ymin=Teleportations_m-Teleportations_se, 
                     ymax=Teleportations_m+Teleportations_se, group = Age, color = Age), 
-                width=0.1, alpha=0.7)+
+                width=0.2, size=1)+
   facet_grid(. ~ Target_Name) + 
   stat_smooth(method = "lm") +
   theme_classic() +
@@ -491,7 +506,8 @@ p_teleport <- ggplot(allblocks_targets, aes(x=Block_num, y=Teleportations_m, col
     axis.text.x = element_text(size = 20),
     axis.text.y = element_text(size = 20),
     axis.title.y = element_text(size = 20),
-    axis.title.x = element_text(size = 20)
+    axis.title.x = element_text(size = 20),
+    strip.text = element_text(size = 20)
   ) +
   panel_border()
 p_teleport
@@ -500,6 +516,7 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 
 ```{r comp, fig.height = 25, fig.width = 15, fig.align = "center"}
 p<-grid.arrange(p_speed, p_ct, p_orict, p_navct, p_dt, p_dwell, p_teleport, ncol=1, nrow=7)
+p
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/composite_fig5.svg", height = 25, width =15, plot=p)
 
 ```
