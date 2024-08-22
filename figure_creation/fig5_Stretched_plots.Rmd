@@ -276,91 +276,42 @@ oa_b3_targets <- oa_b3 %>%
 oa_b3_targets <- oa_b3_targets %>% mutate(Age = 'OA')
 oa_b3_targets$Block_num <- as.factor(3)
 
+
 oa_test_allblocks_targets <- rbind(oa_b1_targets, oa_b2_targets, oa_b3_targets)
 #oa_allblocks_targets <- distinct(oa_test_allblocks_targets)
 allblocks_targets <- rbind(ya_test_allblocks_targets, oa_test_allblocks_targets)
 ```
 
+```{r ct, fig.height = 5, fig.width = 15, fig.align = "center"}
+#Data.summary for Total_Time for all blocks
 # Total Time
-
-```{r ct, fig.height = 5, fig.width = 10, fig.align = "center"}
-#Data.summary for Total_Time for all blocks
-allblocks_targets.summary <- ya_test_allblocks_targets %>%
-  group_by(Block_num) %>%
-  summarise(
-    se = std.error(Total_Time_m),
-    Total_Time = mean(Total_Time_m)
-  )
-#Total_time by Target_Name
-ya_p_ct <- ggplot(allblocks_targets, aes(x=Block_num, y=Total_Time_m, shape=Target_Name))+
-  geom_line(ya_test_allblocks_targets, mapping = aes(x= Block_num, y = Total_Time_m,
-                                             group = Target_Name, 
-                                             color = Target_Name), alpha = 0.7)+
-  scale_color_manual(values = c("#404BA4", "#734BB7", "#9B4BBE", "#BC58B0", "#D5709D", "#E78B88", "#F7A779", "#FEC869"))+
-  scale_fill_manual(values = c("#404BA4", "#734BB7", "#9B4BBE", "#BC58B0", "#D5709D", "#E78B88", "#F7A779", "#FEC869"))+
-  scale_shape_manual(values= c(7, 8, 12, 21, 22, 23, 24, 25))+
-  geom_point(ya_test_allblocks_targets, mapping = aes(x= Block_num, 
-                                              y = Total_Time_m, 
-                                              group = Target_Name, 
-                                              color = Target_Name,
-                                              fill = Target_Name),
-             alpha = 0.7, size = 3)+
-  geom_errorbar(ya_test_allblocks_targets, mapping = aes(x=Block_num, ymin=Total_Time_m-Total_Time_se, 
-                    ymax=Total_Time_m+Total_Time_se, group = Target_Name, color = Target_Name), 
+p_ct <- ggplot(allblocks_targets, aes(x=Block_num, y=Total_Time_m, color=Age)) + 
+  scale_color_manual(values=c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
+  geom_point() + 
+  geom_line(mapping = aes(group = Age, color = Age)) + 
+  geom_errorbar(allblocks_targets, mapping = aes(x=Block_num, ymin=Total_Time_m-Total_Time_se, 
+                    ymax=Total_Time_m+Total_Time_se, group = Age, color = Age), 
                 width=0.1, alpha=0.7)+
-  labs(color= "Target_Name", y="Total Time (s)", x = "Block Number")+
-  theme_classic()+
-  ylim(0,250)+
-  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
-  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
-  theme(plot.title = element_text(hjust = 0.5))+
-  theme(legend.position = "none")+
-  theme(axis.text.x = element_text(size=20))+
-  theme(axis.text.y = element_text(size=20))+
-  theme(axis.title.y = element_text(size=20))+
-  theme(axis.title.x = element_text(size=20))
+  facet_grid(. ~ Target_Name) + 
+  stat_smooth(method = "lm") +
+  theme_classic() +
+  labs(color= "Age", y="Total Time (s)", x = "Block Number") +
+  ylim(0, 250) +
+  theme(
+    axis.line = element_line(linewidth = .5, colour = "#242526"),
+    axis.ticks = element_line(linewidth = .2, colour = "#242526"),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none",
+    axis.text.x = element_text(size = 20),
+    axis.text.y = element_text(size = 20),
+    axis.title.y = element_text(size = 20),
+    axis.title.x = element_text(size = 20)
+  ) +
+  panel_border()
+p_ct
 
-#Data.summary for Total_Time for all blocks
-allblocks_targets.summary <- oa_test_allblocks_targets %>%
-  group_by(Block_num) %>%
-  summarise(
-    se = std.error(Total_Time_m),
-    Total_Time = mean(Total_Time_m)
-  )
-#Total_time by Target_Name
-oa_p_ct <- ggplot(allblocks_targets, aes(x=Block_num, y=Total_Time_m, shape=Target_Name))+
-  geom_line(oa_test_allblocks_targets, mapping = aes(x= Block_num, y = Total_Time_m,
-                                             group = Target_Name, 
-                                             color = Target_Name), alpha = 0.7)+
-  scale_color_manual(values = c("#404BA4", "#734BB7", "#9B4BBE", "#BC58B0", "#D5709D", "#E78B88", "#F7A779", "#FEC869"))+
-  scale_fill_manual(values = c("#404BA4", "#734BB7", "#9B4BBE", "#BC58B0", "#D5709D", "#E78B88", "#F7A779", "#FEC869"))+
-  scale_shape_manual(values= c(7, 8, 12, 21, 22, 23, 24, 25))+
-  geom_point(oa_test_allblocks_targets, mapping = aes(x= Block_num, 
-                                              y = Total_Time_m, 
-                                              group = Target_Name, 
-                                              color = Target_Name,
-                                              fill = Target_Name),
-             alpha = 0.7, size = 3)+
-  geom_errorbar(oa_test_allblocks_targets, mapping = aes(x=Block_num, ymin=Total_Time_m-Total_Time_se, 
-                    ymax=Total_Time_m+Total_Time_se, group = Target_Name, color = Target_Name), 
-                width=0.1, alpha=0.7)+
-  labs(color= "Target_Name", y="Total Time (s)", x = "Block Number")+
-  theme_classic()+
-  ylim(0,250)+
-  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
-  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
-  theme(plot.title = element_text(hjust = 0.5))+
-  theme(legend.position = "none")+
-  theme(axis.text.x = element_text(size=20))+
-  theme(axis.text.y = element_text(size=20))+
-  theme(axis.title.y = element_text(size=20))+
-  theme(axis.title.x = element_text(size=20))
-
-p_ct<-grid.arrange(ya_p_ct, oa_p_ct, ncol=2, nrow=1)
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig5_ct.svg", 
-       height = 5, width = 10, plot=p_ct)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig5_ct.svg", height = 5, width = 10, plot=p_ct)
 ```
-
 # Orientation Time
 
 ```{r orict, fig.height = 5, fig.width = 10, fig.align = "center"}
