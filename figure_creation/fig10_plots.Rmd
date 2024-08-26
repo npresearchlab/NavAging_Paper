@@ -191,8 +191,8 @@ ya_corr <- cor.test(ya_data$NARA, ya_data$Distance,
 ya_corr
 p_dt <- ggplot(df_final, aes(x=Distance, y=NARA, color = Cohort, fill = Cohort))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
-  scale_fill_manual(values =c(  'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
+  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
+  scale_fill_manual(values =c(  'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", y="NARA Score", x = "\u0394 Distance Traveled (VR Units)")+
@@ -211,13 +211,13 @@ p_dt <- ggplot(df_final, aes(x=Distance, y=NARA, color = Cohort, fill = Cohort))
 # add the folloing to shift right:  label.x.npc = "right", label.y.npc = "top",hjust = 1
 p_dt
 
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_dt.svg", height = 5, width = 5, plot=p_dt)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig10_dt.svg", height = 5, width = 5, plot=p_dt)
 ```
 ```{r}
 p_ct <- ggplot(df_final, aes(y=NARA, x=Total_Time, color = Cohort, fill = Cohort))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
-  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
+  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="\u0394 Total Time", y="NARA Score")+
@@ -242,14 +242,16 @@ oa_corr <- cor.test(oa_data$NARA, oa_data$Total_Time,
 oa_corr
 ya_corr <- cor.test(ya_data$NARA, ya_data$Total_Time, 
                     method = "pearson")
+
+
 ya_corr
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_ct.svg", height = 5, width = 5, plot=p_ct)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig10_ct.svg", height = 5, width = 5, plot=p_ct)
 ```
 ```{r}
 p_orict <- ggplot(df_final, aes(y=NARA, x=Orientation_Time, color = Cohort, fill = Cohort))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
-  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
+  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="\u0394 Orientation Time", y="NARA Score")+
@@ -274,13 +276,13 @@ oa_corr
 ya_corr <- cor.test(ya_data$NARA, ya_data$Orientation_Time, 
                     method = "pearson")
 ya_corr
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_orict.svg", height = 5, width = 5, plot=p_orict)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig10_orict.svg", height = 5, width = 5, plot=p_orict)
 ```
 ```{r}
 p_navct <- ggplot(df_final, aes(y=NARA, x=Navigation_Time,  color = Cohort, fill = Cohort))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
-  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
+  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="\u0394 Navigation Time", y="NARA Score")+
@@ -305,13 +307,13 @@ oa_corr
 ya_corr <- cor.test(ya_data$NARA, ya_data$Navigation_Time, 
                     method = "pearson")
 ya_corr
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_navct.svg", height = 5, width = 5, plot=p_navct)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig10_navct.svg", height = 5, width = 5, plot=p_navct)
 ```
 ```{r}
 p_speed <- ggplot(df_final, aes(y=NARA, x=Speed,  color = Cohort, fill = Cohort))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
-  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
+  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="\u0394 Speed", y="NARA Score")+
@@ -337,13 +339,13 @@ oa_corr
 ya_corr <- cor.test(ya_data$NARA, ya_data$Speed, 
                     method = "pearson")
 ya_corr
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_speed.svg", height = 5, width = 5, plot=p_speed)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig10_speed.svg", height = 5, width = 5, plot=p_speed)
 ```
 ```{r}
 p_teleport <- ggplot(df_final, aes(y=NARA, x=Teleportations,  color = Cohort, fill = Cohort))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
-  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
+  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
+  scale_fill_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="\u0394 Teleportations", y="NARA Score")+
@@ -370,13 +372,13 @@ ya_corr <- cor.test(ya_data$NARA, ya_data$Teleportations,
                     method = "pearson")
 ya_corr
 
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_teleport.svg", height = 5, width = 5, plot=p_teleport)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig10_teleport.svg", height = 5, width = 5, plot=p_teleport)
 ```
 ```{r}
 p_dwell <- ggplot(df_final, aes(y=NARA, x=Mean_Dwell, color = Cohort, fill = Cohort))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
-  scale_fill_manual(values =c('ya' ='#FF9FAF', 'oa_low' = '#9dff00', 'oa_high' = '#5E7AFA'))+
+  scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
+  scale_fill_manual(values =c('ya' ='#FF9FAF', 'oa_low' = '#5E7AFA', 'oa_high' = '#b512e6'))+
   #stat_summary(fun.data = ) + 
   stat_smooth(method='lm', formula= y~x)+
   labs(color= "Participant", x="\u0394 Mean Dwell Time (s)", y="NARA Score")+
@@ -401,12 +403,12 @@ oa_corr
 ya_corr <- cor.test(ya_data$NARA, ya_data$Mean_Dwell, 
                     method = "pearson")
 ya_corr
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_dwell.svg", height = 5, width = 5, plot=p_dwell)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig10_dwell.svg", height = 5, width = 5, plot=p_dwell)
 ```
 
 ```{r fig8, fig.height = 16, fig.width = 20, fig.align = "center"}
 p<-grid.arrange(p_speed, p_ct, p_orict, p_navct, p_dt, p_dwell, p_teleport, ncol=4, nrow=3)
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/composite_fig7.svg", height = 16, width =20, plot=p)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/composite_fig10.svg", height = 16, width =20, plot=p)
 
 ```
 
