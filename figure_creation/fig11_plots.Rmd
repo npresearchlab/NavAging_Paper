@@ -16,7 +16,8 @@ knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
 #install.packages("ggpubr", "broom", "AICcmodavg")
 ```
 
-```{r}
+```{r loading libraries, include=FALSE}
+# This code chunk loads various libraries necessary to complete the data analysis and produce graphics
 library(readr)
 library(dplyr)
 library(tidyverse)
@@ -24,10 +25,7 @@ library(ggplot2)
 #library(ggpubr)
 #library(broom)
 #library(AICcmodavg)
-```
 
-```{r loading libraries, include=FALSE}
-# This code chunk loads various libraries necessary to complete the data analysis and produce graphics
 library(tidyverse)
 library(stringr)
 library(ez)
@@ -55,10 +53,9 @@ library(gghalves)
 library(grid)
 library(gridExtra)
 ```
-```
 
 ```{r}
-#This loads the data file as the variable "data"
+#This loads the data file as the variable "non_nav_data_data"
 non_nav_data <- read.csv('/Users/emilycui/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/data_analysis/non_nav_data.csv')
 # Tidying up the data
 names(non_nav_data)[1] <- 'Participant'
@@ -91,7 +88,7 @@ ymaze_allo <- non_nav_data %>% filter(ymaze_class == 'allo')
 p_ymazeclass <- ggplot(non_nav_data, aes(x=ymaze_class, y=NARA, fill=ymaze_class)) +
  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
-  ylim(0,100)+
+  ylim(0,101)+
   labs(color= "Y-Maze Characterization", y="NARA Score (%)", x="")+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
@@ -119,22 +116,13 @@ p_ymazeclass <- ggplot(non_nav_data, aes(x=ymaze_class, y=NARA, fill=ymaze_class
     alpha = 0.5
   )+
   geom_half_point(
-    aes(color = Age),
+    aes(color = ymaze_class),
     side = 'l',
     range_scale = .4,
     alpha = .3,
     position = position_jitter(seed = 1, width = .12)
   ) + scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
 p_ymazeclass
-  #geom_point(size=4)+
-  #stat_summary(fun.args = list(mult=1), 
-                #geom="crossbar", 
-                #width=0.2, 
-                #color="black")+
-  #labs(color= "Participant", y="NARA", x="Age-Reference Frame")+
-  #scale_x_discrete("Y-Maze Class",limits = c("ego","allo"))+
-  #scale_color_manual(values =c( 'YA' ='#FF9FAF', 'OA-low' = '#9dff00', 'OA-high' = '#5E7AFA'))+
-  #ggtitle("X")
 
 #ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/ymaze_class_nara.svg", height = 5, width = 5, plot=NARA_ymaze_class)
 ```
