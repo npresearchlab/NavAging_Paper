@@ -125,14 +125,16 @@ p_ymazeclass <- ggplot(non_nav_data, aes(x=ymaze_class, y=NARA, fill=ymaze_class
 p_ymazeclass
 
 #ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/ymaze_class_nara.svg", height = 5, width = 5, plot=NARA_ymaze_class)
+
+#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_speed.svg", height = 5, width = 5, plot=p_speed)
 ```
 
 ```{r}
-p_speed <- ggplot(mean_data, aes(x = factor(Age), y=Speed, fill=Age)) +
-  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+p_ymazeclass_oa <- ggplot(non_nav_data, aes(x=ymaze_class, y=NARA, fill=ymaze_class)) +
+ scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
   scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
-  ylim(0,30)+
-  labs(color= "Age", y="Mean Speed (VR Unit/s)", x="")+
+  ylim(0,101)+
+  labs(color= "Y-Maze Characterization", y="NARA Score (%)", x="")+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
@@ -159,31 +161,17 @@ p_speed <- ggplot(mean_data, aes(x = factor(Age), y=Speed, fill=Age)) +
     alpha = 0.5
   )+
   geom_half_point(
-    aes(color = Age),
+    aes(color = ymaze_class),
     side = 'l',
     range_scale = .4,
     alpha = .3,
     position = position_jitter(seed = 1, width = .12)
   ) + scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
-p_speed
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_speed.svg", height = 5, width = 5, plot=p_speed)
-```
+p_ymazeclass_oa
 
-```{r}
-NARA_ymaze_oa <- ggplot(non_nav_data, aes(x=ymaze_class_oa_presence, y=NARA, color=nara_class))+
- geom_point(size=4)+
-  stat_summary(fun.args = list(mult=1), 
-                geom="crossbar", 
-                width=0.2, 
-                color="black")+
-  labs(color= "Participant", y="NARA", x="Age-Reference Frame")+
-  scale_x_discrete("Age-YMaze Class OA",limits = c("YA","OA-allo","OA-ego"))+
-  scale_color_manual(values =c( 'YA' ='#FF9FAF', 'OA-low' = '#9dff00', 'OA-high' = '#5E7AFA'))+
-  ggtitle("X")
+#ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/ymaze_class_nara.svg", height = 5, width = 5, plot=NARA_ymaze_class)
 
-NARA_ymaze_oa 
-
-#ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/ymaze_class_oa_nara.svg", height = 5, width = 5, plot=NARA_ymaze_oa)
+#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_speed.svg", height = 5, width = 5, plot=p_speed)
 ```
 
 ```{r}
