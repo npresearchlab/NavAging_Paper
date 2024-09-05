@@ -26,6 +26,37 @@ library(ggplot2)
 #library(AICcmodavg)
 ```
 
+```{r loading libraries, include=FALSE}
+# This code chunk loads various libraries necessary to complete the data analysis and produce graphics
+library(tidyverse)
+library(stringr)
+library(ez)
+library(cowplot)
+library("readxl")
+library("ggcorrplot")
+library(dplyr)
+library(ltm)
+library(plotrix)
+library("viridis")
+library("paletteer")
+library(ggpubr)
+library(rstatix)
+library(lme4)
+#install.packages("lmerTest")
+library(lmerTest)
+#install.packages('emmeans')
+library('emmeans')
+#install.packages("svglite")
+library(svglite)
+library(tidyquant)
+library(ggdist)
+library(ggthemes)
+library(gghalves)
+library(grid)
+library(gridExtra)
+```
+```
+
 ```{r}
 #This loads the data file as the variable "data"
 non_nav_data <- read.csv('/Users/emilycui/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/data_analysis/non_nav_data.csv')
