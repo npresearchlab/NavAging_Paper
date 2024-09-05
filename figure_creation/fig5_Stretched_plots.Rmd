@@ -293,7 +293,7 @@ allblocks_targets <- allblocks_targets %>%
 ```{r ct, fig.height = 5, fig.width = 15, fig.align = "center"}
 #Data.summary for Total_Time for all blocks
 # Total Time
-  
+
 p_ct <- ggplot(allblocks_targets, aes(x=Block_num, y=Total_Time_m, color=Age)) + 
   scale_color_manual(values=c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
   geom_point(size = 3) + 
