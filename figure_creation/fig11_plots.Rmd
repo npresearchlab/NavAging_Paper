@@ -171,7 +171,7 @@ p_ymazeclass_oa <- ggplot(non_nav_data, aes(x=ymaze_class_oa_presence, y=NARA, f
   ) + scale_color_manual(values =c('#e68eb8','#e1aa67','#FF9FAF'))
 p_ymazeclass_oa
 
-#ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/ymaze_class_nara.svg", height = 5, width = 5, plot=NARA_ymaze_class)
+ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/fig11_ymazeclass_oa.svg", height = 5, width = 5, plot=p_ymazeclass_oa)
 
 #ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_speed.svg", height = 5, width = 5, plot=p_speed)
 ```
@@ -216,6 +216,8 @@ p_ymazeclass_ego <- ggplot(non_nav_data, aes(x=ymaze_class_ego_presence, y=NARA,
     position = position_jitter(seed = 1, width = .12)
   ) + scale_color_manual(values =c('#ba3175','#e1aa67','#feb964'))
 p_ymazeclass_ego
+
+ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/fig11_ymazeclass_ego.svg", height = 5, width = 5, plot=p_ymazeclass_ego)
 ```
 
 ```{r}
