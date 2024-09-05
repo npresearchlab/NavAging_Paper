@@ -1,0 +1,195 @@
+---
+title: "Figure 11 Code"
+output: html_document
+date: "2024-08-05"
+---
+
+```{r global-options, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r}
+#install.packages("readr")
+#install.packages("dplyr")
+#install.packages("tidyverse")
+#install.packages("ggplot2")
+#install.packages("ggpubr", "broom", "AICcmodavg")
+```
+
+```{r}
+library(readr)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+#library(ggpubr)
+#library(broom)
+#library(AICcmodavg)
+```
+
+```{r}
+#This loads the data file as the variable "data"
+non_nav_data <- read.csv('/Users/emilycui/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/data_analysis/non_nav_data.csv')
+# Tidying up the data
+names(non_nav_data)[1] <- 'Participant'
+names(non_nav_data)[2] <- 'Age'
+names(non_nav_data)[3] <- 'PSQI'
+names(non_nav_data)[4] <- 'SSS_Pre'
+names(non_nav_data)[5] <- 'SSS_Post'
+names(non_nav_data)[6] <- 'SBSOD'
+names(non_nav_data)[7] <- 'MiniCog'
+names(non_nav_data)[8] <- 'TrailsA'
+names(non_nav_data)[9] <- 'TrailsB'
+names(non_nav_data)[10] <- 'SetShifting'
+names(non_nav_data)[11] <- 'CorsiBlocks'
+names(non_nav_data)[12] <- 'SSQ_Pre'
+names(non_nav_data)[13] <- 'SSQ_Post'
+names(non_nav_data)[14] <- 'NARA'
+non_nav_data <- select(non_nav_data, -Age) 
+
+#Deleting the participants who did not complete the Y-Maze (BNC1-20)
+non_nav_data <- non_nav_data[-c(1:20),]
+```
+
+```{r}
+# Filtering Ego Pres Data
+ymaze_ego <- non_nav_data %>% filter(ymaze_class == 'ego')
+ymaze_allo <- non_nav_data %>% filter(ymaze_class == 'allo')
+```
+
+```{r}
+p_ymazeclass <- ggplot(non_nav_data, aes(x=ymaze_class, y=NARA, fill=ymaze_class)) +
+ scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
+  ylim(0,100)+
+  labs(color= "Y-Maze Characterization", y="NARA Score (%)", x="")+
+  theme_classic()+
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = "none")+
+  theme(axis.text.x = element_text(size=20))+
+  theme(axis.text.y = element_text(size=20))+
+  theme(axis.title.y = element_text(size=20))+
+  # add half-violin from {ggdist} package
+  stat_halfeye(
+    # adjust bandwidth
+    adjust = 0.5,
+    # move to the right
+    justification = -0.2,
+    # remove the slub interval
+    .width = 0,
+    point_colour = NA,
+    scale = 0.5 ##  <(**new parameter**)
+  ) +
+  geom_boxplot(
+    width = 0.12,
+    # removing outliers
+    outlier.color = NA,
+    alpha = 0.5
+  )+
+  geom_half_point(
+    aes(color = Age),
+    side = 'l',
+    range_scale = .4,
+    alpha = .3,
+    position = position_jitter(seed = 1, width = .12)
+  ) + scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
+p_ymazeclass
+  #geom_point(size=4)+
+  #stat_summary(fun.args = list(mult=1), 
+                #geom="crossbar", 
+                #width=0.2, 
+                #color="black")+
+  #labs(color= "Participant", y="NARA", x="Age-Reference Frame")+
+  #scale_x_discrete("Y-Maze Class",limits = c("ego","allo"))+
+  #scale_color_manual(values =c( 'YA' ='#FF9FAF', 'OA-low' = '#9dff00', 'OA-high' = '#5E7AFA'))+
+  #ggtitle("X")
+
+#ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/ymaze_class_nara.svg", height = 5, width = 5, plot=NARA_ymaze_class)
+```
+
+```{r}
+p_speed <- ggplot(mean_data, aes(x = factor(Age), y=Speed, fill=Age)) +
+  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
+  ylim(0,30)+
+  labs(color= "Age", y="Mean Speed (VR Unit/s)", x="")+
+  theme_classic()+
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = "none")+
+  theme(axis.text.x = element_text(size=20))+
+  theme(axis.text.y = element_text(size=20))+
+  theme(axis.title.y = element_text(size=20))+
+  # add half-violin from {ggdist} package
+  stat_halfeye(
+    # adjust bandwidth
+    adjust = 0.5,
+    # move to the right
+    justification = -0.2,
+    # remove the slub interval
+    .width = 0,
+    point_colour = NA,
+    scale = 0.5 ##  <(**new parameter**)
+  ) +
+  geom_boxplot(
+    width = 0.12,
+    # removing outliers
+    outlier.color = NA,
+    alpha = 0.5
+  )+
+  geom_half_point(
+    aes(color = Age),
+    side = 'l',
+    range_scale = .4,
+    alpha = .3,
+    position = position_jitter(seed = 1, width = .12)
+  ) + scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
+p_speed
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_speed.svg", height = 5, width = 5, plot=p_speed)
+```
+
+```{r}
+NARA_ymaze_oa <- ggplot(non_nav_data, aes(x=ymaze_class_oa_presence, y=NARA, color=nara_class))+
+ geom_point(size=4)+
+  stat_summary(fun.args = list(mult=1), 
+                geom="crossbar", 
+                width=0.2, 
+                color="black")+
+  labs(color= "Participant", y="NARA", x="Age-Reference Frame")+
+  scale_x_discrete("Age-YMaze Class OA",limits = c("YA","OA-allo","OA-ego"))+
+  scale_color_manual(values =c( 'YA' ='#FF9FAF', 'OA-low' = '#9dff00', 'OA-high' = '#5E7AFA'))+
+  ggtitle("X")
+
+NARA_ymaze_oa 
+
+#ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/ymaze_class_oa_nara.svg", height = 5, width = 5, plot=NARA_ymaze_oa)
+```
+
+```{r}
+NARA_ymaze_class_age <- ggplot(non_nav_data, aes(x=ymaze_class_age_presence, y=NARA, color=nara_class))+
+ geom_point(size=4)+
+  stat_summary(fun.args = list(mult=1), 
+                geom="crossbar", 
+                width=0.2, 
+                color="black")+
+  labs(color= "Participant", y="NARA", x="Age-Reference Frame")+
+  scale_x_discrete("Age-YMaze Class",limits = c("YA-allo","YA-ego","OA-allo","OA-ego"))+
+  scale_color_manual(values =c( 'YA' ='#FF9FAF', 'OA-low' = '#9dff00', 'OA-high' = '#5E7AFA'))+
+  ggtitle("X")
+
+NARA_ymaze_class_age
+
+#ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/ymaze_class_age_nara.svg", height = 5, width = 5, plot=NARA_ymaze_class_age)
+```
+
+```{r}
+# T-Test for Ego vs. Allo NARA scores
+ttest_ymaze_class_nara <- t.test(ymaze_ego$NARA, ymaze_allo$NARA, p.adjust="none")
+
+ttest_ymaze_class_nara
+```
+
+
+
