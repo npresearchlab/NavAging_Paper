@@ -107,6 +107,11 @@ sapply(ya_nav_data, class)
 desired_order <- c("Automobile shop", "Police station ", "Fire Station", "Bank", "Pawn Shop", "Pizzeria", "Quattroki Restaurant", "High School")
 # Reorder the levels of Target_Name
 ya_nav_data$Target_Name <- factor(ya_nav_data$Target_Name, levels = desired_order)
+pseudonym_map <- c("Automobile shop" = 'T1', "Police station "= 'T2', "Fire Station"= 'T3', "Bank"= 'T4', "Pawn Shop"= 'T5', "Pizzeria"= 'T6', "Quattroki Restaurant"= 'T7', "High School"= 'T8')
+ 
+# Apply the mapping to the data frame
+ya_nav_data <- ya_nav_data%>%
+mutate(Target_Name = recode(Target_Name, !!!pseudonym_map))
 
 #This loads the data file as the variable "data"
 oa_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_merged_results.csv')
@@ -131,18 +136,58 @@ sapply(oa_nav_data, class)
 desired_order <- c("Automobile shop", "Police station ", "Fire Station", "Bank", "Pawn Shop", "Pizzeria", "Quattroki Restaurant", "High School")
 # Reorder the levels of Target_Name
 oa_nav_data$Target_Name <- factor(oa_nav_data$Target_Name, levels = desired_order)
-
+pseudonym_map <- c("Automobile shop" = 'T1', "Police station "= 'T2', "Fire Station"= 'T3', "Bank"= 'T4', "Pawn Shop"= 'T5', "Pizzeria"= 'T6', "Quattroki Restaurant"= 'T7', "High School"= 'T8')
+ 
+# Apply the mapping to the data frame
+oa_nav_data <- oa_nav_data %>%
+mutate(Target_Name = recode(Target_Name, !!!pseudonym_map))
 nav_data <- rbind(ya_nav_data, oa_nav_data)
+```
+
+```{r reading more data, include=FALSE}
+#This loads the data file as the variable "data"
+non_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/non_nav_data.csv')
+# Tidying up the data
+names(non_nav_data)[1] <- 'Participant'
+names(non_nav_data)[2] <- 'Age'
+names(non_nav_data)[3] <- 'PSQI'
+names(non_nav_data)[4] <- 'SSS_Pre'
+names(non_nav_data)[5] <- 'SSS_Post'
+names(non_nav_data)[6] <- 'SBSOD'
+names(non_nav_data)[7] <- 'MiniCog'
+names(non_nav_data)[8] <- 'TrailsA'
+names(non_nav_data)[9] <- 'TrailsB'
+names(non_nav_data)[10] <- 'SetShifting'
+names(non_nav_data)[11] <- 'CorsiBlocks'
+names(non_nav_data)[12] <- 'SSQ_Pre'
+names(non_nav_data)[13] <- 'SSQ_Post'
+names(non_nav_data)[14] <- 'NARA'
+```
+
+
+```{r organizing data, include=FALSE}
+b1 <- subset(nav_data, Block_num == 1)
+rownames(b1) <- NULL
+b2 <- subset(nav_data, Block_num == 2)
+rownames(b2) <- NULL 
+b3 <- subset(nav_data, Block_num == 3)
+rownames(b3) <- NULL 
+
+pseudonym_map <- c("Automobile shop" = 'T1', "Police station "= 'T2', "Fire Station"= 'T3', "Bank"= 'T4', "Pawn Shop"= 'T5', "Pizzeria"= 'T6', "Quattroki Restaurant"= 'T7', "High School"= 'T8')
+ 
+# Apply the mapping to the data frame
+nav_data <- nav_data %>%
+mutate(Target_Name = recode(Target_Name, !!!pseudonym_map))
 ```
 
 
 ```{r ya organizing data, include=FALSE}
 ya_b1 <- subset(ya_nav_data, Block_num == 1)
-rownames(ya_b1) <- NULL 
+rownames(ya_b1) <- NULL
 ya_b2 <- subset(ya_nav_data, Block_num == 2)
-rownames(ya_b2) <- NULL 
+rownames(ya_b2) <- NULL
 ya_b3 <- subset(ya_nav_data, Block_num == 3)
-rownames(ya_b3) <- NULL 
+rownames(ya_b3) <- NULL
 
 ya_b1$Target_Name <- factor(ya_b1$Target_Name, levels = desired_order)
 ya_b2$Target_Name <- factor(ya_b2$Target_Name, levels = desired_order)
@@ -166,7 +211,7 @@ ya_b1_targets <- ya_b1 %>%
             Teleportations_se = std.error(Teleportations))
 ya_b1_targets <- ya_b1_targets %>% mutate(Age = 'YA')
 ya_b1_targets$Block_num <- as.factor(1)
- ### USE THE CODE CHUNK ABOVE TO FIX
+### USE THE CODE CHUNK ABOVE TO FIX
 ya_b2_targets <- ya_b2 %>%
   group_by(Target_Name) %>%
   summarize(Total_Time_m = mean(Total_Time),
@@ -211,11 +256,11 @@ ya_test_allblocks_targets <- rbind(ya_b1_targets, ya_b2_targets, ya_b3_targets)
 
 ```{r oa organizing data, include=FALSE}
 oa_b1 <- subset(oa_nav_data, Block_num == 1)
-rownames(oa_b1) <- NULL 
+rownames(oa_b1) <- NULL
 oa_b2 <- subset(oa_nav_data, Block_num == 2)
-rownames(oa_b2) <- NULL 
+rownames(oa_b2) <- NULL
 oa_b3 <- subset(oa_nav_data, Block_num == 3)
-rownames(oa_b3) <- NULL 
+rownames(oa_b3) <- NULL
 
 
 oa_b1$Target_Name <- factor(oa_b1$Target_Name, levels = desired_order)
@@ -290,25 +335,64 @@ allblocks_targets <- allblocks_targets %>%
   mutate(Target_Name = recode(Target_Name, !!!pseudonym_map))
 ```
 
-```{r ct, fig.height = 5, fig.width = 15, fig.align = "center"}
+```{r ct, fig.height = 5, fig.width = 30, fig.align = "center"}
 #Data.summary for Total_Time for all blocks
 # Total Time
+oa_data_summary <- oa_nav_data %>%
+  group_by(Target_Name, Block_num) %>%
+  summarise(
+    se = std.error(Total_Time),
+    Total_Time = mean(Total_Time)
+  )
 
-p_ct <- ggplot(allblocks_targets, aes(x=Block_num, y=Total_Time_m, color=Age)) + 
-  scale_color_manual(values=c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
-  geom_point(size = 3) + 
-  geom_line(mapping = aes(group = Age, color = Age),   size = 1.5) + 
-  geom_errorbar(allblocks_targets, mapping = aes(x=Block_num, ymin=Total_Time_m-Total_Time_se, 
-                    ymax=Total_Time_m+Total_Time_se, group = Age, color = Age), 
-                width=0.2, size=1)+
-  facet_grid(. ~ Target_Name) + 
-  stat_smooth(method = "lm") +
+ya_data_summary <- ya_nav_data %>%
+  group_by(Target_Name, Block_num) %>%
+  summarise(
+    se = std.error(Total_Time),
+    Total_Time = mean(Total_Time)
+  )
+library(ggplot2)
+library(dplyr)
+
+# Assuming `nav_data` contains all participants, grouped by Target_Name, Age, and Block_num
+# We will use `oa_data_summary` and `ya_data_summary` for OA and YA summaries
+
+p_ct <- ggplot(nav_data, aes(x = Block_num, y = Total_Time, color = Age)) + 
+  scale_color_manual(values = c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
+  
+  # Facet by Target_Name (8 separate graphs)
+  facet_wrap(~ Target_Name, scales = "free_y", ncol = 8) + 
+  
+  # Individual participant lines (YA and OA)
+  geom_line(aes(group = Participant), alpha = 0.2) +
+  
+  # Individual participant points
+  geom_point(size = 2, alpha = 0.2) +
+  
+  # Summary line for YA
+  geom_line(data = ya_data_summary, aes(x = Block_num, y = Total_Time, group = 1), 
+            color = '#FF9FAF', size = 1.5) +
+  
+  # Error band (standard deviation) for YA
+  geom_ribbon(data = ya_data_summary, aes(x = Block_num, ymin = Total_Time - sd(Total_Time), 
+                                          ymax = Total_Time + sd(Total_Time)), 
+              alpha = 0.1, color = '#FF9FAF') +
+  
+  # Summary line for OA
+  geom_line(data = oa_data_summary, aes(x = Block_num, y = Total_Time, group = 1), 
+            color = '#5E7AFA', size = 1.5) +
+  stat_summary(data = oa_data_summary, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
+  
+  # Error band (standard deviation) for OA
+  #geom_ribbon(data = oa_data_summary, aes(x = Block_num, ymin = Total_Time - sd(Total_Time), ymax = Total_Time + sd(Total_Time)), alpha = 0.1, color = '#5E7AFA') +
+  
+  # Plot theme
   theme_classic() +
-  labs(color= "Age", y="Total Time (s)", x = "Block Number") +
+  labs(color = "Age", y = "Total Time (s)", x = "Block Number") +
   ylim(0, 250) +
   theme(
-    axis.line = element_line(linewidth = .5, colour = "#242526"),
-    axis.ticks = element_line(linewidth = .2, colour = "#242526"),
+    axis.line = element_line(linewidth = 0.5, colour = "#242526"),
+    axis.ticks = element_line(linewidth = 0.2, colour = "#242526"),
     plot.title = element_text(hjust = 0.5),
     legend.position = "none",
     axis.text.x = element_text(size = 20),
@@ -316,11 +400,11 @@ p_ct <- ggplot(allblocks_targets, aes(x=Block_num, y=Total_Time_m, color=Age)) +
     axis.title.y = element_text(size = 20),
     axis.title.x = element_text(size = 20),
     strip.text = element_text(size = 20)
-  ) +
-  panel_border()
+  )
+
 p_ct
 
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig5_ct.svg", height = 5, width = 10, plot=p_ct)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig5_ct.svg", height = 5, width = 30, plot=p_ct)
 ```
 # Orientation Time
 
