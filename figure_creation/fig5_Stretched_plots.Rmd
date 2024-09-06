@@ -336,7 +336,7 @@ allblocks_targets <- allblocks_targets %>%
 ```
 
 ```{r ct, fig.height = 5, fig.width = 30, fig.align = "center"}
-#Data.summary for Total_Time for all blocks
+# #Data.summary for Total_Time for all blocks
 # Total Time
 oa_data_summary <- oa_nav_data %>%
   group_by(Target_Name, Block_num) %>%
@@ -351,45 +351,24 @@ ya_data_summary <- ya_nav_data %>%
     se = std.error(Total_Time),
     Total_Time = mean(Total_Time)
   )
-library(ggplot2)
-library(dplyr)
-
-# Assuming `nav_data` contains all participants, grouped by Target_Name, Age, and Block_num
-# We will use `oa_data_summary` and `ya_data_summary` for OA and YA summaries
 
 p_ct <- ggplot(nav_data, aes(x = Block_num, y = Total_Time, color = Age)) + 
   scale_color_manual(values = c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
-  
-  # Facet by Target_Name (8 separate graphs)
-  facet_wrap(~ Target_Name, scales = "free_y", ncol = 8) + 
-  
-  # Individual participant lines (YA and OA)
+  facet_wrap(~ Target_Name, scales = "fixed", ncol = 8) + 
   geom_line(aes(group = Participant), alpha = 0.2) +
-  
-  # Individual participant points
   geom_point(size = 2, alpha = 0.2) +
-  
-  # Summary line for YA
   geom_line(data = ya_data_summary, aes(x = Block_num, y = Total_Time, group = 1), 
             color = '#FF9FAF', size = 1.5) +
-  
-  # Error band (standard deviation) for YA
-  geom_ribbon(data = ya_data_summary, aes(x = Block_num, ymin = Total_Time - sd(Total_Time), 
-                                          ymax = Total_Time + sd(Total_Time)), 
-              alpha = 0.1, color = '#FF9FAF') +
-  
-  # Summary line for OA
+  geom_errorbar(data = ya_data_summary, aes(x = Block_num, ymin = Total_Time - se, ymax = Total_Time + se), 
+                width = 0.2, size = 1, color = '#FF9FAF') +
   geom_line(data = oa_data_summary, aes(x = Block_num, y = Total_Time, group = 1), 
             color = '#5E7AFA', size = 1.5) +
-  stat_summary(data = oa_data_summary, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
-  
-  # Error band (standard deviation) for OA
-  #geom_ribbon(data = oa_data_summary, aes(x = Block_num, ymin = Total_Time - sd(Total_Time), ymax = Total_Time + sd(Total_Time)), alpha = 0.1, color = '#5E7AFA') +
-  
+  geom_errorbar(data = oa_data_summary, aes(x = Block_num, ymin = Total_Time - se, ymax = Total_Time + se), 
+                width = 0.2, size = 1, color = '#5E7AFA') +
   # Plot theme
   theme_classic() +
-  labs(color = "Age", y = "Total Time (s)", x = "Block Number") +
-  ylim(0, 250) +
+  labs(color = "Age", y = "Total Time (s)", x = "") +
+  ylim(0, 300) +
   theme(
     axis.line = element_line(linewidth = 0.5, colour = "#242526"),
     axis.ticks = element_line(linewidth = 0.2, colour = "#242526"),
@@ -400,7 +379,7 @@ p_ct <- ggplot(nav_data, aes(x = Block_num, y = Total_Time, color = Age)) +
     axis.title.y = element_text(size = 20),
     axis.title.x = element_text(size = 20),
     strip.text = element_text(size = 20)
-  )
+  )+panel_border()
 
 p_ct
 
@@ -408,22 +387,44 @@ ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots
 ```
 # Orientation Time
 
-```{r orict, fig.height = 5, fig.width = 10, fig.align = "center"}
-p_orict <- ggplot(allblocks_targets, aes(x=Block_num, y=Orientation_Time_m, color=Age)) + 
-  scale_color_manual(values=c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
-  geom_point(size = 3) + 
-  geom_line(mapping = aes(group = Age, color = Age)) + 
-  geom_errorbar(allblocks_targets, mapping = aes(x=Block_num, ymin=Orientation_Time_m-Orientation_Time_se, 
-                    ymax=Orientation_Time_m+Orientation_Time_se, group = Age, color = Age), 
-                width=0.2, size=1)+
-  facet_grid(. ~ Target_Name) + 
-  stat_smooth(method = "lm") +
+```{r orict, fig.height = 5, fig.width = 30, fig.align = "center"}
+oa_data_summary <- oa_nav_data %>%
+  group_by(Target_Name, Block_num) %>%
+  summarise(
+    se = std.error(Orientation_Time),
+    Orientation_Time = mean(Orientation_Time)
+  )
+
+ya_data_summary <- ya_nav_data %>%
+  group_by(Target_Name, Block_num) %>%
+  summarise(
+    se = std.error(Orientation_Time),
+    Orientation_Time = mean(Orientation_Time)
+  )
+
+p_orict <- ggplot(nav_data, aes(x = Block_num, y = Orientation_Time, color = Age)) + 
+  scale_color_manual(values = c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
+  facet_wrap(~ Target_Name, scales = "fixed", ncol = 8) + 
+  geom_line(aes(group = Participant), alpha = 0.2) +
+  geom_point(size = 2, alpha = 0.2) +
+  geom_line(data = ya_data_summary, aes(x = Block_num, y = Orientation_Time, group = 1), 
+            color = '#FF9FAF', size = 1.5) +
+  geom_point(size = 2, alpha = 0.2) +
+  geom_errorbar(data = ya_data_summary, aes(x = Block_num, ymin = Orientation_Time - se, ymax = Orientation_Time + se), 
+                width = 0.2, size = 1, color = '#FF9FAF') +
+  geom_point(size = 2, alpha = 0.2) +
+  geom_line(data = oa_data_summary, aes(x = Block_num, y = Orientation_Time, group = 1), 
+            color = '#5E7AFA', size = 1.5) +
+  geom_point(size = 2, alpha = 0.2) +
+  geom_errorbar(data = oa_data_summary, aes(x = Block_num, ymin = Orientation_Time - se, ymax = Orientation_Time + se), 
+                width = 0.2, size = 1, color = '#5E7AFA') +
+  # Plot theme
   theme_classic() +
-  labs(color= "Age", y="Orientation Time (s)", x = "Block Number") +
+  labs(color = "Age", y = "Orientation Time (s)", x = "") +
   ylim(0, 50) +
   theme(
-    axis.line = element_line(linewidth = .5, colour = "#242526"),
-    axis.ticks = element_line(linewidth = .2, colour = "#242526"),
+    axis.line = element_line(linewidth = 0.5, colour = "#242526"),
+    axis.ticks = element_line(linewidth = 0.2, colour = "#242526"),
     plot.title = element_text(hjust = 0.5),
     legend.position = "none",
     axis.text.x = element_text(size = 20),
@@ -431,32 +432,49 @@ p_orict <- ggplot(allblocks_targets, aes(x=Block_num, y=Orientation_Time_m, colo
     axis.title.y = element_text(size = 20),
     axis.title.x = element_text(size = 20),
     strip.text = element_text(size = 20)
-  ) +
-  panel_border()
+  )+panel_border()
 p_orict
 
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig5_orict.svg", height = 5, width = 10, plot=p_orict)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig5_orict.svg", height = 5, width = 30, plot=p_orict)
 ```
 
 # Navigation Time
 
-```{r navct, fig.height = 5, fig.width = 10, fig.align = "center"}
+```{r navct, fig.height = 5, fig.width = 30, fig.align = "center"}
+oa_data_summary <- oa_nav_data %>%
+  group_by(Target_Name, Block_num) %>%
+  summarise(
+    se = std.error(Navigation_Time),
+    Navigation_Time = mean(Navigation_Time)
+  )
 
-p_navct <- ggplot(allblocks_targets, aes(x=Block_num, y=Navigation_Time_m, color=Age)) + 
-  scale_color_manual(values=c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
-  geom_point(size = 3) + 
-  geom_line(mapping = aes(group = Age, color = Age)) + 
-  geom_errorbar(allblocks_targets, mapping = aes(x=Block_num, ymin=Navigation_Time_m-Navigation_Time_se, 
-                    ymax=Navigation_Time_m+Navigation_Time_se, group = Age, color = Age), 
-                width=0.2, size=1)+
-  facet_grid(. ~ Target_Name) + 
-  stat_smooth(method = "lm") +
+ya_data_summary <- ya_nav_data %>%
+  group_by(Target_Name, Block_num) %>%
+  summarise(
+    se = std.error(Navigation_Time),
+    Navigation_Time = mean(Navigation_Time)
+  )
+
+p_navct <- ggplot(nav_data, aes(x = Block_num, y = Navigation_Time, color = Age)) + 
+  scale_color_manual(values = c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
+  facet_wrap(~ Target_Name, scales = "fixed", ncol = 8) + 
+  geom_line(aes(group = Participant), alpha = 0.2) +
+  geom_point(size = 2, alpha = 0.2) +
+  geom_line(data = ya_data_summary, aes(x = Block_num, y = Navigation_Time, group = 1), 
+            color = '#FF9FAF', size = 1.5) +
+  geom_errorbar(data = ya_data_summary, aes(x = Block_num, ymin = Navigation_Time - se, ymax = Navigation_Time + se), 
+                width = 0.2, size = 1, color = '#FF9FAF') +
+  geom_line(data = oa_data_summary, aes(x = Block_num, y = Navigation_Time, group = 1), 
+            color = '#5E7AFA', size = 1.5) +
+  geom_errorbar(data = oa_data_summary, aes(x = Block_num, ymin = Navigation_Time - se, ymax = Navigation_Time + se), 
+                width = 0.2, size = 1, color = '#5E7AFA') +
+  # Plot theme
   theme_classic() +
-  labs(color= "Age", y="Navigation Time (s)", x = "Block Number") +
-  ylim(0, 250) +
+  labs(color = "Age", y = "Navigation Time (s)", x = "") +
+  ylim(0, 300) +
   theme(
-    axis.line = element_line(linewidth = .5, colour = "#242526"),
-    axis.ticks = element_line(linewidth = .2, colour = "#242526"),
+    axis.line = element_line(linewidth = 0.5, colour = "#242526"),
+    axis.ticks = element_line(linewidth = 0.2, colour = "#242526"),
     plot.title = element_text(hjust = 0.5),
     legend.position = "none",
     axis.text.x = element_text(size = 20),
@@ -464,30 +482,48 @@ p_navct <- ggplot(allblocks_targets, aes(x=Block_num, y=Navigation_Time_m, color
     axis.title.y = element_text(size = 20),
     axis.title.x = element_text(size = 20),
     strip.text = element_text(size = 20)
-  ) +
-  panel_border()
+  )+panel_border()
 p_navct
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig5_navct.svg", height = 5, width = 10, plot=p_navct)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig5_navct.svg", height = 5, width = 30, plot=p_navct)
 ```
 
 # Distance
 
-```{r dt, fig.height = 5, fig.width = 10, fig.align = "center"}
-p_dt <- ggplot(allblocks_targets, aes(x=Block_num, y=Distance_m, color=Age)) + 
-  scale_color_manual(values=c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
-  geom_point(size =3) + 
-  geom_line(mapping = aes(group = Age, color = Age)) + 
-  geom_errorbar(allblocks_targets, mapping = aes(x=Block_num, ymin=Distance_m-Distance_se, 
-                    ymax=Distance_m+Distance_se, group = Age, color = Age), 
-                width=0.2, size=1)+
-  facet_grid(. ~ Target_Name) + 
-  stat_smooth(method = "lm") +
+```{r dt, fig.height = 5, fig.width = 30, fig.align = "center"}
+oa_data_summary <- oa_nav_data %>%
+  group_by(Target_Name, Block_num) %>%
+  summarise(
+    se = std.error(Distance),
+    Distance = mean(Distance)
+  )
+
+ya_data_summary <- ya_nav_data %>%
+  group_by(Target_Name, Block_num) %>%
+  summarise(
+    se = std.error(Distance),
+    Distance = mean(Distance)
+  )
+
+p_dt <- ggplot(nav_data, aes(x = Block_num, y = Distance, color = Age)) + 
+  scale_color_manual(values = c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
+  facet_wrap(~ Target_Name, scales = "fixed", ncol = 8) + 
+  geom_line(aes(group = Participant), alpha = 0.2) +
+  geom_point(size = 2, alpha = 0.2) +
+  geom_line(data = ya_data_summary, aes(x = Block_num, y = Distance, group = 1), 
+            color = '#FF9FAF', size = 1.5) +
+  geom_errorbar(data = ya_data_summary, aes(x = Block_num, ymin = Distance - se, ymax = Distance + se), 
+                width = 0.2, size = 1, color = '#FF9FAF') +
+  geom_line(data = oa_data_summary, aes(x = Block_num, y = Distance, group = 1), 
+            color = '#5E7AFA', size = 1.5) +
+  geom_errorbar(data = oa_data_summary, aes(x = Block_num, ymin = Distance - se, ymax = Distance + se), 
+                width = 0.2, size = 1, color = '#5E7AFA') +
+  # Plot theme
   theme_classic() +
-  labs(color= "Age", y="Distance (VR Units)", x = "Block Number") +
-  ylim(0,1200)+
+  labs(color = "Age", y = "Distance (VR Units)", x = "") +
+  ylim(0, 1250) +
   theme(
-    axis.line = element_line(linewidth = .5, colour = "#242526"),
-    axis.ticks = element_line(linewidth = .2, colour = "#242526"),
+    axis.line = element_line(linewidth = 0.5, colour = "#242526"),
+    axis.ticks = element_line(linewidth = 0.2, colour = "#242526"),
     plot.title = element_text(hjust = 0.5),
     legend.position = "none",
     axis.text.x = element_text(size = 20),
@@ -495,32 +531,49 @@ p_dt <- ggplot(allblocks_targets, aes(x=Block_num, y=Distance_m, color=Age)) +
     axis.title.y = element_text(size = 20),
     axis.title.x = element_text(size = 20),
     strip.text = element_text(size = 20)
-  ) +
-  panel_border()
+  )+panel_border()
 p_dt
 
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig5_dt.svg", height = 5, width = 10, plot=p_dt)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig5_dt.svg", height = 5, width = 30, plot=p_dt)
 ```
 
 # Speed
 
-```{r speed, fig.height = 5, fig.width = 10, fig.align = "center"}
+```{r speed, fig.height = 5, fig.width = 30, fig.align = "center"}
+oa_data_summary <- oa_nav_data %>%
+  group_by(Target_Name, Block_num) %>%
+  summarise(
+    se = std.error(Speed),
+    Speed = mean(Speed)
+  )
 
-p_speed <- ggplot(allblocks_targets, aes(x=Block_num, y=Speed_m, color=Age)) + 
-  scale_color_manual(values=c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
-  geom_point(size =3) + 
-  geom_line(mapping = aes(group = Age, color = Age)) + 
-  geom_errorbar(allblocks_targets, mapping = aes(x=Block_num, ymin=Speed_m-Speed_se, 
-                    ymax=Speed_m+Speed_se, group = Age, color = Age), 
-                width=0.2, size=1)+
-  facet_grid(. ~ Target_Name) + 
-  stat_smooth(method = "lm") +
+ya_data_summary <- ya_nav_data %>%
+  group_by(Target_Name, Block_num) %>%
+  summarise(
+    se = std.error(Speed),
+    Speed = mean(Speed)
+  )
+
+p_speed <- ggplot(nav_data, aes(x = Block_num, y = Speed, color = Age)) + 
+  scale_color_manual(values = c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
+  facet_wrap(~ Target_Name, scales = "fixed", ncol = 8) + 
+  geom_line(aes(group = Participant), alpha = 0.2) +
+  geom_point(size = 2, alpha = 0.2) +
+  geom_line(data = ya_data_summary, aes(x = Block_num, y = Speed, group = 1), 
+            color = '#FF9FAF', size = 1.5) +
+  geom_errorbar(data = ya_data_summary, aes(x = Block_num, ymin = Speed - se, ymax = Speed + se), 
+                width = 0.2, size = 1, color = '#FF9FAF') +
+  geom_line(data = oa_data_summary, aes(x = Block_num, y = Speed, group = 1), 
+            color = '#5E7AFA', size = 1.5) +
+  geom_errorbar(data = oa_data_summary, aes(x = Block_num, ymin = Speed - se, ymax = Speed + se), 
+                width = 0.2, size = 1, color = '#5E7AFA') +
+  # Plot theme
   theme_classic() +
-  labs(color= "Age", y="Speed (VR Units / s)", x = "Block Number") +
-  ylim(0,30)+
+  labs(color = "Age", y = "Speed (VR Units/ s)", x = "") +
+  ylim(0, 30) +
   theme(
-    axis.line = element_line(linewidth = .5, colour = "#242526"),
-    axis.ticks = element_line(linewidth = .2, colour = "#242526"),
+    axis.line = element_line(linewidth = 0.5, colour = "#242526"),
+    axis.ticks = element_line(linewidth = 0.2, colour = "#242526"),
     plot.title = element_text(hjust = 0.5),
     legend.position = "none",
     axis.text.x = element_text(size = 20),
@@ -528,32 +581,49 @@ p_speed <- ggplot(allblocks_targets, aes(x=Block_num, y=Speed_m, color=Age)) +
     axis.title.y = element_text(size = 20),
     axis.title.x = element_text(size = 20),
     strip.text = element_text(size = 20)
-  ) +
-  panel_border()
+  )+panel_border()
 p_speed
 
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig5_speed.svg", height = 5, width = 10, plot=p_speed)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig5_speed.svg", height = 5, width = 30, plot=p_speed)
 ```
 
 # Dwell Time
 
-```{r dwell, fig.height = 5, fig.width = 10, fig.align = "center"}
+```{r dwell, fig.height = 5, fig.width = 30, fig.align = "center"}
+oa_data_summary <- oa_nav_data %>%
+  group_by(Target_Name, Block_num) %>%
+  summarise(
+    se = std.error(Mean_Dwell),
+    Mean_Dwell = mean(Mean_Dwell)
+  )
 
-p_dwell <- ggplot(allblocks_targets, aes(x=Block_num, y=Mean_Dwell_m, color=Age)) + 
-  scale_color_manual(values=c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
-  geom_point(size = 3) + 
-  geom_line(mapping = aes(group = Age, color = Age)) + 
-  geom_errorbar(allblocks_targets, mapping = aes(x=Block_num, ymin=Mean_Dwell_m-Mean_Dwell_se, 
-                    ymax=Mean_Dwell_m+Mean_Dwell_se, group = Age, color = Age), 
-                width=0.2, size=1)+
-  facet_grid(. ~ Target_Name) + 
-  stat_smooth(method = "lm") +
+ya_data_summary <- ya_nav_data %>%
+  group_by(Target_Name, Block_num) %>%
+  summarise(
+    se = std.error(Mean_Dwell),
+    Mean_Dwell = mean(Mean_Dwell)
+  )
+
+p_dwell <- ggplot(nav_data, aes(x = Block_num, y = Mean_Dwell, color = Age)) + 
+  scale_color_manual(values = c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
+  facet_wrap(~ Target_Name, scales = "fixed", ncol = 8) + 
+  geom_line(aes(group = Participant), alpha = 0.2) +
+  geom_point(size = 2, alpha = 0.2) +
+  geom_line(data = ya_data_summary, aes(x = Block_num, y = Mean_Dwell, group = 1), 
+            color = '#FF9FAF', size = 1.5) +
+  geom_errorbar(data = ya_data_summary, aes(x = Block_num, ymin = Mean_Dwell - se, ymax = Mean_Dwell + se), 
+                width = 0.2, size = 1, color = '#FF9FAF') +
+  geom_line(data = oa_data_summary, aes(x = Block_num, y = Mean_Dwell, group = 1), 
+            color = '#5E7AFA', size = 1.5) +
+  geom_errorbar(data = oa_data_summary, aes(x = Block_num, ymin = Mean_Dwell - se, ymax = Mean_Dwell + se), 
+                width = 0.2, size = 1, color = '#5E7AFA') +
+  # Plot theme
   theme_classic() +
-  labs(color= "Age", y="Dwell Time (s)", x = "Block Number") +
-  ylim(0,5)+
+  labs(color = "Age", y = "Dwell Time (s)", x = "") +
+  ylim(0,5) +
   theme(
-    axis.line = element_line(linewidth = .5, colour = "#242526"),
-    axis.ticks = element_line(linewidth = .2, colour = "#242526"),
+    axis.line = element_line(linewidth = 0.5, colour = "#242526"),
+    axis.ticks = element_line(linewidth = 0.2, colour = "#242526"),
     plot.title = element_text(hjust = 0.5),
     legend.position = "none",
     axis.text.x = element_text(size = 20),
@@ -561,30 +631,48 @@ p_dwell <- ggplot(allblocks_targets, aes(x=Block_num, y=Mean_Dwell_m, color=Age)
     axis.title.y = element_text(size = 20),
     axis.title.x = element_text(size = 20),
     strip.text = element_text(size = 20)
-  ) +
-  panel_border()
+  )+panel_border()
 p_dwell
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig5_dwell.svg", height = 5, width = 10, plot=p_dwell)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig5_dwell.svg", height = 5, width = 30, plot=p_dwell)
 ```
 
 # Teleportations
 
-```{r teleport, fig.height = 5, fig.width = 10, fig.align = "center"}
-p_teleport <- ggplot(allblocks_targets, aes(x=Block_num, y=Teleportations_m, color=Age)) + 
-  scale_color_manual(values=c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
-  geom_point(size = 3) + 
-  geom_line(mapping = aes(group = Age, color = Age)) + 
-  geom_errorbar(allblocks_targets, mapping = aes(x=Block_num, ymin=Teleportations_m-Teleportations_se, 
-                    ymax=Teleportations_m+Teleportations_se, group = Age, color = Age), 
-                width=0.2, size=1)+
-  facet_grid(. ~ Target_Name) + 
-  stat_smooth(method = "lm") +
+```{r teleport, fig.height = 5, fig.width = 30, fig.align = "center"}
+oa_data_summary <- oa_nav_data %>%
+  group_by(Target_Name, Block_num) %>%
+  summarise(
+    se = std.error(Teleportations),
+    Teleportations = mean(Teleportations)
+  )
+
+ya_data_summary <- ya_nav_data %>%
+  group_by(Target_Name, Block_num) %>%
+  summarise(
+    se = std.error(Teleportations),
+    Teleportations = mean(Teleportations)
+  )
+
+p_teleport <- ggplot(nav_data, aes(x = Block_num, y = Teleportations, color = Age)) + 
+  scale_color_manual(values = c('YA' = '#FF9FAF', 'OA' = '#5E7AFA')) +
+  facet_wrap(~ Target_Name, scales = "fixed", ncol = 8) + 
+  geom_line(aes(group = Participant), alpha = 0.2) +
+  geom_point(size = 2, alpha = 0.2) +
+  geom_line(data = ya_data_summary, aes(x = Block_num, y = Teleportations, group = 1), 
+            color = '#FF9FAF', size = 1.5) +
+  geom_errorbar(data = ya_data_summary, aes(x = Block_num, ymin = Teleportations - se, ymax = Teleportations + se), 
+                width = 0.2, size = 1, color = '#FF9FAF') +
+  geom_line(data = oa_data_summary, aes(x = Block_num, y = Teleportations, group = 1), 
+            color = '#5E7AFA', size = 1.5) +
+  geom_errorbar(data = oa_data_summary, aes(x = Block_num, ymin = Teleportations - se, ymax = Teleportations + se), 
+                width = 0.2, size = 1, color = '#5E7AFA') +
+  # Plot theme
   theme_classic() +
-  labs(color= "Age", y="Teleportations (count)", x = "Block Number") +
-  ylim(0,200)+
+  labs(color = "Age", y = "Teleportations (count)", x = "") +
+  ylim(0, 300) +
   theme(
-    axis.line = element_line(linewidth = .5, colour = "#242526"),
-    axis.ticks = element_line(linewidth = .2, colour = "#242526"),
+    axis.line = element_line(linewidth = 0.5, colour = "#242526"),
+    axis.ticks = element_line(linewidth = 0.2, colour = "#242526"),
     plot.title = element_text(hjust = 0.5),
     legend.position = "none",
     axis.text.x = element_text(size = 20),
@@ -592,13 +680,12 @@ p_teleport <- ggplot(allblocks_targets, aes(x=Block_num, y=Teleportations_m, col
     axis.title.y = element_text(size = 20),
     axis.title.x = element_text(size = 20),
     strip.text = element_text(size = 20)
-  ) +
-  panel_border()
+  )+panel_border()
 p_teleport
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig5_teleport.svg", height =5, width = 10, plot=p_teleport)
+ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig5_teleport.svg", height =5, width = 30, plot=p_teleport)
 ```
 
-```{r comp, fig.height = 25, fig.width = 15, fig.align = "center"}
+```{r comp, fig.height = 25, fig.width = 20, fig.align = "center"}
 p<-grid.arrange(p_speed, p_ct, p_orict, p_navct, p_dt, p_dwell, p_teleport, ncol=1, nrow=7)
 p
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/composite_fig5.svg", height = 25, width =15, plot=p)
