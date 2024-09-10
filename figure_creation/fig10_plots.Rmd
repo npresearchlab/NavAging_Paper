@@ -206,8 +206,8 @@ p_dt <- ggplot(df_final, aes(x=Distance, y=NARA, color = Cohort, fill = Cohort))
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))+
-  theme(legend.position = 'none')+
-  stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
+  theme(legend.position = 'none')
+  # stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 # add the folloing to shift right:  label.x.npc = "right", label.y.npc = "top",hjust = 1
 p_dt
 
@@ -231,8 +231,8 @@ p_ct <- ggplot(df_final, aes(y=NARA, x=Total_Time, color = Cohort, fill = Cohort
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))+
-  theme(legend.position = 'none')+
-  stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
+  theme(legend.position = 'none')
+  # stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 
 corr <- cor.test(df_final$NARA, df_final$Total_Time, 
                     method = "pearson")
@@ -265,8 +265,8 @@ p_orict <- ggplot(df_final, aes(y=NARA, x=Orientation_Time, color = Cohort, fill
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))+
-  theme(legend.position = 'none')+
-  stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
+  theme(legend.position = 'none')
+  # stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 corr <- cor.test(df_final$NARA, df_final$Orientation_Time, 
                     method = "pearson")
 corr
@@ -296,8 +296,8 @@ p_navct <- ggplot(df_final, aes(y=NARA, x=Navigation_Time,  color = Cohort, fill
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))+
-  theme(legend.position = 'none')+
-  stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
+  theme(legend.position = 'none')
+  # stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 corr <- cor.test(df_final$NARA, df_final$Navigation_Time, 
                     method = "pearson")
 corr
@@ -327,8 +327,8 @@ p_speed <- ggplot(df_final, aes(y=NARA, x=Speed,  color = Cohort, fill = Cohort)
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))+
-  theme(legend.position = 'none')+
-  stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
+  theme(legend.position = 'none')
+  # stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 
 corr <- cor.test(df_final$NARA, df_final$Speed, 
                     method = "pearson")
@@ -359,8 +359,8 @@ p_teleport <- ggplot(df_final, aes(y=NARA, x=Teleportations,  color = Cohort, fi
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))+
-  theme(legend.position = 'none')+
-  stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
+  theme(legend.position = 'none')
+  # stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 
 corr <- cor.test(df_final$NARA, df_final$Teleportations, 
                     method = "pearson")
@@ -392,8 +392,8 @@ p_dwell <- ggplot(df_final, aes(y=NARA, x=Mean_Dwell, color = Cohort, fill = Coh
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))+
-  theme(legend.position = 'none')+
-  stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
+  theme(legend.position = 'none')
+  # stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 corr <- cor.test(df_final$NARA, df_final$Mean_Dwell, 
                     method = "pearson")
 corr
