@@ -1,0 +1,1017 @@
+---
+title: "Figure 2 Stats Code"
+output: html_document
+date: "2023-05-13"
+---
+
+
+```{r global-options, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r loading libraries, include=FALSE}
+# This code chunk loads various libraries necessary to complete the data analysis and produce graphics
+library(tidyverse)
+library(stringr)
+library(ez)
+library(cowplot)
+library(viridis)
+library(viridisLite)
+library("readxl")
+library("ggcorrplot")
+library(dplyr)
+library(ltm)
+library(plotrix)
+library("viridis")
+library("paletteer")
+library(ggpubr)
+library(rstatix)
+library(lme4)
+#install.packages("lmerTest")
+library(lmerTest)
+#install.packages('emmeans')
+library('emmeans')
+```
+
+```{r reading data, include=FALSE}
+#This data chunk loads and tidies up the data
+
+#This loads the data file as the variable "ya_data"
+ya_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data_analysis/ya_averaged_results.csv')
+# Tidying up the data
+names(ya_data)[1] <- 'index'
+names(ya_data)[2] <- 'Participant'
+names(ya_data)[3] <- 'Block_num'
+names(ya_data)[4] <- 'Total_Time'
+names(ya_data)[5] <- 'Orientation_Time'
+names(ya_data)[6] <- 'Navigation_Time'
+names(ya_data)[7] <- 'Distance'
+names(ya_data)[8] <- 'Speed'
+names(ya_data)[9] <- 'Mean_Dwell'
+names(ya_data)[10] <- 'Teleportations'
+ya_data <- ya_data[ -c(1) ]
+ya_data$Block_num <- as.factor(ya_data$Block_num)
+sapply(ya_data, class)
+ya_data$Age <- "YA"
+ya_data
+```
+
+```{r reading data 2, include=FALSE}
+#This data chunk loads and tidies up the data
+
+#This loads the data file as the variable "ya_data"
+oa_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data_analysis/oa_averaged_results.csv')
+# Tidying up the data
+names(oa_data)[1] <- 'index'
+names(oa_data)[2] <- 'Participant'
+names(oa_data)[3] <- 'Block_num'
+names(oa_data)[4] <- 'Total_Time'
+names(oa_data)[5] <- 'Orientation_Time'
+names(oa_data)[6] <- 'Navigation_Time'
+names(oa_data)[7] <- 'Distance'
+names(oa_data)[8] <- 'Speed'
+names(oa_data)[9] <- 'Mean_Dwell'
+names(oa_data)[10] <- 'Teleportations'
+oa_data <- oa_data[ -c(1) ]
+oa_data$Block_num <- as.factor(oa_data$Block_num)
+sapply(oa_data, class)
+oa_data$Age <- "OA"
+oa_data
+```
+
+```{r}
+all_data <- rbind(ya_data, oa_data)
+```
+
+
+```{r reading more data, include=FALSE}
+#This loads the data file as the variable "ya_target_data"
+ya_target_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data_analysis/ya_merged_results.csv')
+# Tidying up the data
+names(ya_target_data)[1] <- 'index'
+names(ya_target_data)[2] <- 'Participant'
+names(ya_target_data)[3] <- 'Block_num'
+names(ya_target_data)[4] <- 'Target_Name'
+names(ya_target_data)[5] <- 'Total_Time'
+names(ya_target_data)[6] <- 'Orientation_Time'
+names(ya_target_data)[7] <- 'Navigation_Time'
+names(ya_target_data)[8] <- 'Distance'
+names(ya_target_data)[9] <- 'Speed'
+names(ya_target_data)[10] <- 'Mean_Dwell'
+names(ya_target_data)[11] <- 'Teleportations'
+ya_target_data <- ya_target_data[ -c(1) ]
+ya_target_data$Block_num <- as.factor(ya_target_data$Block_num)
+sapply(ya_target_data, class)
+
+desired_order <- c("Automobile shop", "Police station ", "Fire Station", "Bank", "Pawn Shop", "Pizzeria", "Quattroki Restaurant", "High School")
+# Reorder the levels of Target_Name
+ya_target_data$Target_Name <- factor(ya_target_data$Target_Name, levels = desired_order)
+ya_target_data$Age <- "YA"
+```
+
+```{r reading more data 2, include=FALSE}
+#This loads the data file as the variable "oa_target_data"
+oa_target_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data_analysis/oa_merged_results.csv')
+# Tidying up the data
+names(oa_target_data)[1] <- 'index'
+names(oa_target_data)[2] <- 'Participant'
+names(oa_target_data)[3] <- 'Block_num'
+names(oa_target_data)[4] <- 'Target_Name'
+names(oa_target_data)[5] <- 'Total_Time'
+names(oa_target_data)[6] <- 'Orientation_Time'
+names(oa_target_data)[7] <- 'Navigation_Time'
+names(oa_target_data)[8] <- 'Distance'
+names(oa_target_data)[9] <- 'Speed'
+names(oa_target_data)[10] <- 'Mean_Dwell'
+names(oa_target_data)[11] <- 'Teleportations'
+oa_target_data <- oa_target_data[ -c(1) ]
+oa_target_data$Block_num <- as.factor(oa_target_data$Block_num)
+sapply(oa_target_data, class)
+
+# Reorder the levels of Target_Name
+oa_target_data$Target_Name <- factor(oa_target_data$Target_Name, levels = desired_order)
+oa_target_data$Age <- "OA"
+```
+
+```{r}
+all_target_data <- rbind(ya_target_data, oa_target_data)
+```
+
+# Total Time
+
+```{r}
+# Running ANOVA
+ct_anova <- aov(outcome ~ age_group, data = data)
+# omnibus p-values - main effect of this variable
+```
+
+```{r}
+# Jasmine's code
+emm_m_ct_b <- emmeans(m_ct,~Block_num)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_ct_block <- pairs(emm_m_ct_b)
+m_ct_block <- as.data.frame(m_ct_block)
+```
+
+```{r}
+# Jasmine's code
+emm_m_ct_t <- emmeans(m_ct,~Target_Name)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_ct_targetonly <- pairs(emm_m_ct_t)
+m_ct_targetonly <- as.data.frame(m_ct_targetonly)
+```
+
+```{r}
+# Jasmine's code
+emm_m_ct <- emmeans(m_ct,~Block_num|Target_Name)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_ct_blocktarget <- pairs(emm_m_ct)
+m_ct_blocktarget <- as.data.frame(m_ct_blocktarget)
+```
+
+# Orientation Time
+
+```{r}
+# Running linear mixed model
+m_orict <- lmer(Orientation_Time ~ Block_num*Target_Name + (1|Participant), data=oa_target_data)
+m_orict_anova <- anova(m_orict)
+m_orict_anova
+```
+
+```{r}
+# Jasmine's code
+emm_m_orict_b <- emmeans(m_orict,~Block_num)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_orict_block <- pairs(emm_m_orict_b)
+m_orict_block <- as.data.frame(m_orict_block)
+```
+
+```{r}
+# Jasmine's code
+emm_m_orict_t <- emmeans(m_orict,~Target_Name)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_orict_targetonly <- pairs(emm_m_orict_t)
+m_orict_targetonly <- as.data.frame(m_orict_targetonly)
+```
+
+```{r}
+# Jasmine's code
+emm_m_orict <- emmeans(m_orict,~Block_num|Target_Name)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_orict_blocktarget <- pairs(emm_m_orict)
+m_orict_blocktarget <- as.data.frame(m_orict_blocktarget)
+```
+
+# Navigation Time
+
+```{r}
+# Running linear mixed model
+m_navct <- lmer(Navigation_Time ~ Block_num*Target_Name + (1|Participant), data=oa_target_data)
+m_navct_anova <- anova(m_navct)
+m_navct_anova
+```
+```{r}
+# Jasmine's code
+emm_m_navct_b <- emmeans(m_navct,~Block_num)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_navct_block <- pairs(emm_m_navct_b)
+m_navct_block <- as.data.frame(m_navct_block)
+```
+
+```{r}
+# Jasmine's code
+emm_m_navct_t <- emmeans(m_navct,~Target_Name)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_navct_targetonly <- pairs(emm_m_navct_t)
+m_navct_targetonly <- as.data.frame(m_navct_targetonly)
+```
+
+```{r}
+# Jasmine's code
+emm_m_navct <- emmeans(m_navct,~Block_num|Target_Name)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_navct_blocktarget <- pairs(emm_m_navct)
+m_navct_blocktarget <- as.data.frame(m_navct_blocktarget)
+```
+
+# Distance
+
+```{r}
+# Running linear mixed model
+m_dt <- lmer(Distance ~ Block_num*Target_Name + (1|Participant), data=oa_target_data)
+m_dt_anova <- anova(m_dt)
+m_dt_anova
+```
+
+```{r}
+# Jasmine's code
+emm_m_dt_b <- emmeans(m_dt,~Block_num)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_dt_block <- pairs(emm_m_dt_b)
+m_dt_block <- as.data.frame(m_dt_block)
+```
+
+```{r}
+# Jasmine's code
+emm_m_dt_t <- emmeans(m_dt,~Target_Name)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_dt_targetonly <- pairs(emm_m_dt_t)
+m_dt_targetonly <- as.data.frame(m_dt_targetonly)
+```
+
+```{r}
+# Jasmine's code
+emm_m_dt <- emmeans(m_dt,~Block_num|Target_Name)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_dt_blocktarget <- pairs(emm_m_dt)
+m_dt_blocktarget <- as.data.frame(m_dt_blocktarget)
+```
+
+
+# Speed
+
+```{r}
+# Running linear mixed model
+m_speed <- lmer(Speed ~ Block_num*Target_Name + (1|Participant), data=oa_target_data)
+m_speed_anova <- anova(m_speed)
+m_speed_anova
+```
+
+```{r}
+# Jasmine's code
+emm_m_speed_b <- emmeans(m_speed,~Block_num)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_speed_block <- pairs(emm_m_speed_b)
+m_speed_block <- as.data.frame(m_speed_block)
+```
+
+```{r}
+# Jasmine's code
+emm_m_speed_t <- emmeans(m_speed,~Target_Name)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_speed_targetonly <- pairs(emm_m_speed_t)
+m_speed_targetonly <- as.data.frame(m_speed_targetonly)
+```
+
+```{r}
+# Jasmine's code
+emm_m_speed <- emmeans(m_speed,~Block_num|Target_Name)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_speed_blocktarget <- pairs(emm_m_speed)
+m_speed_blocktarget <- as.data.frame(m_speed_blocktarget)
+```
+
+# Dwell Time
+
+```{r}
+# Running linear mixed model
+m_dwell <- lmer(Mean_Dwell ~ Block_num*Target_Name + (1|Participant), data=oa_target_data)
+m_dwell_anova <- anova(m_dwell)
+m_dwell_anova
+```
+
+```{r}
+# Jasmine's code
+emm_m_dwell_b <- emmeans(m_dwell,~Block_num)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_dwell_block <- pairs(emm_m_dwell_b)
+m_dwell_block <- as.data.frame(m_dwell_block)
+```
+
+```{r}
+# Jasmine's code
+emm_m_dwell_t <- emmeans(m_dwell,~Target_Name)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_dwell_targetonly <- pairs(emm_m_dwell_t)
+m_dwell_targetonly <- as.data.frame(m_dwell_targetonly)
+```
+
+```{r}
+# Jasmine's code
+emm_m_dwell <- emmeans(m_dwell,~Block_num|Target_Name)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_dwell_blocktarget <- pairs(emm_m_dwell)
+m_dwell_blocktarget <- as.data.frame(m_dwell_blocktarget)
+```
+
+# Teleportations 
+
+```{r}
+# Running linear mixed model
+m_teleport <- lmer(Teleportations ~ Block_num*Target_Name + (1|Participant), data=oa_target_data)
+m_teleport_anova <- anova(m_teleport)
+m_teleport_anova
+```
+
+```{r}
+# Jasmine's code
+emm_m_teleport_b <- emmeans(m_teleport,~Block_num)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_teleport_block <- pairs(emm_m_teleport_b)
+m_teleport_block <- as.data.frame(m_teleport_block)
+```
+
+```{r}
+# Jasmine's code
+emm_m_teleport_t <- emmeans(m_teleport,~Target_Name)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_teleport_targetonly <- pairs(emm_m_teleport_t)
+m_teleport_targetonly <- as.data.frame(m_teleport_targetonly)
+```
+
+```{r}
+# Jasmine's code
+emm_m_teleport <- emmeans(m_teleport,~Block_num|Target_Name)
+# can look at just Block_num, or just Target_Name; or the interaction with |
+# can run the reverse: Target_Name | Block_num for contrasts 
+m_teleport_blocktarget <- pairs(emm_m_teleport)
+m_teleport_blocktarget <- as.data.frame(m_teleport_blocktarget)
+```
+
+
+```{r}
+
+# List all dataframes in the global environment
+dataframes <- ls()
+
+# Filter dataframes that end with "anova"
+dataframes_to_save_anova <- dataframes[grep("anova$", dataframes)]
+
+# Create an empty list to store dataframes
+combined_dataframes_anova <- list()
+
+# Loop through the selected dataframes, combine them, and add a "Source" column
+for (df_name in dataframes_to_save_anova) {
+  # Get the dataframe by name
+  df <- get(df_name)
+  
+  # Add a "Source" column with the dataframe name
+  df$Source <- df_name
+  
+  # Append the modified dataframe to the list
+  combined_dataframes_anova[[df_name]] <- df
+}
+
+# Combine all dataframes into one giant dataframe
+final_combined_dataframe_anova <- do.call(rbind, combined_dataframes_anova)
+
+# Specify the directory where you want to save the CSV file
+output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
+
+# Define the CSV file name
+csv_file <- paste0(output_directory, "oa_combined_anova_data.csv")
+
+# Save the combined dataframe as a CSV file
+write.csv(final_combined_dataframe_anova, file = csv_file, row.names = FALSE)
+
+# Print a message to confirm the save
+cat("Saved combined data as", csv_file, "\n")
+
+```
+
+
+```{r}
+
+# List all dataframes in the global environment
+dataframes <- ls()
+
+# Filter dataframes that end with "anova"
+dataframes_to_save_block <- dataframes[grep("block$", dataframes)]
+
+# Create an empty list to store dataframes
+combined_dataframes_block <- list()
+
+# Loop through the selected dataframes, combine them, and add a "Source" column
+for (df_name in dataframes_to_save_block) {
+  # Get the dataframe by name
+  df <- get(df_name)
+  
+  # Add a "Source" column with the dataframe name
+  df$Source <- df_name
+  
+  # Append the modified dataframe to the list
+  combined_dataframes_block[[df_name]] <- df
+}
+
+# Combine all dataframes into one giant dataframe
+final_combined_dataframe_block <- do.call(rbind, combined_dataframes_block)
+
+# Specify the directory where you want to save the CSV file
+output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
+
+# Define the CSV file name
+csv_file <- paste0(output_directory, "oa_combined_block_data.csv")
+
+# Save the combined dataframe as a CSV file
+write.csv(final_combined_dataframe_block, file = csv_file, row.names = FALSE)
+
+# Print a message to confirm the save
+cat("Saved combined data as", csv_file, "\n")
+
+```
+
+
+
+```{r}
+
+# List all dataframes in the global environment
+dataframes2 <- ls()
+
+# Filter dataframes that end with "anova"
+dataframes_to_save_blocktarget <- dataframes2[grep("blocktarget$", dataframes2)]
+
+# Create an empty list to store dataframes
+combined_dataframes_blocktarget <- list()
+
+# Loop through the selected dataframes, combine them, and add a "Source" column
+for (df_name in dataframes_to_save_blocktarget) {
+  # Get the dataframe by name
+  df <- get(df_name)
+  
+  # Add a "Source" column with the dataframe name
+  df$Source <- df_name
+  
+  # Append the modified dataframe to the list
+  combined_dataframes_blocktarget[[df_name]] <- df
+}
+
+# Combine all dataframes into one giant dataframe
+final_combined_dataframe_blocktarget <- do.call(rbind, combined_dataframes_blocktarget)
+
+# Specify the directory where you want to save the CSV file
+output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
+
+# Define the CSV file name
+csv_file <- paste0(output_directory, "oa_combined_blocktarget_data.csv")
+
+# Save the combined dataframe as a CSV file
+write.csv(final_combined_dataframe_blocktarget, file = csv_file, row.names = FALSE)
+
+# Print a message to confirm the save
+cat("Saved combined data as", csv_file, "\n")
+```
+
+
+```{r}
+
+# List all dataframes in the global environment
+dataframes3 <- ls()
+
+# Filter dataframes that end with "anova"
+dataframes_to_save_targetonly <- dataframes3[grep("targetonly$", dataframes3)]
+
+# Create an empty list to store dataframes
+combined_dataframes_targetonly <- list()
+
+# Loop through the selected dataframes, combine them, and add a "Source" column
+for (df_name in dataframes_to_save_targetonly) {
+  # Get the dataframe by name
+  df <- get(df_name)
+  
+  # Add a "Source" column with the dataframe name
+  df$Source <- df_name
+  
+  # Append the modified dataframe to the list
+  combined_dataframes_targetonly[[df_name]] <- df
+}
+
+# Combine all dataframes into one giant dataframe
+final_combined_dataframe_targetonly <- do.call(rbind, combined_dataframes_targetonly)
+
+# Specify the directory where you want to save the CSV file
+output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
+
+# Define the CSV file name
+csv_file <- paste0(output_directory, "oa_combined_target_data.csv")
+
+# Save the combined dataframe as a CSV file
+write.csv(final_combined_dataframe_targetonly, file = csv_file, row.names = FALSE)
+
+# Print a message to confirm the save
+cat("Saved combined data as", csv_file, "\n")
+```
+
+
+# Creating Figure 4 P-Value Matrices
+
+```{r}
+unique_labels <- unique(final_combined_dataframe_targetonly$Source)
+
+for (source_label in unique_labels) {
+  # Filter the dataset based on the label
+  filtered_data <- subset(final_combined_dataframe_targetonly, Source == source_label)
+  filtered_data[, 8] <- filtered_data[, 6] * 7
+  colnames(filtered_data)[8] <- "p.value.adj"
+  filtered_data <- separate(filtered_data, contrast, into = c("t1", "t2"), sep = " - ")
+  filtered_data$p.value.adj[filtered_data$p.value.adj > 1] <- 1
+  filtered_data$t1 <- factor(filtered_data$t1, 
+                                  levels = c("Automobile shop", "Police station ", 
+                                             "Fire Station", "Bank", "Pawn Shop",
+                                             "Pizzeria", "Quattroki Restaurant",
+                                             "High School"))
+  filtered_data$t2 <- factor(filtered_data$t2, 
+                                  levels = c("Automobile shop", "Police station ", 
+                                             "Fire Station", "Bank", "Pawn Shop",
+                                             "Pizzeria", "Quattroki Restaurant",
+                                             "High School"))
+  
+  new <- data.frame()
+  for (i in 1:nrow(filtered_data)) {
+    if (filtered_data$t1[i] == "Automobile shop" | filtered_data$t2[i] == "High School") {
+      new <- rbind(new, filtered_data[i, ])
+    }
+  }
+  
+  
+  temp <- new$t1
+  new$t1 <- new$t2
+  new$t2 <- temp
+  combined <- rbind(filtered_data, new)
+  
+  combined <- combined[!(combined$t1 == "Police station " & combined$t2 == "Automobile shop"), ]
+  combined <- combined[!(combined$t1 == "Fire Station" & combined$t2 == "Automobile shop"), ]
+  combined <- combined[!(combined$t1 == "Bank" & combined$t2 == "Automobile shop"), ]
+  combined <- combined[!(combined$t1 == "Pawn Shop" & combined$t2 == "Automobile shop"), ]
+  combined <- combined[!(combined$t1 == "Pizzeria" & combined$t2 == "Automobile shop"), ]
+  combined <- combined[!(combined$t1 == "Quattroki Restaurant" & combined$t2 == "Automobile shop"), ]
+  combined <- combined[!(combined$t1 == "High School" & combined$t2 == "Automobile shop"), ]
+  combined <- combined[!(combined$t1 == "High School" & combined$t2 == "Police station "), ]
+  combined <- combined[!(combined$t1 == "High School" & combined$t2 == "Fire Station"), ]
+  combined <- combined[!(combined$t1 == "High School" & combined$t2 == "Bank"), ]
+  combined <- combined[!(combined$t1 == "High School" & combined$t2 == "Pawn Shop"), ]
+  combined <- combined[!(combined$t1 == "High School" & combined$t2 == "Pizzeria"), ]
+  combined <- combined[!(combined$t1 == "High School" & combined$t2 == "Quattroki Restaurant"), ]
+  
+  new_rows <- data.frame(
+    t1 = c("Automobile shop", "Police station ", "Fire Station", "Bank", "Pawn Shop", "Pizzeria", 
+           "Quattroki Restaurant", "High School"),
+    t2 = c("Automobile shop", "Police station ", "Fire Station", "Bank", "Pawn Shop", "Pizzeria", 
+           "Quattroki Restaurant", "High School"),
+    estimate = c(rep(1, times = 8)),
+    SE = c(rep(1, times = 8)),
+    df = c(rep(1, times = 8)),
+    t.ratio = c(rep(1, times = 8)),
+    p.value = c(rep(1, times = 8)),
+    Source = c(rep(source_label, times = 8)),
+    p.value.adj = c(rep(1, times = 8))
+    )
+
+ 
+  new_combined <- rbind(combined, new_rows)
+  
+  # Assign filtered data to a new data frame with the label name
+  assign(paste0("data_", source_label), new_combined)
+}
+```
+
+## Creating Heatmaps
+
+```{r}
+heatmap_diagonal <- ggplot(subset(data_m_ct_targetonly, t1 == t2), 
+                           aes(x = t2, y = t1, fill = p.value.adj)) +
+  geom_tile(aes(width = 1, height = 1), color = "white", lwd = 1) +
+  geom_tile(data = subset(data_m_ct_targetonly, p.value.adj < 0.05 & t1 == t2), 
+            aes(width = 1, height = 1), color = "white", lwd = 1) +
+  geom_text(data = subset(data_m_ct_targetonly, p.value.adj < 0.05 & t1 == t2), 
+            aes(label = ifelse(p.value.adj < 0.05, "*", ""), 
+                fontface = ifelse(p.value.adj < 0.05, "bold", "plain")),
+            size = 10, vjust = 0.7, hjust = 0.5, color = "white") +
+  scale_fill_gradient(limits = c(0,0.05), low = "#800971", high = "#EDACE5", na.value = "gray") +
+  labs(title = "", x = "", y = "", fill = "P-Value") +
+  theme_classic() +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526")) +
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.position = "right") +
+  theme(axis.text.x = element_text(size=25)) +
+  theme(axis.text.y = element_text(size=25)) +
+  theme(panel.background = element_rect(fill = "transparent", color = NA),
+        plot.background = element_rect(fill = "transparent", color = NA)) +
+  scale_x_discrete(labels = c("T1","T2","T3","T4","T5","T6","T7","T8")) +
+  scale_y_discrete(labels = c("T1","T2","T3","T4","T5","T6","T7","T8"))
+
+heatmap_diagonal
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_heatmap_diagonal.svg", height = 6, width = 6, plot=heatmap_diagonal)
+```
+
+
+```{r}
+heatmap_speed <- ggplot(data_m_speed_targetonly, aes(x = t2, y = t1, fill = p.value.adj)) +
+  geom_tile(aes(width = 1, height = 1), color = "white", lwd = 1) +
+  geom_tile(data = subset(data_m_speed_targetonly, p.value.adj < 0.05), aes(width = 1, height = 1), 
+            color = "white", lwd = 1) +
+  geom_text(aes(label = ifelse(p.value.adj < 0.05, "*", ""), 
+                fontface = ifelse(p.value.adj <0.05, "bold", "plain")),
+            size = 10, vjust = 0.7, hjust = 0.5, color = "white") +
+  scale_fill_gradient(limits = c(0,0.05), low = "#800971", high = "#EDACE5", na.value = "#bbc8fe") +
+  labs(title = "", x = "", y = "", fill = "P-Value") +
+  theme_classic() +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526")) +
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.position = "right") +
+  theme(axis.text.x = element_text(size=25)) +
+  theme(axis.text.y = element_text(size=25)) +
+  theme(panel.background = element_rect(fill = "transparent", color = NA),
+        plot.background = element_rect(fill = "transparent", color = NA)) +
+  scale_x_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8")) +
+  scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
+heatmap_speed
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_oa_heatmap_speed.svg", height = 6, width = 6, plot=heatmap_speed)
+```
+
+
+```{r}
+heatmap_ct <- ggplot(data_m_ct_targetonly, aes(x = t2, y = t1, fill = p.value.adj)) +
+  geom_tile(aes(width = 1, height = 1), color = "white", lwd = 1) +
+  geom_tile(data = subset(data_m_ct_targetonly, p.value.adj < 0.05), aes(width = 1, height = 1), 
+            color = "white", lwd = 1) +
+  geom_text(aes(label = ifelse(p.value.adj < 0.05, "*", ""), 
+                fontface = ifelse(p.value.adj <0.05, "bold", "plain")),
+            size = 10, vjust = 0.7, hjust = 0.5, color = "white") +
+  scale_fill_gradient(limits = c(0,0.05), low = "#800971", high = "#EDACE5", na.value = "#bbc8fe") +
+  labs(title = "", x = "", y = "", fill = "P-Value") +
+  theme_classic() +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526")) +
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.position = "right") +
+  theme(axis.text.x = element_text(size=25)) +
+  theme(axis.text.y = element_text(size=25)) +
+  theme(panel.background = element_rect(fill = "transparent", color = NA),
+        plot.background = element_rect(fill = "transparent", color = NA)) +
+  scale_x_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8")) +
+  scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
+heatmap_ct
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_oa_heatmap_ct.svg", height = 6, width = 6, plot=heatmap_ct)
+```
+
+
+```{r}
+heatmap_orict <- ggplot(data_m_orict_targetonly, aes(x = t2, y = t1, fill = p.value.adj)) +
+  geom_tile(aes(width = 1, height = 1), color = "white", lwd = 1) +
+  geom_tile(data = subset(data_m_orict_targetonly, p.value.adj < 0.05), aes(width = 1, height = 1), 
+            color = "white", lwd = 1) +
+  geom_text(aes(label = ifelse(p.value.adj < 0.05, "*", ""), 
+                fontface = ifelse(p.value.adj <0.05, "bold", "plain")),
+            size = 10, vjust = 0.7, hjust = 0.5, color = "white") +
+  scale_fill_gradient(limits = c(0,0.05), low = "#800971", high = "#EDACE5", na.value = "#bbc8fe") +
+  labs(title = "", x = "", y = "", fill = "P-Value") +
+  theme_classic() +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526")) +
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.position = "right") +
+  theme(axis.text.x = element_text(size=25)) +
+  theme(axis.text.y = element_text(size=25)) +
+  theme(panel.background = element_rect(fill = "transparent", color = NA),
+        plot.background = element_rect(fill = "transparent", color = NA)) +
+  scale_x_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8")) +
+  scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
+heatmap_orict
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_oa_heatmap_orict.svg", height = 6, width = 6, plot=heatmap_orict)
+```
+
+```{r}
+heatmap_navct <- ggplot(data_m_navct_targetonly, aes(x = t2, y = t1, fill = p.value.adj)) +
+  geom_tile(aes(width = 1, height = 1), color = "white", lwd = 1) +
+  geom_tile(data = subset(data_m_navct_targetonly, p.value.adj < 0.05), aes(width = 1, height = 1), 
+            color = "white", lwd = 1) +
+  geom_text(aes(label = ifelse(p.value.adj < 0.05, "*", ""), 
+                fontface = ifelse(p.value.adj <0.05, "bold", "plain")),
+            size = 10, vjust = 0.7, hjust = 0.5, color = "white") +
+  scale_fill_gradient(limits = c(0,0.05), low = "#800971", high = "#EDACE5", na.value = "#bbc8fe") +
+  labs(title = "", x = "", y = "", fill = "P-Value") +
+  theme_classic() +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526")) +
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.position = "right") +
+  theme(axis.text.x = element_text(size=25)) +
+  theme(axis.text.y = element_text(size=25)) +
+  theme(panel.background = element_rect(fill = "transparent", color = NA),
+        plot.background = element_rect(fill = "transparent", color = NA)) +
+  scale_x_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8")) +
+  scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
+heatmap_navct
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_oa_heatmap_navct.svg", height = 6, width = 6, plot=heatmap_navct)
+```
+
+```{r}
+heatmap_dt <- ggplot(data_m_dt_targetonly, aes(x = t2, y = t1, fill = p.value.adj)) +
+  geom_tile(aes(width = 1, height = 1), color = "white", lwd = 1) +
+  geom_tile(data = subset(data_m_dt_targetonly, p.value.adj < 0.05), aes(width = 1, height = 1), 
+            color = "white", lwd = 1) +
+  geom_text(aes(label = ifelse(p.value.adj < 0.05, "*", ""), 
+                fontface = ifelse(p.value.adj <0.05, "bold", "plain")),
+            size = 10, vjust = 0.7, hjust = 0.5, color = "white") +
+  scale_fill_gradient(limits = c(0,0.05), low = "#800971", high = "#EDACE5", na.value = "#bbc8fe") +
+  labs(title = "", x = "", y = "", fill = "P-Value") +
+  theme_classic() +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526")) +
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.position = "right") +
+  theme(axis.text.x = element_text(size=25)) +
+  theme(axis.text.y = element_text(size=25)) +
+  theme(panel.background = element_rect(fill = "transparent", color = NA),
+        plot.background = element_rect(fill = "transparent", color = NA)) +
+  scale_x_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8")) +
+  scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
+heatmap_dt
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_oa_heatmap_dt.svg", height = 6, width = 6, plot=heatmap_dt)
+```
+
+```{r}
+heatmap_dwell <- ggplot(data_m_dwell_targetonly, aes(x = t2, y = t1, fill = p.value.adj)) +
+  geom_tile(aes(width = 1, height = 1), color = "white", lwd = 1) +
+  geom_tile(data = subset(data_m_dwell_targetonly, p.value.adj < 0.05), aes(width = 1, height = 1), 
+            color = "white", lwd = 1) +
+  geom_text(aes(label = ifelse(p.value.adj < 0.05, "*", ""), 
+                fontface = ifelse(p.value.adj <0.05, "bold", "plain")),
+            size = 10, vjust = 0.7, hjust = 0.5, color = "white") +
+  scale_fill_gradient(limits = c(0,0.05), low = "#800971", high = "#EDACE5", na.value = "#bbc8fe") +
+  labs(title = "", x = "", y = "", fill = "P-Value") +
+  theme_classic() +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526")) +
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.position = "right") +
+  theme(axis.text.x = element_text(size=25)) +
+  theme(axis.text.y = element_text(size=25)) +
+  theme(panel.background = element_rect(fill = "transparent", color = NA),
+        plot.background = element_rect(fill = "transparent", color = NA)) +
+  scale_x_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8")) +
+  scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
+heatmap_dwell
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_oa_heatmap_dwell.svg", height = 6, width = 6, plot=heatmap_dwell)
+```
+
+```{r}
+heatmap_teleport <- ggplot(data_m_teleport_targetonly, aes(x = t2, y = t1, fill = p.value.adj)) +
+  geom_tile(aes(width = 1, height = 1), color = "white", lwd = 1) +
+  geom_tile(data = subset(data_m_teleport_targetonly, p.value.adj < 0.05), aes(width = 1, height = 1), 
+            color = "white", lwd = 1) +
+  geom_text(aes(label = ifelse(p.value.adj < 0.05, "*", ""), 
+                fontface = ifelse(p.value.adj <0.05, "bold", "plain")),
+            size = 10, vjust = 0.7, hjust = 0.5, color = "white") +
+  scale_fill_gradient(limits = c(0,0.05), low = "#800971", high = "#EDACE5", na.value = "#bbc8fe") +
+  labs(title = "", x = "", y = "", fill = "P-Value") +
+  theme_classic() +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526")) +
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.position = "right") +
+  theme(axis.text.x = element_text(size=25)) +
+  theme(axis.text.y = element_text(size=25)) +
+  theme(panel.background = element_rect(fill = "transparent", color = NA),
+        plot.background = element_rect(fill = "transparent", color = NA)) +
+  scale_x_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8")) +
+  scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
+heatmap_teleport
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_oa_heatmap_teleport.svg", height = 6, width = 6, plot=heatmap_teleport)
+```
+
+
+# Creating Figure 5 P-Value Plots
+
+```{r}
+unique_labels <- unique(final_combined_dataframe_blocktarget$Source)
+
+for (source_label in unique_labels) {
+  # Filter the dataset based on the label
+  filtered_data2 <- subset(final_combined_dataframe_blocktarget, Source == source_label)
+  filtered_data2[, 8] <- filtered_data2[, 7] * 7
+  colnames(filtered_data2)[8] <- "p.value.adj"
+  filtered_data2$p.value.adj[filtered_data2$p.value.adj > 1] <- 1
+  filtered_data2$contrast <- factor(filtered_data2$contrast, 
+                                    levels = c("Block_num1 - Block_num2",
+                                               "Block_num2 - Block_num3",
+                                               "Block_num1 - Block_num3"))
+  
+  # Assign filtered data to a new data frame with the label name
+  assign(paste0("data_", source_label), filtered_data2)
+}
+```
+
+
+```{r}
+fig5_heatmap_speed <- ggplot(data_m_speed_blocktarget, aes(x = contrast, y = Target_Name, fill = p.value.adj)) +
+  geom_tile(aes(width = 1, height = 1), color = "white", lwd = 1) +
+  geom_tile(data = subset(data_m_speed_blocktarget, p.value.adj < 0.05), aes(width = 1, height = 1), 
+            color = "white", lwd = 1) +
+  geom_text(aes(label = ifelse(p.value.adj < 0.05, "*", ""), 
+                fontface = ifelse(p.value.adj <0.05, "bold", "plain")),
+            size = 10, vjust = 0.7, hjust = 0.5, color = "white") +
+  scale_fill_gradient(limits = c(0,0.05), low = "#800971", high = "#EDACE5", na.value = "#ffd2d9") +
+  labs(title = "", x = "", y = "", fill = "P-Value") +
+  theme_classic() +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526")) +
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.position = "right") +
+  theme(axis.text.x = element_text(size=25)) +
+  theme(axis.text.y = element_text(size=25)) +
+  scale_x_discrete(labels=c("B1-B2","B2-B3","B1-B3")) +
+  scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
+fig5_heatmap_speed
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig5_oa_heatmap_speed.svg", height = 6, width = 6, plot=fig5_heatmap_speed)
+```
+
+```{r}
+fig5_heatmap_ct <- ggplot(data_m_ct_blocktarget, aes(x = contrast, y = Target_Name, fill = p.value.adj)) +
+  geom_tile(aes(width = 1, height = 1), color = "white", lwd = 1) +
+  geom_tile(data = subset(data_m_ct_blocktarget, p.value.adj < 0.05), aes(width = 1, height = 1), 
+            color = "white", lwd = 1) +
+  geom_text(aes(label = ifelse(p.value.adj < 0.05, "*", ""), 
+                fontface = ifelse(p.value.adj <0.05, "bold", "plain")),
+            size = 10, vjust = 0.7, hjust = 0.5, color = "white") +
+  scale_fill_gradient(limits = c(0,0.05), low = "#800971", high = "#EDACE5", na.value = "#ffd2d9") +
+  labs(title = "", x = "", y = "", fill = "P-Value") +
+  theme_classic() +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526")) +
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.position = "right") +
+  theme(axis.text.x = element_text(size=25)) +
+  theme(axis.text.y = element_text(size=25)) +
+  scale_x_discrete(labels=c("B1-B2","B2-B3","B1-B3")) +
+  scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
+fig5_heatmap_ct
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig5_oa_heatmap_ct.svg", height = 6, width = 6, plot=fig5_heatmap_ct)
+```
+
+```{r}
+fig5_heatmap_orict <- ggplot(data_m_orict_blocktarget, aes(x = contrast, y = Target_Name, fill = p.value.adj)) +
+  geom_tile(aes(width = 1, height = 1), color = "white", lwd = 1) +
+  geom_tile(data = subset(data_m_orict_blocktarget, p.value.adj < 0.05), aes(width = 1, height = 1), 
+            color = "white", lwd = 1) +
+  geom_text(aes(label = ifelse(p.value.adj < 0.05, "*", ""), 
+                fontface = ifelse(p.value.adj <0.05, "bold", "plain")),
+            size = 10, vjust = 0.7, hjust = 0.5, color = "white") +
+  scale_fill_gradient(limits = c(0,0.05), low = "#800971", high = "#EDACE5", na.value = "#ffd2d9") +
+  labs(title = "", x = "", y = "", fill = "P-Value") +
+  theme_classic() +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526")) +
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.position = "right") +
+  theme(axis.text.x = element_text(size=25)) +
+  theme(axis.text.y = element_text(size=25)) +
+  scale_x_discrete(labels=c("B1-B2","B2-B3","B1-B3")) +
+  scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
+fig5_heatmap_orict
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig5_oa_heatmap_orict.svg", height = 6, width = 6, plot=fig5_heatmap_orict)
+```
+
+```{r}
+fig5_heatmap_navct <- ggplot(data_m_navct_blocktarget, aes(x = contrast, y = Target_Name, fill = p.value.adj)) +
+  geom_tile(aes(width = 1, height = 1), color = "white", lwd = 1) +
+  geom_tile(data = subset(data_m_navct_blocktarget, p.value.adj < 0.05), aes(width = 1, height = 1), 
+            color = "white", lwd = 1) +
+  geom_text(aes(label = ifelse(p.value.adj < 0.05, "*", ""), 
+                fontface = ifelse(p.value.adj <0.05, "bold", "plain")),
+            size = 10, vjust = 0.7, hjust = 0.5, color = "white") +
+  scale_fill_gradient(limits = c(0,0.05), low = "#800971", high = "#EDACE5", na.value = "#ffd2d9") +
+  labs(title = "", x = "", y = "", fill = "P-Value") +
+  theme_classic() +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526")) +
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.position = "right") +
+  theme(axis.text.x = element_text(size=25)) +
+  theme(axis.text.y = element_text(size=25)) +
+  scale_x_discrete(labels=c("B1-B2","B2-B3","B1-B3")) +
+  scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
+fig5_heatmap_navct
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig5_oa_heatmap_navct.svg", height = 6, width = 6, plot=fig5_heatmap_navct)
+```
+
+```{r}
+fig5_heatmap_dt <- ggplot(data_m_dt_blocktarget, aes(x = contrast, y = Target_Name, fill = p.value.adj)) +
+  geom_tile(aes(width = 1, height = 1), color = "white", lwd = 1) +
+  geom_tile(data = subset(data_m_dt_blocktarget, p.value.adj < 0.05), aes(width = 1, height = 1), 
+            color = "white", lwd = 1) +
+  geom_text(aes(label = ifelse(p.value.adj < 0.05, "*", ""), 
+                fontface = ifelse(p.value.adj <0.05, "bold", "plain")),
+            size = 10, vjust = 0.7, hjust = 0.5, color = "white") +
+  scale_fill_gradient(limits = c(0,0.05), low = "#800971", high = "#EDACE5", na.value = "#ffd2d9") +
+  labs(title = "", x = "", y = "", fill = "P-Value") +
+  theme_classic() +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526")) +
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.position = "right") +
+  theme(axis.text.x = element_text(size=25)) +
+  theme(axis.text.y = element_text(size=25)) +
+  scale_x_discrete(labels=c("B1-B2","B2-B3","B1-B3")) +
+  scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
+fig5_heatmap_dt
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig5_oa_heatmap_dt.svg", height = 6, width = 6, plot=fig5_heatmap_dt)
+```
+
+```{r}
+fig5_heatmap_dwell <- ggplot(data_m_dwell_blocktarget, aes(x = contrast, y = Target_Name, fill = p.value.adj)) +
+  geom_tile(aes(width = 1, height = 1), color = "white", lwd = 1) +
+  geom_tile(data = subset(data_m_dwell_blocktarget, p.value.adj < 0.05), aes(width = 1, height = 1), 
+            color = "white", lwd = 1) +
+  geom_text(aes(label = ifelse(p.value.adj < 0.05, "*", ""), 
+                fontface = ifelse(p.value.adj <0.05, "bold", "plain")),
+            size = 10, vjust = 0.7, hjust = 0.5, color = "white") +
+  scale_fill_gradient(limits = c(0,0.05), low = "#800971", high = "#EDACE5", na.value = "#ffd2d9") +
+  labs(title = "", x = "", y = "", fill = "P-Value") +
+  theme_classic() +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526")) +
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.position = "right") +
+  theme(axis.text.x = element_text(size=25)) +
+  theme(axis.text.y = element_text(size=25)) +
+  scale_x_discrete(labels=c("B1-B2","B2-B3","B1-B3")) +
+  scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
+fig5_heatmap_dwell
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig5_oa_heatmap_dwell.svg", height = 6, width = 6, plot=fig5_heatmap_dwell)
+```
+
+```{r}
+fig5_heatmap_teleport <- ggplot(data_m_teleport_blocktarget, aes(x = contrast, y = Target_Name, fill = p.value.adj)) +
+  geom_tile(aes(width = 1, height = 1), color = "white", lwd = 1) +
+  geom_tile(data = subset(data_m_teleport_blocktarget, p.value.adj < 0.05), aes(width = 1, height = 1), 
+            color = "white", lwd = 1) +
+  geom_text(aes(label = ifelse(p.value.adj < 0.05, "*", ""), 
+                fontface = ifelse(p.value.adj <0.05, "bold", "plain")),
+            size = 10, vjust = 0.7, hjust = 0.5, color = "white") +
+  scale_fill_gradient(limits = c(0,0.05), low = "#800971", high = "#EDACE5", na.value = "#ffd2d9") +
+  labs(title = "", x = "", y = "", fill = "P-Value") +
+  theme_classic() +
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526")) +
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.position = "right") +
+  theme(axis.text.x = element_text(size=25)) +
+  theme(axis.text.y = element_text(size=25)) +
+  scale_x_discrete(labels=c("B1-B2","B2-B3","B1-B3")) +
+  scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
+fig5_heatmap_teleport
+ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig5_oa_heatmap_teleport.svg", height = 6, width = 6, plot=fig5_heatmap_teleport)
+```
