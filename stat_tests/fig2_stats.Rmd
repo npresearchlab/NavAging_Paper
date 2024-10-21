@@ -11,8 +11,6 @@ knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
 
 ```{r loading libraries, include=FALSE}
 
-# Learning how to use VS Code and GitHub 
-
 # This code chunk loads various libraries necessary to complete the data analysis and produce graphics
 library(tidyverse)
 library(stringr)
@@ -30,9 +28,7 @@ library("paletteer")
 library(ggpubr)
 library(rstatix)
 library(lme4)
-#install.packages("lmerTest")
 library(lmerTest)
-#install.packages('emmeans')
 library('emmeans')
 ```
 
@@ -41,6 +37,7 @@ library('emmeans')
 
 #This loads the data file as the variable "ya_data"
 ya_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/ya_averaged_results.csv')
+
 # Tidying up the data
 names(ya_data)[1] <- 'index'
 names(ya_data)[2] <- 'Participant'
@@ -64,6 +61,7 @@ ya_data
 
 #This loads the data file as the variable "ya_data"
 oa_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/oa_averaged_results.csv')
+
 # Tidying up the data
 names(oa_data)[1] <- 'index'
 names(oa_data)[2] <- 'Participant'
@@ -90,6 +88,7 @@ all_data <- rbind(ya_data, oa_data)
 ```{r reading more data, include=FALSE}
 #This loads the data file as the variable "ya_target_data"
 ya_target_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/ya_merged_results.csv')
+
 # Tidying up the data
 names(ya_target_data)[1] <- 'index'
 names(ya_target_data)[2] <- 'Participant'
@@ -115,6 +114,8 @@ ya_target_data$Age <- "YA"
 ```{r reading more data 2, include=FALSE}
 #This loads the data file as the variable "oa_target_data"
 oa_target_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/oa_merged_results.csv')
+
+
 # Tidying up the data
 names(oa_target_data)[1] <- 'index'
 names(oa_target_data)[2] <- 'Participant'
@@ -140,12 +141,19 @@ oa_target_data$Age <- "OA"
 all_target_data <- rbind(ya_target_data, oa_target_data)
 ```
 
-# Total Time
+# ANOVA - All Values
 
 ```{r}
-# Running ANOVA
-ct_anova <- aov(Total_Time ~ Age, data = all_data)
-summary(ct_anova)
+# This runs ANOVA tests for all outcome measures
+outcome_measures <- c('Total_Time', 'Orientation_Time', 'Navigation_Time', 'Distance', 'Speed', 'Mean_Dwell', 'Teleportations')
+
+for (outcome in outcome_measures) {
+  anova_formula <- as.formula(paste(outcome, "~ Age"))
+  ct_anova <- aov(anova_formula, data = all_data)
+  
+  cat("\nANOVA for", outcome, ":\n")
+  print(ct_anova)
+}
 # omnibus p-values - main effect of this variable
 ```
 
