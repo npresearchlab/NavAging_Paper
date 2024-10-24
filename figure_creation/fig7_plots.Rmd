@@ -148,15 +148,7 @@ ya_data <- df_merge %>%
 
 
 ```{r}
-corr <- cor.test(df_merge$NARA, df_merge$Distance, 
-                    method = "pearson")
-corr
-oa_corr <- cor.test(oa_data$NARA, oa_data$Distance, 
-                    method = "pearson")
-oa_corr
-ya_corr <- cor.test(ya_data$NARA, ya_data$Distance, 
-                    method = "pearson")
-ya_corr
+
 p_dt <- ggplot(df_merge, aes(x=Distance, y=NARA, color = Age, fill = Age))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
   scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
@@ -174,10 +166,18 @@ p_dt <- ggplot(df_merge, aes(x=Distance, y=NARA, color = Age, fill = Age))+
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))+
-  theme(legend.position = 'none')+
-  stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
+  theme(legend.position = 'none')
+  # stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 p_dt
-
+corr <- cor.test(df_merge$NARA, df_merge$Distance, 
+                    method = "pearson")
+corr
+oa_corr <- cor.test(oa_data$NARA, oa_data$Distance, 
+                    method = "pearson")
+oa_corr
+ya_corr <- cor.test(ya_data$NARA, ya_data$Distance, 
+                    method = "pearson")
+ya_corr
 ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig7_dt.svg", height = 5, width = 5, plot=p_dt)
 ```
 ```{r}
@@ -198,8 +198,8 @@ p_ct <- ggplot(df_merge, aes(y=NARA, x=Total_Time, color = Age, fill = Age))+
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))+
-  theme(legend.position = 'none')+
-  stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
+  theme(legend.position = 'none')
+  # stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 
 corr <- cor.test(df_merge$NARA, df_merge$Total_Time, 
                     method = "pearson")
@@ -230,8 +230,8 @@ p_orict <- ggplot(df_merge, aes(y=NARA, x=Orientation_Time, color = Age, fill = 
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))+
-  theme(legend.position = 'none')+
-  stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
+  theme(legend.position = 'none')
+  # stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 corr <- cor.test(df_merge$NARA, df_merge$Orientation_Time, 
                     method = "pearson")
 corr
@@ -261,8 +261,8 @@ p_navct <- ggplot(df_merge, aes(y=NARA, x=Navigation_Time,  color = Age, fill = 
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))+
-  theme(legend.position = 'none')+
-  stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
+  theme(legend.position = 'none')
+  # stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 corr <- cor.test(df_merge$NARA, df_merge$Navigation_Time, 
                     method = "pearson")
 corr
@@ -292,8 +292,8 @@ p_speed <- ggplot(df_merge, aes(y=NARA, x=Speed,  color = Age, fill = Age))+
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))+
-  theme(legend.position = 'none')+
-  stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
+  theme(legend.position = 'none')
+  # stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 
 corr <- cor.test(df_merge$NARA, df_merge$Speed, 
                     method = "pearson")
@@ -324,8 +324,8 @@ p_teleport <- ggplot(df_merge, aes(y=NARA, x=Teleportations,  color = Age, fill 
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))+
-  theme(legend.position = 'none')+
-  stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
+  theme(legend.position = 'none')
+  # stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 
 corr <- cor.test(df_merge$NARA, df_merge$Teleportations, 
                     method = "pearson")
@@ -357,8 +357,8 @@ p_dwell <- ggplot(df_merge, aes(y=NARA, x=Mean_Dwell, color = Age, fill = Age))+
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))+
-  theme(legend.position = 'none')+
-  stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
+  theme(legend.position = 'none')
+  # stat_cor(aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")), color = "#242526", geom = "label", size = 5)
 corr <- cor.test(df_merge$NARA, df_merge$Mean_Dwell, 
                     method = "pearson")
 corr
