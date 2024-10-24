@@ -250,5 +250,8 @@ rain_nara
 
 ```{r}
 non_nav_data_final <- read.csv('~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/stat_tests/non_nav_data_final.csv')
-#corr_nara <-ggplot(non_nav_data_final, aes(x=) )
+corr_nara <-ggplot(non_nav_data_final, aes(x=age, y=nara, color = group)) +
+  geom_point(size=2)
+
+corr_nara + scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))
 ```
