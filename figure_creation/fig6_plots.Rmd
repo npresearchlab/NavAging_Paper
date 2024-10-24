@@ -35,7 +35,8 @@ library(gghalves)
 #This data chunk loads and tidies up the data
 
 #This loads the data file as the variable "data"
-ya_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_averaged_results.csv')
+#ya_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_averaged_results.csv')
+ya_data <- read.csv('~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/data_analysis/ya_averaged_results.csv')
 # Tidying up the data
 ya_data<- ya_data %>% mutate(Age = 'YA')
 ya_data
@@ -56,7 +57,8 @@ sapply(ya_data, class)
 ya_data
 
 #This loads the data file as the variable "data"
-oa_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_averaged_results.csv')
+#oa_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_averaged_results.csv')
+oa_data <- read.csv('~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/data_analysis/oa_averaged_results.csv')
 # Tidying up the data
 oa_data<- oa_data %>% mutate(Age = 'OA')
 oa_data
@@ -81,7 +83,9 @@ data <- rbind(ya_data, oa_data)
 
 ```{r reading more data, include=FALSE}
 #This loads the data file as the variable "data"
-ya_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_merged_results.csv')
+#ya_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_merged_results.csv')
+ya_nav_data <- read.csv('~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/data_analysis/ya_merged_results.csv')
+
 # Tidying up the data
 ya_nav_data<- ya_nav_data %>% mutate(Age = 'YA')
 names(ya_nav_data)[1] <- 'index'
@@ -105,7 +109,8 @@ desired_order <- c("Automobile shop", "Police station ", "Fire Station", "Bank",
 ya_nav_data$Target_Name <- factor(ya_nav_data$Target_Name, levels = desired_order)
 
 #This loads the data file as the variable "data"
-oa_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_merged_results.csv')
+#oa_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_merged_results.csv')
+oa_nav_data <- read.csv('~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/data_analysis/ya_merged_results.csv')
 # Tidying up the data
 oa_nav_data<- oa_nav_data %>% mutate(Age = 'OA')
 names(oa_nav_data)[1] <- 'index'
@@ -133,7 +138,8 @@ nav_data <- rbind(ya_nav_data, oa_nav_data)
 
 ```{r reading more data, include=FALSE}
 #This loads the data file as the variable "data"
-non_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/non_nav_data.csv')
+#non_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/non_nav_data.csv')
+non_nav_data <- read.csv('~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/data_analysis/non_nav_data.csv')
 # Tidying up the data
 names(non_nav_data)[1] <- 'Participant'
 names(non_nav_data)[2] <- 'Age'
@@ -240,4 +246,9 @@ rain_nara <-ggplot(df_merge_drop, aes(x = factor(Age), y=NARA, fill=Age)) +
   ) +scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
 rain_nara
 #ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig6_rain_nara.svg", height = 5, width = 5, plot=p_ct)
+```
+
+```{r}
+non_nav_data_final <- read.csv('~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/stat_tests/non_nav_data_final.csv')
+#corr_nara <-ggplot(non_nav_data_final, aes(x=) )
 ```
