@@ -137,7 +137,9 @@ oa_target_data$Age <- "OA"
 all_target_data <- rbind(ya_target_data, oa_target_data)
 ```
 
-# Total Time
+# Using All Target Data (Across Age Groups)
+
+## Total Time
 
 ```{r}
 # Running linear mi
@@ -174,7 +176,7 @@ m_ct_blocktarget <- pairs(emm_m_ct)
 m_ct_blocktarget <- as.data.frame(m_ct_blocktarget)
 ```
 
-# Orientation Time
+## Orientation Time
 
 ```{r}
 # Running linear mixed model
@@ -210,7 +212,7 @@ m_orict_blocktarget <- pairs(emm_m_orict)
 m_orict_blocktarget <- as.data.frame(m_orict_blocktarget)
 ```
 
-# Navigation Time
+## Navigation Time
 
 ```{r}
 # Running linear mixed model
@@ -649,7 +651,6 @@ heatmap_speed <- ggplot(data_m_speed_targetonly, aes(x = t1, y = t2, fill = p.va
   scale_x_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8")) +
   scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
 heatmap_speed
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_heatmap_speed.svg", height = 6, width = 6, plot=heatmap_speed)
 ```
 
 
@@ -673,7 +674,6 @@ heatmap_ct <- ggplot(data_m_ct_targetonly, aes(x = t1, y = t2, fill = p.value.ad
   scale_x_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8")) +
   scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
 heatmap_ct
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_heatmap_ct.svg", height = 6, width = 6, plot=heatmap_ct)
 ```
 
 
@@ -697,7 +697,6 @@ heatmap_orict <- ggplot(data_m_orict_targetonly, aes(x = t1, y = t2, fill = p.va
   scale_x_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8")) +
   scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
 heatmap_orict
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_heatmap_orict.svg", height = 6, width = 6, plot=heatmap_orict)
 ```
 
 ```{r}
@@ -720,7 +719,6 @@ heatmap_navct <- ggplot(data_m_navct_targetonly, aes(x = t1, y = t2, fill = p.va
   scale_x_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8")) +
   scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
 heatmap_navct
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_heatmap_navct.svg", height = 6, width = 6, plot=heatmap_navct)
 ```
 
 ```{r}
@@ -743,7 +741,6 @@ heatmap_dt <- ggplot(data_m_dt_targetonly, aes(x = t1, y = t2, fill = p.value.ad
   scale_x_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8")) +
   scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
 heatmap_dt
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_heatmap_dt.svg", height = 6, width = 6, plot=heatmap_dt)
 ```
 
 ```{r}
@@ -766,7 +763,6 @@ heatmap_dwell <- ggplot(data_m_dwell_targetonly, aes(x = t1, y = t2, fill = p.va
   scale_x_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8")) +
   scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
 heatmap_dwell
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_heatmap_dwell.svg", height = 6, width = 6, plot=heatmap_dwell)
 ```
 
 ```{r}
@@ -789,7 +785,6 @@ heatmap_teleport <- ggplot(data_m_teleport_targetonly, aes(x = t1, y = t2, fill 
   scale_x_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8")) +
   scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
 heatmap_teleport
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig4_heatmap_teleport.svg", height = 6, width = 6, plot=heatmap_teleport)
 ```
 
 
@@ -835,5 +830,4 @@ fig5_heatmap_speed <- ggplot(data_m_speed_blocktarget, aes(x = contrast, y = Tar
   scale_x_discrete(labels=c("B1-B2","B2-B3","B1-B3")) +
   scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
 fig5_heatmap_speed
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig5_heatmap_speed.svg", height = 6, width = 6, plot=fig5_heatmap_speed)
 ```
