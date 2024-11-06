@@ -141,7 +141,7 @@ all_target_data <- rbind(ya_target_data, oa_target_data)
 
 ```{r}
 # Running linear mi
-m_ct <- lmer(Total_Time ~ Block_num*Target_Name + (1|Participant), data=all_target_data)
+m_ct <- lmer(Total_Time ~ Block_num*Target_Name*Age + (1|Participant), data=all_target_data)
 m_ct_anova <- anova(m_ct)
 m_ct_anova
 # omnibus p-values - main effect of this variable
@@ -178,7 +178,7 @@ m_ct_blocktarget <- as.data.frame(m_ct_blocktarget)
 
 ```{r}
 # Running linear mixed model
-m_orict <- lmer(Orientation_Time ~ Block_num*Target_Name + (1|Participant), data=all_target_data)
+m_orict <- lmer(Orientation_Time ~ Block_num*Target_Name*Age + (1|Participant), data=all_target_data)
 m_orict_anova <- anova(m_orict)
 m_orict_anova
 ```
@@ -214,7 +214,7 @@ m_orict_blocktarget <- as.data.frame(m_orict_blocktarget)
 
 ```{r}
 # Running linear mixed model
-m_navct <- lmer(Navigation_Time ~ Block_num*Target_Name + (1|Participant), data=all_target_data)
+m_navct <- lmer(Navigation_Time ~ Block_num*Target_Name*Age + (1|Participant), data=all_target_data)
 m_navct_anova <- anova(m_navct)
 m_navct_anova
 ```
@@ -249,7 +249,7 @@ m_navct_blocktarget <- as.data.frame(m_navct_blocktarget)
 
 ```{r}
 # Running linear mixed model
-m_dt <- lmer(Distance ~ Block_num*Target_Name + (1|Participant), data=all_target_data)
+m_dt <- lmer(Distance ~ Block_num*Target_Name*Age + (1|Participant), data=all_target_data)
 m_dt_anova <- anova(m_dt)
 m_dt_anova
 ```
