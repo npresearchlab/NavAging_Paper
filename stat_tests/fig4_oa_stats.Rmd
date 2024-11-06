@@ -37,30 +37,7 @@ library('emmeans')
 #This data chunk loads and tidies up the data
 
 #This loads the data file as the variable "ya_data"
-ya_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data_analysis/ya_averaged_results.csv')
-# Tidying up the data
-names(ya_data)[1] <- 'index'
-names(ya_data)[2] <- 'Participant'
-names(ya_data)[3] <- 'Block_num'
-names(ya_data)[4] <- 'Total_Time'
-names(ya_data)[5] <- 'Orientation_Time'
-names(ya_data)[6] <- 'Navigation_Time'
-names(ya_data)[7] <- 'Distance'
-names(ya_data)[8] <- 'Speed'
-names(ya_data)[9] <- 'Mean_Dwell'
-names(ya_data)[10] <- 'Teleportations'
-ya_data <- ya_data[ -c(1) ]
-ya_data$Block_num <- as.factor(ya_data$Block_num)
-sapply(ya_data, class)
-ya_data$Age <- "YA"
-ya_data
-```
-
-```{r reading data 2, include=FALSE}
-#This data chunk loads and tidies up the data
-
-#This loads the data file as the variable "ya_data"
-oa_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data_analysis/oa_averaged_results.csv')
+oa_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/oa_averaged_results.csv')
 # Tidying up the data
 names(oa_data)[1] <- 'index'
 names(oa_data)[2] <- 'Participant'
@@ -79,39 +56,9 @@ oa_data$Age <- "OA"
 oa_data
 ```
 
-```{r}
-all_data <- rbind(ya_data, oa_data)
-```
-
-
 ```{r reading more data, include=FALSE}
-#This loads the data file as the variable "ya_target_data"
-ya_target_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data_analysis/ya_merged_results.csv')
-# Tidying up the data
-names(ya_target_data)[1] <- 'index'
-names(ya_target_data)[2] <- 'Participant'
-names(ya_target_data)[3] <- 'Block_num'
-names(ya_target_data)[4] <- 'Target_Name'
-names(ya_target_data)[5] <- 'Total_Time'
-names(ya_target_data)[6] <- 'Orientation_Time'
-names(ya_target_data)[7] <- 'Navigation_Time'
-names(ya_target_data)[8] <- 'Distance'
-names(ya_target_data)[9] <- 'Speed'
-names(ya_target_data)[10] <- 'Mean_Dwell'
-names(ya_target_data)[11] <- 'Teleportations'
-ya_target_data <- ya_target_data[ -c(1) ]
-ya_target_data$Block_num <- as.factor(ya_target_data$Block_num)
-sapply(ya_target_data, class)
-
-desired_order <- c("Automobile shop", "Police station ", "Fire Station", "Bank", "Pawn Shop", "Pizzeria", "Quattroki Restaurant", "High School")
-# Reorder the levels of Target_Name
-ya_target_data$Target_Name <- factor(ya_target_data$Target_Name, levels = desired_order)
-ya_target_data$Age <- "YA"
-```
-
-```{r reading more data 2, include=FALSE}
 #This loads the data file as the variable "oa_target_data"
-oa_target_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data_analysis/oa_merged_results.csv')
+oa_target_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/oa_merged_results.csv')
 # Tidying up the data
 names(oa_target_data)[1] <- 'index'
 names(oa_target_data)[2] <- 'Participant'
@@ -133,263 +80,67 @@ oa_target_data$Target_Name <- factor(oa_target_data$Target_Name, levels = desire
 oa_target_data$Age <- "OA"
 ```
 
-```{r}
-all_target_data <- rbind(ya_target_data, oa_target_data)
-```
-
-# Total Time
+# Using All Target Data
 
 ```{r}
-# Running linear mi
-m_ct <- lmer(Total_Time ~ Block_num*Target_Name + (1|Participant), data=oa_target_data)
-m_ct_anova <- anova(m_ct)
-m_ct_anova
-# omnibus p-values - main effect of this variable
-```
+# This runs ANOVA tests for all outcome measures
+outcome_measures <- c('Total_Time', 'Orientation_Time', 'Navigation_Time', 'Distance', 'Speed', 'Mean_Dwell', 'Teleportations')
+outcome_names <- c('ct', 'orict','navct','dt','speed', 'dwell', 'teleport')
+count <- 1
 
-```{r}
-# Jasmine's code
-emm_m_ct_b <- emmeans(m_ct,~Block_num)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_ct_block <- pairs(emm_m_ct_b)
-m_ct_block <- as.data.frame(m_ct_block)
-```
-
-```{r}
-# Jasmine's code
-emm_m_ct_t <- emmeans(m_ct,~Target_Name)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_ct_targetonly <- pairs(emm_m_ct_t)
-m_ct_targetonly <- as.data.frame(m_ct_targetonly)
-```
-
-```{r}
-# Jasmine's code
+# Looping through outcome measures
+for (outcome in outcome_measures) {
+  
+  # Running the linear mixed model (LMM)
+  lmm_formula <- as.formula(paste(outcome, "~ Block_num*Target_Name + (1|Participant)"))
+  lmm_outcome <- lmer(lmm_formula, data = ya_target_data)
+  assign(paste0("m_",outcome_names[count]), lmm_outcome)
+  
+  # Running the anova on the LMM
+  anova_formula <- paste0("m_",outcome_names[count])
+  anova <- anova(get(paste0("m_",outcome_names[count])))
+  assign(paste0("m_",outcome_names[count], "_anova"), anova)
+  
+  # Printing all anova outputs
+  cat("\nANOVA for", outcome, ":\n")
+  print(anova)
+  
+  # Running contrasts on LMM for BLOCK
+  contrast_b <- emmeans(get(paste0("m_",outcome_names[count])), ~Block_num)
+  assign(paste0("emm_m_",outcome_names[count], "_b"), contrast_b)
+  
+  # Running pairs on contrast
+  emm_pairs_b <- pairs(get(paste0("emm_m_",outcome_names[count], "_b")))
+  assign(paste0("m_", outcome_names[count], "_block"), emm_pairs_b)
+  
+  # Running contrasts on LMM for TARGET
+  contrast_t <- emmeans(get(paste0("m_",outcome_names[count])), ~Target_Name)
+  assign(paste0("emm_m_",outcome_names[count], "_t"), contrast_t)
+  
+  # Running pairs on contrast
+  emm_pairs_t <- pairs(get(paste0("emm_m_",outcome_names[count], "_t")))
+  assign(paste0("m_", outcome_names[count], "_targetonly"), emm_pairs_t)
+  
+  # Running contrasts on LMM for BLOCK:TARGET interaction
+  contrast_bt <- emmeans(get(paste0("m_",outcome_names[count])), ~Block_num|Target_Name)
+  assign(paste0("emm_m_",outcome_names[count]), contrast_bt)
+  
+  # Running pairs on contrast
+  emm_pairs_bt <- pairs(get(paste0("emm_m_",outcome_names[count])))
+  assign(paste0("m_", outcome_names[count], "_blocktarget"), emm_pairs_bt)
+  
+  
+  
 emm_m_ct <- emmeans(m_ct,~Block_num|Target_Name)
 # can look at just Block_num, or just Target_Name; or the interaction with |
 # can run the reverse: Target_Name | Block_num for contrasts 
 m_ct_blocktarget <- pairs(emm_m_ct)
 m_ct_blocktarget <- as.data.frame(m_ct_blocktarget)
+
+  # Updating count variable to loop through outcome names
+  count <- count + 1
+}
 ```
-
-# Orientation Time
-
-```{r}
-# Running linear mixed model
-m_orict <- lmer(Orientation_Time ~ Block_num*Target_Name + (1|Participant), data=oa_target_data)
-m_orict_anova <- anova(m_orict)
-m_orict_anova
-```
-
-```{r}
-# Jasmine's code
-emm_m_orict_b <- emmeans(m_orict,~Block_num)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_orict_block <- pairs(emm_m_orict_b)
-m_orict_block <- as.data.frame(m_orict_block)
-```
-
-```{r}
-# Jasmine's code
-emm_m_orict_t <- emmeans(m_orict,~Target_Name)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_orict_targetonly <- pairs(emm_m_orict_t)
-m_orict_targetonly <- as.data.frame(m_orict_targetonly)
-```
-
-```{r}
-# Jasmine's code
-emm_m_orict <- emmeans(m_orict,~Block_num|Target_Name)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_orict_blocktarget <- pairs(emm_m_orict)
-m_orict_blocktarget <- as.data.frame(m_orict_blocktarget)
-```
-
-# Navigation Time
-
-```{r}
-# Running linear mixed model
-m_navct <- lmer(Navigation_Time ~ Block_num*Target_Name + (1|Participant), data=oa_target_data)
-m_navct_anova <- anova(m_navct)
-m_navct_anova
-```
-```{r}
-# Jasmine's code
-emm_m_navct_b <- emmeans(m_navct,~Block_num)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_navct_block <- pairs(emm_m_navct_b)
-m_navct_block <- as.data.frame(m_navct_block)
-```
-
-```{r}
-# Jasmine's code
-emm_m_navct_t <- emmeans(m_navct,~Target_Name)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_navct_targetonly <- pairs(emm_m_navct_t)
-m_navct_targetonly <- as.data.frame(m_navct_targetonly)
-```
-
-```{r}
-# Jasmine's code
-emm_m_navct <- emmeans(m_navct,~Block_num|Target_Name)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_navct_blocktarget <- pairs(emm_m_navct)
-m_navct_blocktarget <- as.data.frame(m_navct_blocktarget)
-```
-
-# Distance
-
-```{r}
-# Running linear mixed model
-m_dt <- lmer(Distance ~ Block_num*Target_Name + (1|Participant), data=oa_target_data)
-m_dt_anova <- anova(m_dt)
-m_dt_anova
-```
-
-```{r}
-# Jasmine's code
-emm_m_dt_b <- emmeans(m_dt,~Block_num)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_dt_block <- pairs(emm_m_dt_b)
-m_dt_block <- as.data.frame(m_dt_block)
-```
-
-```{r}
-# Jasmine's code
-emm_m_dt_t <- emmeans(m_dt,~Target_Name)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_dt_targetonly <- pairs(emm_m_dt_t)
-m_dt_targetonly <- as.data.frame(m_dt_targetonly)
-```
-
-```{r}
-# Jasmine's code
-emm_m_dt <- emmeans(m_dt,~Block_num|Target_Name)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_dt_blocktarget <- pairs(emm_m_dt)
-m_dt_blocktarget <- as.data.frame(m_dt_blocktarget)
-```
-
-
-# Speed
-
-```{r}
-# Running linear mixed model
-m_speed <- lmer(Speed ~ Block_num*Target_Name + (1|Participant), data=oa_target_data)
-m_speed_anova <- anova(m_speed)
-m_speed_anova
-```
-
-```{r}
-# Jasmine's code
-emm_m_speed_b <- emmeans(m_speed,~Block_num)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_speed_block <- pairs(emm_m_speed_b)
-m_speed_block <- as.data.frame(m_speed_block)
-```
-
-```{r}
-# Jasmine's code
-emm_m_speed_t <- emmeans(m_speed,~Target_Name)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_speed_targetonly <- pairs(emm_m_speed_t)
-m_speed_targetonly <- as.data.frame(m_speed_targetonly)
-```
-
-```{r}
-# Jasmine's code
-emm_m_speed <- emmeans(m_speed,~Block_num|Target_Name)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_speed_blocktarget <- pairs(emm_m_speed)
-m_speed_blocktarget <- as.data.frame(m_speed_blocktarget)
-```
-
-# Dwell Time
-
-```{r}
-# Running linear mixed model
-m_dwell <- lmer(Mean_Dwell ~ Block_num*Target_Name + (1|Participant), data=oa_target_data)
-m_dwell_anova <- anova(m_dwell)
-m_dwell_anova
-```
-
-```{r}
-# Jasmine's code
-emm_m_dwell_b <- emmeans(m_dwell,~Block_num)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_dwell_block <- pairs(emm_m_dwell_b)
-m_dwell_block <- as.data.frame(m_dwell_block)
-```
-
-```{r}
-# Jasmine's code
-emm_m_dwell_t <- emmeans(m_dwell,~Target_Name)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_dwell_targetonly <- pairs(emm_m_dwell_t)
-m_dwell_targetonly <- as.data.frame(m_dwell_targetonly)
-```
-
-```{r}
-# Jasmine's code
-emm_m_dwell <- emmeans(m_dwell,~Block_num|Target_Name)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_dwell_blocktarget <- pairs(emm_m_dwell)
-m_dwell_blocktarget <- as.data.frame(m_dwell_blocktarget)
-```
-
-# Teleportations 
-
-```{r}
-# Running linear mixed model
-m_teleport <- lmer(Teleportations ~ Block_num*Target_Name + (1|Participant), data=oa_target_data)
-m_teleport_anova <- anova(m_teleport)
-m_teleport_anova
-```
-
-```{r}
-# Jasmine's code
-emm_m_teleport_b <- emmeans(m_teleport,~Block_num)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_teleport_block <- pairs(emm_m_teleport_b)
-m_teleport_block <- as.data.frame(m_teleport_block)
-```
-
-```{r}
-# Jasmine's code
-emm_m_teleport_t <- emmeans(m_teleport,~Target_Name)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_teleport_targetonly <- pairs(emm_m_teleport_t)
-m_teleport_targetonly <- as.data.frame(m_teleport_targetonly)
-```
-
-```{r}
-# Jasmine's code
-emm_m_teleport <- emmeans(m_teleport,~Block_num|Target_Name)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_teleport_blocktarget <- pairs(emm_m_teleport)
-m_teleport_blocktarget <- as.data.frame(m_teleport_blocktarget)
-```
-
 
 ```{r}
 
@@ -421,10 +172,10 @@ final_combined_dataframe_anova <- do.call(rbind, combined_dataframes_anova)
 output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
 
 # Define the CSV file name
-csv_file <- paste0(output_directory, "oa_combined_anova_data.csv")
+csv_file <- paste0(output_directory, "oa_anova_data.csv")
 
 # Save the combined dataframe as a CSV file
-write.csv(final_combined_dataframe_anova, file = csv_file, row.names = FALSE)
+write.csv(final_combined_dataframe_anova, file = csv_file, row.names = TRUE)
 
 # Print a message to confirm the save
 cat("Saved combined data as", csv_file, "\n")
@@ -462,10 +213,10 @@ final_combined_dataframe_block <- do.call(rbind, combined_dataframes_block)
 output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
 
 # Define the CSV file name
-csv_file <- paste0(output_directory, "oa_combined_block_data.csv")
+csv_file <- paste0(output_directory, "oa_block_data.csv")
 
 # Save the combined dataframe as a CSV file
-write.csv(final_combined_dataframe_block, file = csv_file, row.names = FALSE)
+write.csv(final_combined_dataframe_block, file = csv_file, row.names = TRUE)
 
 # Print a message to confirm the save
 cat("Saved combined data as", csv_file, "\n")
@@ -504,10 +255,10 @@ final_combined_dataframe_blocktarget <- do.call(rbind, combined_dataframes_block
 output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
 
 # Define the CSV file name
-csv_file <- paste0(output_directory, "oa_combined_blocktarget_data.csv")
+csv_file <- paste0(output_directory, "oa_blocktarget_data.csv")
 
 # Save the combined dataframe as a CSV file
-write.csv(final_combined_dataframe_blocktarget, file = csv_file, row.names = FALSE)
+write.csv(final_combined_dataframe_blocktarget, file = csv_file, row.names = TRUE)
 
 # Print a message to confirm the save
 cat("Saved combined data as", csv_file, "\n")
@@ -544,10 +295,10 @@ final_combined_dataframe_targetonly <- do.call(rbind, combined_dataframes_target
 output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
 
 # Define the CSV file name
-csv_file <- paste0(output_directory, "oa_combined_target_data.csv")
+csv_file <- paste0(output_directory, "oa_target_data.csv")
 
 # Save the combined dataframe as a CSV file
-write.csv(final_combined_dataframe_targetonly, file = csv_file, row.names = FALSE)
+write.csv(final_combined_dataframe_targetonly, file = csv_file, row.names = TRUE)
 
 # Print a message to confirm the save
 cat("Saved combined data as", csv_file, "\n")
