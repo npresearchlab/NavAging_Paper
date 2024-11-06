@@ -137,7 +137,7 @@ oa_nav_data$Target_Name <- factor(oa_nav_data$Target_Name, levels = desired_orde
 nav_data <- rbind(ya_nav_data, oa_nav_data)
 ```
 
-```{r reading more data, include=FALSE}
+```{r reading more data 2, include=FALSE}
 # YB loading data
 non_nav_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/non_nav_data.csv')
 # Tidying up the data
