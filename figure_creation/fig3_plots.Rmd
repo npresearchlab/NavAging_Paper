@@ -258,7 +258,7 @@ p_orict <- ggplot(data, aes(x=Block_num, y=Orientation_Time, color=Age))+
   stat_summary(data = oa_data, fun.data = mean_se, geom="errorbar",  width=0.2, size=1,  color='#5E7AFA', alpha = 1) +
   labs(color= "Age", y="Orientation Time (s)", x="")+
   scale_x_discrete(labels = c( "Block 1","Block 2","Block 3"))+
-  ylim (0,30)+
+  #ylim (0,30)+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
