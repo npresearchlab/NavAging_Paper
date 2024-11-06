@@ -9,6 +9,11 @@ date: "2023-05-13"
 knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
 ```
 
+```{r}
+# Clearing environment
+rm(list = ls())
+```
+
 ```{r loading libraries, include=FALSE}
 # This code chunk loads various libraries necessary to complete the data analysis and produce graphics
 library(tidyverse)
@@ -112,6 +117,7 @@ for (outcome in outcome_measures) {
   
   # Running pairs on contrast
   emm_pairs_b <- pairs(get(paste0("emm_m_",outcome_names[count], "_b")))
+  emm_pairs_b <- as.data.frame(emm_pairs_b)
   assign(paste0("m_", outcome_names[count], "_block"), emm_pairs_b)
   
   # Running contrasts on LMM for TARGET
@@ -120,6 +126,7 @@ for (outcome in outcome_measures) {
   
   # Running pairs on contrast
   emm_pairs_t <- pairs(get(paste0("emm_m_",outcome_names[count], "_t")))
+  emm_pairs_t <- as.data.frame(emm_pairs_t)
   assign(paste0("m_", outcome_names[count], "_targetonly"), emm_pairs_t)
   
   # Running contrasts on LMM for BLOCK:TARGET interaction
@@ -128,15 +135,8 @@ for (outcome in outcome_measures) {
   
   # Running pairs on contrast
   emm_pairs_bt <- pairs(get(paste0("emm_m_",outcome_names[count])))
+  emm_pairs_bt <- as.data.frame(emm_pairs_bt)
   assign(paste0("m_", outcome_names[count], "_blocktarget"), emm_pairs_bt)
-  
-  
-  
-emm_m_ct <- emmeans(m_ct,~Block_num|Target_Name)
-# can look at just Block_num, or just Target_Name; or the interaction with |
-# can run the reverse: Target_Name | Block_num for contrasts 
-m_ct_blocktarget <- pairs(emm_m_ct)
-m_ct_blocktarget <- as.data.frame(m_ct_blocktarget)
 
   # Updating count variable to loop through outcome names
   count <- count + 1
@@ -145,7 +145,7 @@ m_ct_blocktarget <- as.data.frame(m_ct_blocktarget)
 
 
 ```{r}
-
+rm(anova)
 # List all dataframes in the global environment
 dataframes <- ls()
 

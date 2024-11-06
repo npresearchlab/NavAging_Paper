@@ -613,24 +613,3 @@ for (source_label in unique_labels) {
 ```
 
 
-```{r}
-fig5_heatmap_speed <- ggplot(data_m_speed_blocktarget, aes(x = contrast, y = Target_Name, fill = p.value.adj)) +
-  geom_tile(aes(width = 1, height = 1), color = "white", lwd = 1) +
-  geom_tile(data = subset(data_m_speed_blocktarget, p.value.adj < 0.05), aes(width = 1, height = 1), 
-            color = "white", lwd = 1) +
-  geom_text(aes(label = ifelse(p.value.adj < 0.05, "*", ""), 
-                fontface = ifelse(p.value.adj <0.05, "bold", "plain")),
-            size = 10, vjust = 0.7, hjust = 0.5, color = "white") +
-  scale_fill_gradient(limits = c(0,0.05), low = "#800971", high = "#EDACE5", na.value = "#ffd2d9") +
-  labs(title = "", x = "", y = "", fill = "P-Value") +
-  theme_classic() +
-  theme(axis.line = element_line(linewidth = .5, colour = "#242526")) +
-  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526")) +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  theme(legend.position = "right") +
-  theme(axis.text.x = element_text(size=25)) +
-  theme(axis.text.y = element_text(size=25)) +
-  scale_x_discrete(labels=c("B1-B2","B2-B3","B1-B3")) +
-  scale_y_discrete(labels=c("T1","T2","T3","T4","T5","T6","T7","T8"))
-fig5_heatmap_speed
-```
