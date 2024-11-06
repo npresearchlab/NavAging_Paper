@@ -38,7 +38,11 @@ library('emmeans')
 #This loads the data file as the variable "ya_data"
 # ya_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/ya_averaged_results.csv')
 
-ya_data <- read.csv('/Users/ashleypelton/Documents/NPRL/NavAging_Paper/data/ya_averaged_results.csv')
+# AP loading data
+#ya_data <- read.csv('/Users/ashleypelton/Documents/NPRL/NavAging_Paper/data/ya_averaged_results.csv')
+
+# YB loading data
+ya_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/ya_averaged_results.csv')
 
 # Tidying up the data
 names(ya_data)[1] <- 'index'
@@ -64,7 +68,11 @@ ya_data
 #This loads the data file as the variable "ya_data"
 # oa_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/oa_averaged_results.csv')
 
-oa_data <- read.csv('/Users/ashleypelton/Documents/NPRL/NavAging_Paper/data/oa_averaged_results.csv')
+# AP loading data
+#oa_data <- read.csv('/Users/ashleypelton/Documents/NPRL/NavAging_Paper/data/oa_averaged_results.csv')
+
+# YB loading data
+oa_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/oa_averaged_results.csv')
 
 # Tidying up the data
 names(oa_data)[1] <- 'index'
@@ -93,7 +101,11 @@ all_data <- rbind(ya_data, oa_data)
 #This loads the data file as the variable "ya_target_data"
 # ya_target_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/ya_merged_results.csv')
 
-ya_target_data <- read.csv('/Users/ashleypelton/Documents/NPRL/NavAging_Paper/data/ya_merged_results.csv')
+# AP loading data
+#ya_target_data <- read.csv('/Users/ashleypelton/Documents/NPRL/NavAging_Paper/data/ya_merged_results.csv')
+
+# YB loading data
+ya_target_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/ya_merged_results.csv')
 
 # Tidying up the data
 names(ya_target_data)[1] <- 'index'
@@ -121,7 +133,11 @@ ya_target_data$Age <- "YA"
 #This loads the data file as the variable "oa_target_data"
 # oa_target_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/oa_merged_results.csv')
 
-oa_target_data <- read.csv('/Users/ashleypelton/Documents/NPRL/NavAging_Paper/data/oa_merged_results.csv')
+# AP loading data
+#oa_target_data <- read.csv('/Users/ashleypelton/Documents/NPRL/NavAging_Paper/data/oa_merged_results.csv')
+
+# YB loading data
+oa_target_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/oa_merged_results.csv')
 
 
 # Tidying up the data
