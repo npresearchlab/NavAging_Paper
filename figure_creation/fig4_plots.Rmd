@@ -37,8 +37,8 @@ library('emmeans')
 #This data chunk loads and tidies up the data
 
 #This loads the data file as the variable "data"
-ya_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_merged_results.csv')
-oa_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_merged_results.csv')
+ya_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/ya_merged_results.csv')
+oa_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/oa_merged_results.csv')
 
 names(ya_data)[1] <- 'index'
 names(ya_data)[2] <- 'Participant'
@@ -76,7 +76,7 @@ ya_data$Target_Name <- factor(ya_data$Target_Name, levels = desired_order)
 oa_data$Target_Name <- factor(oa_data$Target_Name, levels = desired_order)
 
 #This loads the data file as the variable "data"
-non_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/non_nav_data.csv')
+non_nav_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/non_nav_data.csv')
 # Tidying up the data
 names(non_nav_data)[1] <- 'Participant'
 names(non_nav_data)[2] <- 'Age'
