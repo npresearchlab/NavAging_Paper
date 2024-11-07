@@ -80,6 +80,8 @@ oa_target_data <- oa_target_data[ -c(1) ]
 oa_target_data$Block_num <- as.factor(oa_target_data$Block_num)
 sapply(oa_target_data, class)
 
+desired_order <- c("Automobile shop", "Police station ", "Fire Station", "Bank", "Pawn Shop", "Pizzeria", "Quattroki Restaurant", "High School")
+
 # Reorder the levels of Target_Name
 oa_target_data$Target_Name <- factor(oa_target_data$Target_Name, levels = desired_order)
 oa_target_data$Age <- "OA"
@@ -98,7 +100,7 @@ for (outcome in outcome_measures) {
   
   # Running the linear mixed model (LMM)
   lmm_formula <- as.formula(paste(outcome, "~ Block_num*Target_Name + (1|Participant)"))
-  lmm_outcome <- lmer(lmm_formula, data = ya_target_data)
+  lmm_outcome <- lmer(lmm_formula, data = oa_target_data)
   assign(paste0("m_",outcome_names[count]), lmm_outcome)
   
   # Running the anova on the LMM
@@ -116,6 +118,7 @@ for (outcome in outcome_measures) {
   
   # Running pairs on contrast
   emm_pairs_b <- pairs(get(paste0("emm_m_",outcome_names[count], "_b")))
+  emm_pairs_b <- as.data.frame(emm_pairs_b)
   assign(paste0("m_", outcome_names[count], "_block"), emm_pairs_b)
   
   # Running contrasts on LMM for TARGET
@@ -124,6 +127,7 @@ for (outcome in outcome_measures) {
   
   # Running pairs on contrast
   emm_pairs_t <- pairs(get(paste0("emm_m_",outcome_names[count], "_t")))
+  emm_pairs_t <- as.data.frame(emm_pairs_t)
   assign(paste0("m_", outcome_names[count], "_targetonly"), emm_pairs_t)
   
   # Running contrasts on LMM for BLOCK:TARGET interaction
@@ -132,6 +136,7 @@ for (outcome in outcome_measures) {
   
   # Running pairs on contrast
   emm_pairs_bt <- pairs(get(paste0("emm_m_",outcome_names[count])))
+  emm_pairs_bt <- as.data.frame(emm_pairs_bt)
   assign(paste0("m_", outcome_names[count], "_blocktarget"), emm_pairs_bt)
   
   
