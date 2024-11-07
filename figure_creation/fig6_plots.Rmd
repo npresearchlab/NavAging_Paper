@@ -262,7 +262,7 @@ corr_nara <-ggplot(non_nav_data_final, aes(x=age, y=nara, color = group))+
   theme(axis.text.x = element_text(size=20))+
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
-  geom_smooth(aes(age,nara), method="lm", se=F)
+  geom_smooth(aes(age,nara, group=group), method="lm", se=TRUE, color = "#242526", fill = "lightgray")
  
 corr_nara
 
@@ -274,12 +274,37 @@ corr_nara_stats <- cor.test(x=non_nav_data_final$age, y=non_nav_data_final$nara,
 
 corr_nara_stats
 
+non_nav_ya_data <- non_nav_data_final %>% filter(group == 'YA')
+
 ##Filter by group in non_nav_data_final
-corr_nara_stats_ya <- cor.test(x=ya_data$age, y=ya_data$nara, method = 'spearman')
+corr_nara_stats_ya <- cor.test(x=non_nav_ya_data$age, y=non_nav_ya_data$nara, method = 'spearman')
 
 corr_nara_stats_ya
 
-corr_nara_stats_oa <- cor.test(x=oa_data$age, y=oa_data$nara, method = 'spearman')
+non_nav_oa_data <- non_nav_data_final %>% filter(group == 'OA')
+
+corr_nara_stats_oa <- cor.test(x=non_nav_oa_data$age, y=non_nav_oa_data$nara, method = 'spearman')
 
 corr_nara_stats_oa
+```
+
+```{r}
+non_nav_oa_high_data <- subset(non_nav_oa_data, nara > 50.00)
+non_nav_oa_low_data <- subset(non_nav_oa_data, nara < 50.00)
+
+corr_nara_three <-ggplot(non_nav_data_final, aes(x=age, y=nara, color = group))+
+  geom_point(size=2)+
+  #labs(color = c('#FF9FAF','#5E7AFA'))+
+  scale_color_manual(values =c('#5E7AFA','#FF9FAF'))+
+  theme_classic()+
+  theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
+  theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.position = "none")+
+  theme(axis.text.x = element_text(size=20))+
+  theme(axis.text.y = element_text(size=20))+
+  theme(axis.title.y = element_text(size=20))+
+  geom_smooth(aes(age,nara, group=group), method="lm", se=TRUE, color = "#242526", fill = "lightgray")
+ 
+corr_nara
 ```
