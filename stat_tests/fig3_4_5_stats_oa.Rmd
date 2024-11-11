@@ -149,7 +149,7 @@ count <- 1
 for (outcome in outcome_measures) {
   
   # Running the linear mixed model (LMM)
-  lmm_formula <- as.formula(paste(outcome, "~ Block_num*Target_Name + (1|Participant)"))
+  lmm_formula <- as.formula(paste(outcome, "~ Block_num*Target_Name*Age + (1|Participant)"))
   lmm_outcome <- lmer(lmm_formula, data = oa_target_data)
   assign(paste0("m_",outcome_names[count]), lmm_outcome)
   
