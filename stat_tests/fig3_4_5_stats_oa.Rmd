@@ -149,7 +149,7 @@ count <- 1
 for (outcome in outcome_measures) {
   
   # Running the linear mixed model (LMM)
-  lmm_formula <- as.formula(paste(outcome, "~ Block_num*Target_Name + (1|Participant)"))
+  lmm_formula <- as.formula(paste(outcome, "~ Block_num*Target_Name*Age + (1|Participant)"))
   lmm_outcome <- lmer(lmm_formula, data = oa_target_data)
   assign(paste0("m_",outcome_names[count]), lmm_outcome)
   
@@ -168,6 +168,7 @@ for (outcome in outcome_measures) {
   
   # Running pairs on contrast
   emm_pairs_b <- pairs(get(paste0("emm_m_",outcome_names[count], "_b")))
+  emm_pairs_bt <- as.data.frame(emm_pairs_bt)
   assign(paste0("m_", outcome_names[count], "_block"), emm_pairs_b)
   
   # Running contrasts on LMM for TARGET
@@ -176,6 +177,7 @@ for (outcome in outcome_measures) {
   
   # Running pairs on contrast
   emm_pairs_t <- pairs(get(paste0("emm_m_",outcome_names[count], "_t")))
+  emm_pairs_t <- as.data.frame(emm_pairs_t)
   assign(paste0("m_", outcome_names[count], "_targetonly"), emm_pairs_t)
   
   # Running contrasts on LMM for BLOCK:TARGET interaction
@@ -184,6 +186,7 @@ for (outcome in outcome_measures) {
   
   # Running pairs on contrast
   emm_pairs_bt <- pairs(get(paste0("emm_m_",outcome_names[count])))
+  emm_pairs_bt <- as.data.frame(emm_pairs_bt)
   assign(paste0("m_", outcome_names[count], "_blocktarget"), emm_pairs_bt)
   
   

@@ -193,7 +193,7 @@ for (outcome in outcome_measures) {
   emm_pairs_bt <- pairs(get(paste0("emm_m_",outcome_names[count])))
   emm_pairs_bt <- as.data.frame(emm_pairs_bt)
   assign(paste0("m_", outcome_names[count], "_blocktarget"), emm_pairs_bt)
-
+  
   # Updating count variable to loop through outcome names
   count <- count + 1
 }
