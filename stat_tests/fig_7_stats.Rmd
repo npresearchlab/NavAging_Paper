@@ -1,0 +1,234 @@
+---
+title: "fig_7_stats"
+output: html_document
+date: "2024-11-07"
+---
+
+```{r global-options, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r loading libraries, include=FALSE}
+
+# This code chunk loads various libraries necessary to complete the data analysis and produce graphics
+library(tidyverse)
+library(stringr)
+library(ez)
+library(cowplot)
+library(viridis)
+library(viridisLite)
+library("readxl")
+library("ggcorrplot")
+library(dplyr)
+library(ltm)
+library(plotrix)
+library("viridis")
+library("paletteer")
+library(ggpubr)
+library(rstatix)
+library(lme4)
+library(lmerTest)
+library('emmeans')
+```
+
+```{r reading data, include=FALSE}
+#This data chunk loads and tidies up the data
+
+#This loads the data file as the variable "ya_data"
+# ya_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/ya_averaged_results.csv')
+
+ya_data <- read.csv('/Users/emmafunderburg/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/data/ya_averaged_results.csv')
+
+# Tidying up the data
+names(ya_data)[1] <- 'index'
+names(ya_data)[2] <- 'Participant'
+names(ya_data)[3] <- 'Block_num'
+names(ya_data)[4] <- 'Total_Time'
+names(ya_data)[5] <- 'Orientation_Time'
+names(ya_data)[6] <- 'Navigation_Time'
+names(ya_data)[7] <- 'Distance'
+names(ya_data)[8] <- 'Speed'
+names(ya_data)[9] <- 'Mean_Dwell'
+names(ya_data)[10] <- 'Teleportations'
+ya_data <- ya_data[ -c(1) ]
+ya_data$Block_num <- as.factor(ya_data$Block_num)
+sapply(ya_data, class)
+ya_data$Age <- "YA"
+ya_data
+
+```
+
+```{r reading data 2, include=FALSE}
+#This data chunk loads and tidies up the data
+
+#This loads the data file as the variable "ya_data"
+# oa_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/oa_averaged_results.csv')
+
+oa_data <- read.csv('/Users/emmafunderburg/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/data/oa_averaged_results.csv')
+
+# Tidying up the data
+names(oa_data)[1] <- 'index'
+names(oa_data)[2] <- 'Participant'
+names(oa_data)[3] <- 'Block_num'
+names(oa_data)[4] <- 'Total_Time'
+names(oa_data)[5] <- 'Orientation_Time'
+names(oa_data)[6] <- 'Navigation_Time'
+names(oa_data)[7] <- 'Distance'
+names(oa_data)[8] <- 'Speed'
+names(oa_data)[9] <- 'Mean_Dwell'
+names(oa_data)[10] <- 'Teleportations'
+oa_data <- oa_data[ -c(1) ]
+oa_data$Block_num <- as.factor(oa_data$Block_num)
+sapply(oa_data, class)
+oa_data$Age <- "OA"
+oa_data
+
+
+
+
+```
+
+```{r}
+
+# load non nav data
+
+non_nav_data <- read.csv('/Users/emmafunderburg/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/data/non_nav_data.csv')
+
+# Create OA NARA High Data Frame
+
+oa_data_nara <- data.frame(filter(non_nav_data, group == "OA", nara > 50))
+
+oa_data_nara$nara_group <- factor(c('OA High'))
+
+
+# Create OA NARA Low Data Frame
+
+oa_data_nara_low <- data.frame(filter(non_nav_data, group == "OA", nara < 50))
+
+oa_data_nara_low$nara_group <- factor(c('OA Low'))
+
+
+# YA NARA
+
+ya_data_nara <- data.frame(filter(non_nav_data, group == "YA"))
+
+ya_data_nara$nara_group <- factor(c('YA'))
+
+# bind NARA frames together
+
+all_data <- rbind(ya_data_nara, oa_data_nara_low, oa_data_nara)
+
+# alphabetize by participant
+
+all_data <- all_data[order(all_data$participant),]
+
+
+# alphabetize nav_data
+
+nav_data <- nav_data[order(nav_data$Participant),]
+
+
+# removing NAV054 (from analysis for now)
+
+all_data <- all_data[-c(49),]
+
+# add speed
+
+df_Speed <- nav_data %>%
+  group_by(Participant) %>%
+  summarise(mean = mean(Speed),
+            sd = sd(Speed))
+
+all_data$Speed <- df_speed$mean
+
+# add orientation time
+
+df_Orientation_Time <- nav_data %>%
+  group_by(Participant) %>%
+  summarise(mean = mean(Orientation_Time),
+            sd = sd(Orientation_Time))
+
+all_data$Orientation_Time <- df_Orientation_Time$mean
+
+# add total time
+
+df_Total_Time <- nav_data %>%
+  group_by(Participant) %>%
+  summarise(mean = mean(Total_Time),
+            sd = sd(Total_Time))
+
+all_data$Total_Time <- df_Total_Time$mean
+
+# add navigation time
+
+df_Navigation_Time <- nav_data %>%
+  group_by(Participant) %>%
+  summarise(mean = mean(Navigation_Time),
+            sd = sd(Navigation_Time))
+
+all_data$Navigation_Time <- df_Navigation_Time$mean
+
+# add distance
+
+df_Distance <- nav_data %>%
+  group_by(Participant) %>%
+  summarise(mean = mean(Distance),
+            sd = sd(Distance))
+
+all_data$Distance <- df_Distance$mean
+
+# add dwell time
+
+df_Mean_Dwell <- nav_data %>%
+  group_by(Participant) %>%
+  summarise(mean = mean(Mean_Dwell),
+            sd = sd(Mean_Dwell))
+
+all_data$Mean_Dwell <- df_Mean_Dwell$mean
+
+# add teleportations
+
+df_Teleportations <- nav_data %>%
+  group_by(Participant) %>%
+  summarise(mean = mean(Teleportations),
+            sd = sd(Teleportations))
+
+all_data$Teleportations <- df_Teleportations$mean
+
+
+# all_data <- all_data[order(all_data$Participant),]
+
+
+# alphabetize all_data & avg by participant
+# add nara from non_nav_data as variable to all_data
+
+```
+
+
+
+
+# ANOVA - All Values
+
+```{r}
+# This runs ANOVA tests for all outcome measures
+outcome_measures <- c('Total_Time', 'Orientation_Time', 'Navigation_Time', 'Distance', 'Speed', 'Mean_Dwell', 'Teleportations')
+
+for (outcome in outcome_measures) {
+  anova_formula <- as.formula(paste(outcome, "~ nara_group"))
+  ct_anova <- aov(anova_formula, data = all_data)
+  
+  assign(paste0(outcome, "_ANOVA"), ct_anova)
+  
+  cat("\nANOVA for", outcome, ":\n")
+  print(summary(ct_anova))
+}
+# omnibus p-values - main effect of this variable
+```
+
+
+
+
+
+
+
+
