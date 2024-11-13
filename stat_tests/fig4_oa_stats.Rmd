@@ -323,7 +323,10 @@ unique_labels <- unique(final_combined_dataframe_targetonly$Source)
 for (source_label in unique_labels) {
   # Filter the dataset based on the label
   filtered_data <- subset(final_combined_dataframe_targetonly, Source == source_label)
+  
+  # Multiple comparisons correction for 7 outcomes
   filtered_data[, 8] <- filtered_data[, 6] * 7
+  
   colnames(filtered_data)[8] <- "p.value.adj"
   filtered_data <- separate(filtered_data, contrast, into = c("t1", "t2"), sep = " - ")
   filtered_data$p.value.adj[filtered_data$p.value.adj > 1] <- 1

@@ -1,0 +1,121 @@
+,contrast,estimate,SE,df,t.ratio,p.value,Source
+m_ct_t_groups_tag4.1,OA Automobile shop - YA Automobile shop,36.01509274,12.26469639,366.7668768,2.936484655,0.202490463,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.2,OA Automobile shop - OA Bank,-44.87387929,11.27126789,1080.000153,-3.981262776,0.007252911,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.3,OA Automobile shop - YA Bank,17.34109472,12.26469639,366.7668768,1.413903302,0.989869426,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.4,OA Automobile shop - OA Fire Station,11.35529563,11.27126789,1080.000153,1.007455039,0.99978425,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.5,OA Automobile shop - YA Fire Station,32.09618227,12.26469639,366.7668768,2.616956935,0.390068348,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.6,OA Automobile shop - OA High School,3.531813571,11.27126789,1080.000153,0.313346609,1,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.7,OA Automobile shop - YA High School,36.45061815,12.26469639,366.7668768,2.971995147,0.186257172,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.8,OA Automobile shop - OA Pawn Shop,-22.63767287,11.31731354,1080.218748,-2.000269127,0.824992474,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.9,OA Automobile shop - YA Pawn Shop,16.59745782,12.26469639,366.7668768,1.35327099,0.993504002,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.10,OA Automobile shop - OA Pizzeria,8.030779336,11.27126789,1080.000153,0.712500086,0.999997625,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.11,OA Automobile shop - YA Pizzeria,29.62097636,12.26469639,366.7668768,2.415141429,0.537425481,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.12,OA Automobile shop - OA Police station ,-12.53510943,11.27126789,1080.000153,-1.112129492,0.999291037,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.13,OA Automobile shop - YA Police station ,26.94358441,12.26469639,366.7668768,2.196840717,0.698887912,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.14,OA Automobile shop - OA Quattroki Restaurant,-76.48771695,11.27126789,1080.000153,-6.786079232,2.27E-09,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.15,OA Automobile shop - YA Quattroki Restaurant,13.73783405,12.26469639,366.7668768,1.120112037,0.999191313,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.16,YA Automobile shop - OA Bank,-80.88897203,12.26469639,366.7668768,-6.595269012,1.77E-08,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.17,YA Automobile shop - YA Bank,-18.67399803,10.17424591,1080.000153,-1.835418388,0.903148257,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.18,YA Automobile shop - OA Fire Station,-24.65979711,12.26469639,366.7668768,-2.010632496,0.817994606,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.19,YA Automobile shop - YA Fire Station,-3.918910473,10.17424591,1080.000153,-0.385179453,1,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.20,YA Automobile shop - OA High School,-32.48327917,12.26469639,366.7668768,-2.648518817,0.368527981,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.21,YA Automobile shop - YA High School,0.435525405,10.17424591,1080.000153,0.042806652,1,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.22,YA Automobile shop - OA Pawn Shop,-58.65276561,12.30702577,370.5297375,-4.765795302,0.000302502,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.23,YA Automobile shop - YA Pawn Shop,-19.41763492,10.17424591,1080.000153,-1.908508511,0.871904279,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.24,YA Automobile shop - OA Pizzeria,-27.98431341,12.26469639,366.7668768,-2.281696385,0.637578985,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.25,YA Automobile shop - YA Pizzeria,-6.394116385,10.17424591,1080.000153,-0.628460963,0.999999578,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.26,YA Automobile shop - OA Police station ,-48.55020218,12.26469639,366.7668768,-3.958532738,0.008764022,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.27,YA Automobile shop - YA Police station ,-9.071508331,10.17424591,1080.000153,-0.89161481,0.999953619,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.28,YA Automobile shop - OA Quattroki Restaurant,-112.5028097,12.26469639,366.7668768,-9.172898059,0,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.29,YA Automobile shop - YA Quattroki Restaurant,-22.27725869,10.17424591,1080.000153,-2.189573447,0.704518098,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.30,OA Bank - YA Bank,62.21497401,12.26469639,366.7668768,5.072687659,7.16E-05,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.31,OA Bank - OA Fire Station,56.22917492,11.27126789,1080.000153,4.988717815,8.15E-05,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.32,OA Bank - YA Fire Station,76.97006156,12.26469639,366.7668768,6.275741292,1.17E-07,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.33,OA Bank - OA High School,48.40569286,11.27126789,1080.000153,4.294609385,0.002025884,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.34,OA Bank - YA High School,81.32449744,12.26469639,366.7668768,6.630779505,1.43E-08,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.35,OA Bank - OA Pawn Shop,22.23620642,11.31731354,1080.218748,1.964795474,0.844119687,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.36,OA Bank - YA Pawn Shop,61.47133711,12.26469639,366.7668768,5.012055347,9.59E-05,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.37,OA Bank - OA Pizzeria,52.90465863,11.27126789,1080.000153,4.693762862,0.00033976,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.38,OA Bank - YA Pizzeria,74.49485565,12.26469639,366.7668768,6.073925786,3.71E-07,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.39,OA Bank - OA Police station ,32.33876985,11.27126789,1080.000153,2.869133284,0.232401724,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.40,OA Bank - YA Police station ,71.8174637,12.26469639,366.7668768,5.855625075,1.25E-06,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.41,OA Bank - OA Quattroki Restaurant,-31.61383766,11.27126789,1080.000153,-2.804816456,0.267684395,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.42,OA Bank - YA Quattroki Restaurant,58.61171334,12.26469639,366.7668768,4.778896394,0.000285882,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.43,YA Bank - OA Fire Station,-5.985799086,12.26469639,366.7668768,-0.488051143,0.999999987,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.44,YA Bank - YA Fire Station,14.75508755,10.17424591,1080.000153,1.450238935,0.987378615,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.45,YA Bank - OA High School,-13.80928114,12.26469639,366.7668768,-1.125937464,0.999140991,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.46,YA Bank - YA High School,19.10952343,10.17424591,1080.000153,1.87822504,0.885516889,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.47,YA Bank - OA Pawn Shop,-39.97876759,12.30702577,370.5297375,-3.248450789,0.090718135,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.48,YA Bank - YA Pawn Shop,-0.743636894,10.17424591,1080.000153,-0.073090124,1,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.49,YA Bank - OA Pizzeria,-9.310315379,12.26469639,366.7668768,-0.759115031,0.999994023,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.50,YA Bank - YA Pizzeria,12.27988164,10.17424591,1080.000153,1.206957424,0.998182743,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.51,YA Bank - OA Police station ,-29.87620415,12.26469639,366.7668768,-2.435951385,0.52175295,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.52,YA Bank - YA Police station ,9.602489696,10.17424591,1080.000153,0.943803578,0.999904306,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.53,YA Bank - OA Quattroki Restaurant,-93.82881167,12.26469639,366.7668768,-7.650316706,1.51E-11,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.54,YA Bank - YA Quattroki Restaurant,-3.603260665,10.17424591,1080.000153,-0.354155059,1,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.55,OA Fire Station - YA Fire Station,20.74088664,12.26469639,366.7668768,1.691104776,0.948134728,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.56,OA Fire Station - OA High School,-7.823482059,11.27126789,1080.000153,-0.69410843,0.999998337,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.57,OA Fire Station - YA High School,25.09532252,12.26469639,366.7668768,2.046142988,0.797389638,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.58,OA Fire Station - OA Pawn Shop,-33.9929685,11.31731354,1080.218748,-3.003625231,0.16897105,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.59,OA Fire Station - YA Pawn Shop,5.242162192,12.26469639,366.7668768,0.427418831,0.999999998,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.60,OA Fire Station - OA Pizzeria,-3.324516294,11.27126789,1080.000153,-0.294954953,1,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.61,OA Fire Station - YA Pizzeria,18.26568073,12.26469639,366.7668768,1.48928927,0.983210659,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.62,OA Fire Station - OA Police station ,-23.89040507,11.27126789,1080.000153,-2.119584531,0.752277669,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.63,OA Fire Station - YA Police station ,15.58828878,12.26469639,366.7668768,1.270988558,0.996651907,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.64,OA Fire Station - OA Quattroki Restaurant,-87.84301258,11.27126789,1080.000153,-7.793534271,1.36E-12,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.65,OA Fire Station - YA Quattroki Restaurant,2.38253842,12.26469639,366.7668768,0.194259878,1,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.66,YA Fire Station - OA High School,-28.5643687,12.26469639,366.7668768,-2.328991097,0.602353891,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.67,YA Fire Station - YA High School,4.354435878,10.17424591,1080.000153,0.427986105,0.999999998,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.68,YA Fire Station - OA Pawn Shop,-54.73385514,12.30702577,370.5297375,-4.447366581,0.001235062,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.69,YA Fire Station - YA Pawn Shop,-15.49872445,10.17424591,1080.000153,-1.523329059,0.979781209,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.70,YA Fire Station - OA Pizzeria,-24.06540293,12.26469639,366.7668768,-1.962168665,0.844240155,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.71,YA Fire Station - YA Pizzeria,-2.475205912,10.17424591,1080.000153,-0.24328151,1,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.72,YA Fire Station - OA Police station ,-44.6312917,12.26469639,366.7668768,-3.639005018,0.027200845,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.73,YA Fire Station - YA Police station ,-5.152597858,10.17424591,1080.000153,-0.506435357,0.99999998,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.74,YA Fire Station - OA Quattroki Restaurant,-108.5838992,12.26469639,366.7668768,-8.85337034,0,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.75,YA Fire Station - YA Quattroki Restaurant,-18.35834822,10.17424591,1080.000153,-1.804393994,0.914753618,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.76,OA High School - YA High School,32.91880458,12.26469639,366.7668768,2.68402931,0.3449761,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.77,OA High School - OA Pawn Shop,-26.16948644,11.31731354,1080.218748,-2.312340853,0.614583751,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.78,OA High School - YA Pawn Shop,13.06564425,12.26469639,366.7668768,1.065305152,0.999552645,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.79,OA High School - OA Pizzeria,4.498965765,11.27126789,1080.000153,0.399153477,0.999999999,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.80,OA High School - YA Pizzeria,26.08916279,12.26469639,366.7668768,2.127175591,0.746426742,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.81,OA High School - OA Police station ,-16.06692301,11.27126789,1080.000153,-1.425476101,0.989353857,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.82,OA High School - YA Police station ,23.41177084,12.26469639,366.7668768,1.90887488,0.87046642,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.83,OA High School - OA Quattroki Restaurant,-80.01953052,11.27126789,1080.000153,-7.099425841,2.71E-10,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.84,OA High School - YA Quattroki Restaurant,10.20602048,12.26469639,366.7668768,0.832146199,0.999979846,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.85,YA High School - OA Pawn Shop,-59.08829102,12.30702577,370.5297375,-4.801183657,0.000257183,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.86,YA High School - YA Pawn Shop,-19.85316033,10.17424591,1080.000153,-1.951315164,0.851064217,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.87,YA High School - OA Pizzeria,-28.41983881,12.26469639,366.7668768,-2.317206877,0.611177815,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.88,YA High School - YA Pizzeria,-6.82964179,10.17424591,1080.000153,-0.671267615,0.999998949,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.89,YA High School - OA Police station ,-48.98572758,12.26469639,366.7668768,-3.994043231,0.007669865,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.90,YA High School - YA Police station ,-9.507033736,10.17424591,1080.000153,-0.934421462,0.999915651,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.91,YA High School - OA Quattroki Restaurant,-112.9383351,12.26469639,366.7668768,-9.208408552,0,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.92,YA High School - YA Quattroki Restaurant,-22.7127841,10.17424591,1080.000153,-2.232380099,0.673876916,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.93,OA Pawn Shop - YA Pawn Shop,39.23513069,12.30702577,370.5297375,3.188027019,0.107227678,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.94,OA Pawn Shop - OA Pizzeria,30.66845221,11.31731354,1080.218748,2.709870332,0.325374321,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.95,OA Pawn Shop - YA Pizzeria,52.25864923,12.30702577,370.5297375,4.246245209,0.002850916,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.96,OA Pawn Shop - OA Police station ,10.10256344,11.31731354,1080.218748,0.892664447,0.999952913,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.97,OA Pawn Shop - YA Police station ,49.58125728,12.30702577,370.5297375,4.028695332,0.00671357,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.98,OA Pawn Shop - OA Quattroki Restaurant,-53.85004408,11.31731354,1080.218748,-4.758200247,0.000250625,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.99,OA Pawn Shop - YA Quattroki Restaurant,36.37550692,12.30702577,370.5297375,2.955670004,0.193546278,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.100,YA Pawn Shop - OA Pizzeria,-8.566678486,12.26469639,366.7668768,-0.698482719,0.999998058,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.101,YA Pawn Shop - YA Pizzeria,13.02351854,10.17424591,1080.000153,1.280047548,0.996523576,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.102,YA Pawn Shop - OA Police station ,-29.13256726,12.26469639,366.7668768,-2.375319073,0.567479995,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.103,YA Pawn Shop - YA Police station ,10.34612659,10.17424591,1080.000153,1.016893702,0.999758085,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.104,YA Pawn Shop - OA Quattroki Restaurant,-93.08517477,12.26469639,366.7668768,-7.589684394,2.58E-11,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.105,YA Pawn Shop - YA Quattroki Restaurant,-2.859623772,10.17424591,1080.000153,-0.281064936,1,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.106,OA Pizzeria - YA Pizzeria,21.59019702,12.26469639,366.7668768,1.760353158,0.928467654,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.107,OA Pizzeria - OA Police station ,-20.56588877,11.27126789,1080.000153,-1.824629578,0.907295184,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.108,OA Pizzeria - YA Police station ,18.91280508,12.26469639,366.7668768,1.542052447,0.976767835,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.109,OA Pizzeria - OA Quattroki Restaurant,-84.51849629,11.27126789,1080.000153,-7.498579318,1.56E-11,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.110,OA Pizzeria - YA Quattroki Restaurant,5.707054714,12.26469639,366.7668768,0.465323766,0.999999994,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.111,YA Pizzeria - OA Police station ,-42.15608579,12.26469639,366.7668768,-3.437189512,0.052044862,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.112,YA Pizzeria - YA Police station ,-2.677391946,10.17424591,1080.000153,-0.263153846,1,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.113,YA Pizzeria - OA Quattroki Restaurant,-106.1086933,12.26469639,366.7668768,-8.651554833,0,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.114,YA Pizzeria - YA Quattroki Restaurant,-15.88314231,10.17424591,1080.000153,-1.561112484,0.974645247,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.115,OA Police station  - YA Police station ,39.47869385,12.26469639,366.7668768,3.218888801,0.098567869,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.116,OA Police station  - OA Quattroki Restaurant,-63.95260752,11.27126789,1080.000153,-5.67394974,2.12E-06,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.117,OA Police station  - YA Quattroki Restaurant,26.27294349,12.26469639,366.7668768,2.14216012,0.736462738,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.118,YA Police station  - OA Quattroki Restaurant,-103.4313014,12.26469639,366.7668768,-8.433254122,0,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.119,YA Police station  - YA Quattroki Restaurant,-13.20575036,10.17424591,1080.000153,-1.297958638,0.99596239,m_ct_t_groups_tag4
+m_ct_t_groups_tag4.120,OA Quattroki Restaurant - YA Quattroki Restaurant,90.225551,12.26469639,366.7668768,7.356525441,1.43E-10,m_ct_t_groups_tag4
