@@ -608,69 +608,327 @@ oa_target_data$Block_num <- as.factor(oa_target_data$Block_num)
 all_target_data <- rbind(ya_target_data, oa_target_data)
 ```
 
-## Model
+```{r}
+# Initializing variables
+outcome_measures <- c('Total_Time', 'Orientation_Time', 'Navigation_Time', 'Distance', 'Speed', 'Mean_Dwell', 'Teleportations')
+outcome_names <- c('ct', 'orict','navct','dt','speed', 'dwell', 'teleport')
+count <- 1
+
+# Specify the directory where you want to save the CSV file
+output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
+
+```
+
+```{r}
+
+# Looping through outcome measures
+for (outcome in outcome_measures) {
+  
+  # Running the linear mixed model (LMM)
+  lmm_formula <- as.formula(paste(outcome, "~ Block_num*Target_Name*Age + (1|Participant)"))
+  lmm_outcome <- lmer(lmm_formula, data = all_target_data)
+  assign(paste0("m_",outcome_names[count]), lmm_outcome)
+  
+  # Running the anova on the LMM
+  anova_formula <- paste0("m_",outcome_names[count])
+  anova <- anova(get(paste0("m_",outcome_names[count])))
+  assign(paste0("m_",outcome_names[count], "_anova_tag1"), anova)
+  
+  # Figure 3
+  
+  ## Running emmeans on LMM for Age x Block
+  emm_b <- emmeans(get(paste0("m_",outcome_names[count])), ~Age*Block_num)
+  assign(paste0("emm_m_",outcome_names[count], "_b"), emm_b)
+
+  ## Running contrasts on emmeans to get group differences
+  emm_b_groups <- contrast(get(paste0("emm_m_",outcome_names[count], "_b")), method = "pairwise")
+  emm_b_groups <- as.data.frame(emm_b_groups)
+  assign(paste0("m_", outcome_names[count], "_b_groups_tag2"), emm_b_groups)
+  
+  ## Running contrasts on emmeans to get slope differences
+  emm_b_slopes <- contrast(get(paste0("emm_m_",outcome_names[count], "_b")), interaction = "pairwise")
+  emm_b_slopes <- data.frame(emm_b_slopes)
+  assign(paste0("m_", outcome_names[count], "_b_slopes_tag3"), emm_b_slopes)
+  
+  # Figure 4
+  
+  ## Running emmeans on LMM for Age * Target
+  emm_t <- emmeans(get(paste0("m_",outcome_names[count])), ~Age*Target_Name)
+  assign(paste0("emm_m_",outcome_names[count], "_t"), emm_t)
+  
+  ## Running contrasts on emmeans to get group differences
+  emm_t_groups <- contrast(get(paste0("emm_m_",outcome_names[count], "_t")), interaction = "pairwise")
+  emm_t_groups <- data.frame(emm_t_groups)
+  assign(paste0("m_", outcome_names[count], "_t_groups_tag4"), emm_t_groups)
+  
+  # Figure 5
+  
+  ## Running emmeans on LMM for Age * Block * Target
+  emm_bt <- emmeans(get(paste0("m_",outcome_names[count])), ~Age*Block_num*Target_Name)
+  assign(paste0("emm_m_",outcome_names[count], "_bt"), emm_bt)
+  
+  ## Running contrasts on emmeans to get group differences
+  emm_bt_groups <- contrast(get(paste0("emm_m_",outcome_names[count], "_bt")), method = "pairwise")
+  emm_bt_groups <- data.frame(emm_bt_groups)
+  assign(paste0("emm_m_",outcome_names[count], "_bt_groups_tag5"), emm_bt_groups)
+  
+  ## Running emmeans on LMM for Age * Block | Target
+  emm_bt_bytarget <- emmeans(get(paste0("m_",outcome_names[count])), ~Age*Block_num|Target_Name)
+  assign(paste0("emm_m_",outcome_names[count], "_bt_bytarget"), emm_bt_bytarget)
+  
+  ## Running contrasts on emmeans to get slope differences sorted by target
+  emm_bt_bytarget_slopes <- contrast(get(paste0("emm_m_",
+                                                outcome_names[count],
+                                                "_bt_bytarget")), 
+                                     interaction = "pairwise")
+  emm_bt_bytarget_slopes <- data.frame(emm_bt_bytarget_slopes)
+  assign(paste0("emm_m_",outcome_names[count], "_bt_slopes_tag6"), emm_bt_bytarget_slopes)
+  
+  count <- count + 1
+}
+```
+
+```{r}
+tags <- c("tag1","tag2", "tag3", "tag4", "tag5", "tag6")
+  
+for (t in tags) {
+  dataframes <- ls()
+  
+  # Filter dataframes that end with "tag1"
+  dataframes_to_save <- dataframes[grep(t, dataframes)]
+  
+  # Create an empty list to store dataframes
+  combined_dataframes <- list()
+  
+  # Loop through the selected dataframes, combine them, and add a "Source" column
+  for (df_name in dataframes_to_save) {
+    # Get the dataframe by name
+    df <- get(df_name)
+    
+    # Add a "Source" column with the dataframe name
+    df$Source <- df_name
+    
+    # Append the modified dataframe to the list
+    combined_dataframes[[df_name]] <- df
+  }
+  
+  # Combine all dataframes into one giant dataframe
+  final_combined_dataframes <- do.call(rbind, combined_dataframes)
+    
+  # Define the CSV file name
+  csv_file <- paste0(output_directory, paste0("stats_data_",
+                                              t, ".csv"))
+  # Save the combined dataframe as a CSV file
+  write.csv(final_combined_dataframes, file = csv_file, row.names = TRUE)
+  
+  # Print a message to confirm the save
+  cat("Saved combined data as", csv_file, "\n")
+}
+```
+
+# PICKUP HERE
+
+
+## Overall Model
 
 ```{r}
 # Running linear mi
 m_all_ct <- lmer(Total_Time ~ Block_num*Target_Name*Age + (1|Participant), data=all_target_data)
-m_all_ct_anova <- anova(m_all_ct)
-m_all_ct_anova
+m_all_ct_anova_tag1 <- anova(m_all_ct)
+m_all_ct_anova_tag1
 # omnibus p-values - main effect of this variable
 ```
 
 ## Figure 3
 
-
 ```{r}
 # Jasmine's code
-m_ct_emm <- emmeans(m_all_ct,~Age*Block_num)
+m_ct_emm_b <- emmeans(m_all_ct,~Age*Block_num)
 
-m_ct_groups <- contrast(m_ct_emm, method = "pairwise")
-m_ct_groups
+m_ct_b_groups <- contrast(m_ct_emm_b, method = "pairwise")
+m_ct_b_groups_tag2 <- data.frame(m_ct_b_groups)
+m_ct_b_groups_tag2
 ```
 
 ```{r}
 # Difference between YA and OA in CHANGE in Blocks
-interaction_contrasts = contrast(emm, interaction = "pairwise")
-table = data.frame(interaction_contrasts); b = data.frame(confint(interaction_contrasts))
-table$lower.CL = b$lower.CL; table$upper.CL = b$upper.CL; table$D = abs(round((table$estimate)/(summary(m_all_ct)$sigma^2),digits = 2))
-#gtsave(gt(table), paste0(imagesPath, "FOOOF_beta_PosturexFeedback_power_stats.png"))
+m_ct_b_slopes <- contrast(m_ct_emm_b, interaction = "pairwise")
+m_ct_b_slopes_tag3 <- data.frame(m_ct_b_slopes)
+m_ct_b_slopes_tag3
 ```
+
+## Figure 4
 
 ```{r}
 # Jasmine's code
-m_ct_pairs <- emmeans(m_all_ct,~Age*Block_num)
-m_ct_contrasts <- contrast(m_ct_pairs, method = "pairwise")
-m_ct_contrasts
+m_ct_emm_t <- emmeans(m_all_ct,~Age*Target_Name)
+
+m_ct_t_groups <- contrast(m_ct_emm_t, method = "pairwise")
+m_ct_t_groups_tag4 <- data.frame(m_ct_t_groups)
+m_ct_t_groups_tag4
+```
+
+# Figure 5
+
+```{r}
+m_ct_bt <- emmeans(m_all_ct,~Age*Block_num*Target_Name)
+m_ct_bt_groups_tag5 <- contrast(m_ct_bt, method = "pairwise")
+m_ct_bt_groups_tag5 <- data.frame(m_ct_bt_groups_tag5)
+m_ct_bt_groups_tag5
 ```
 
 ```{r}
-m_ct_pairs <- emmeans(m_all_ct,~Age*Block_num*Target_Name)
-m_ct_contrasts <- contrast(m_ct_pairs, method = "pairwise")
-m_ct_contrasts
-```
-
-
-```{r}
-# Running linear mi
-m_ba_ct <- lmer(Total_Time ~ Block_num*Age + (1|Participant), data=all_data)
-m_ba_ct_anova <- anova(m_ba_ct)
-m_ba_ct_anova
-# omnibus p-values - main effect of this variable
+m_ct_bt_bytarget <- emmeans(m_all_ct,~Age*Block_num|Target_Name)
+m_ct_bt_slopes_tag6 <- contrast(m_ct_bt_bytarget, interaction = "pairwise")
+m_ct_bt_slopes_tag6 <- data.frame(m_ct_bt_slopes_tag6)
+m_ct_bt_slopes_tag6
 ```
 
 ```{r}
-# Running linear mi
-m_ba_ct <- lmer(Total_Time ~ Block_num*Age + (1|Participant), data=all_data)
-m_ba_ct_anova <- anova(m_ba_ct)
-m_ba_ct_anova
-# omnibus p-values - main effect of this variable
-```
 
+for (t in tags) {
+  dataframes <- ls()
+  
+  # Filter dataframes that end with "tag1"
+  dataframes_to_save <- dataframes[grep(t, dataframes)]
+
+  # Create an empty list to store dataframes
+  combined_dataframes <- list()
+
+  # Loop through the selected dataframes, combine them, and add a "Source" column
+  for (df_name in dataframes_to_save) {
+    # Get the dataframe by name
+    df <- get(df_name)
+    
+    # Add a "Source" column with the dataframe name
+    df$Source <- df_name
+    
+    # Append the modified dataframe to the list
+    combined_dataframes[[df_name]] <- df
+
+    # Combine all dataframes into one giant dataframe
+    final_combined_dataframes <- do.call(rbind, combined_dataframes)
+    
+    # Define the CSV file name
+    csv_file <- paste0(output_directory, paste0("stats_data_",
+                                                outcome_names[count], "_",
+                                                t, ".csv"))
+  
+    # Save the combined dataframe as a CSV file
+    write.csv(final_combined_dataframes, file = csv_file, row.names = TRUE)
+    
+    # Print a message to confirm the save
+    cat("Saved combined data as", csv_file, "\n")
+  }
+  count <- count + 1
+}
+```
 
 ```{r}
-# Jasmine's code
-m_ct_pairs <- emmeans(m_ba_ct,~Age*Block_num)
-m_ct_contrasts <- contrast(m_ct_pairs, method = "pairwise")
-m_ct_contrasts
+sort_contrasts <- function(df) {
+  # Check if the "contrast" column exists
+  if (!("contrast" %in% names(df))) {
+    stop("The dataframe does not have a 'contrast' column.")
+  }
+  
+  # Create three separate dataframes based on the contrast values
+  oa_ya <- df %>% filter(grepl("OA", contrast) & grepl("YA", contrast))
+  two_oa <- df %>% filter(grepl("OA", contrast) & !grepl("YA", contrast))
+  two_ya <- df %>% filter(grepl("YA", contrast) & !grepl("OA", contrast))
+  
+  return(list(both = oa_ya, oa = two_oa, ya = two_ya))
+}
 ```
+
+```{r}
+contrasts <- sort_contrasts(m_ct_t_groups_tag4)
+```
+
+```{r}
+contrasts_oa <- contrasts$oa
+contrasts_oa$contrast <- gsub("OA", "", contrasts_oa$contrast)
+contrasts_oa
+```
+
+```{r}
+contrasts_ya <- contrasts$ya
+contrasts_ya$contrast <- gsub("YA", "", contrasts_ya$contrast)
+contrasts_ya
+```
+
+```{r}
+contrasts_both <- contrasts$both
+contrasts_both$contrast <- gsub("YA", "", contrasts_both$contrast)
+contrasts_both$contrast <- gsub("OA", "", contrasts_both$contrast)
+contrasts_both
+```
+
+```{r}
+labels <- setNames(list(contrasts_ya, contrasts_oa, contrasts_both),
+                  c("contrasts_ya", "contrasts_oa", "contrasts_both"))
+count <- 0
+
+for (i in labels) {
+  count <- count + 1
+  sep_data <- separate(i, contrast, into = c("t1", "t2"), sep = " - ")
+  sep_data$t1 <- factor(filtered_data$t1, 
+                                  levels = c("Automobile shop", "Police station ", 
+                                             "Fire Station", "Bank", "Pawn Shop",
+                                             "Pizzeria", "Quattroki Restaurant",
+                                             "High School"))
+  sep_data$t2 <- factor(filtered_data$t2, 
+                                  levels = c("Automobile shop", "Police station ", 
+                                             "Fire Station", "Bank", "Pawn Shop",
+                                             "Pizzeria", "Quattroki Restaurant",
+                                             "High School"))
+  new <- data.frame()
+  for (i in 1:nrow(sep_data)) {
+    if (sep_data$t1[i] == "Automobile shop" | sep_data$t2[i] == "High School") {
+      new <- rbind(new, sep_data[i, ])
+    }
+  }
+  
+  
+  temp <- new$t1
+  new$t1 <- new$t2
+  new$t2 <- temp
+  combined <- rbind(sep_data, new)
+  
+  combined <- combined[!(combined$t1 == "Police station " & combined$t2 == "Automobile shop"), ]
+  combined <- combined[!(combined$t1 == "Fire Station" & combined$t2 == "Automobile shop"), ]
+  combined <- combined[!(combined$t1 == "Bank" & combined$t2 == "Automobile shop"), ]
+  combined <- combined[!(combined$t1 == "Pawn Shop" & combined$t2 == "Automobile shop"), ]
+  combined <- combined[!(combined$t1 == "Pizzeria" & combined$t2 == "Automobile shop"), ]
+  combined <- combined[!(combined$t1 == "Quattroki Restaurant" & combined$t2 == "Automobile shop"), ]
+  combined <- combined[!(combined$t1 == "High School" & combined$t2 == "Automobile shop"), ]
+  combined <- combined[!(combined$t1 == "High School" & combined$t2 == "Police station "), ]
+  combined <- combined[!(combined$t1 == "High School" & combined$t2 == "Fire Station"), ]
+  combined <- combined[!(combined$t1 == "High School" & combined$t2 == "Bank"), ]
+  combined <- combined[!(combined$t1 == "High School" & combined$t2 == "Pawn Shop"), ]
+  combined <- combined[!(combined$t1 == "High School" & combined$t2 == "Pizzeria"), ]
+  combined <- combined[!(combined$t1 == "High School" & combined$t2 == "Quattroki Restaurant"), ]
+  
+  new_rows <- data.frame(t1 = c("Automobile shop", "Police station ", 
+                                 "Fire Station", "Bank", "Pawn Shop", 
+                                 "Pizzeria", "Quattroki Restaurant", 
+                                 "High School"), 
+                         t2 = c("Automobile shop", "Police station ",
+                                "Fire Station", "Bank", 
+                                "Pawn Shop", "Pizzeria",
+                                "Quattroki Restaurant", "High School"),
+                          estimate = c(rep(1, times = 8)),
+                          SE = c(rep(1, times = 8)),
+                          df = c(rep(1, times = 8)),
+                          t.ratio = c(rep(1, times = 8)),
+                          p.value = c(rep(1, times = 8)))
+  new_combined <- rbind(combined, new_rows)
+  
+  # Assign filtered data to a new data frame with the label name
+  assign(paste0("data_", names(labels)[count]), new_combined)
+}
+
+```
+
+
+
+
