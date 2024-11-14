@@ -48,7 +48,8 @@ library(gghalves)
 # This data chunk loads and tidies up the data
 
 # This loads the data file as the variable "data"
-ya_ndata <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_averaged_results.csv')
+#ya_ndata <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_averaged_results.csv')
+ya_ndata <- read.csv('/Users/emmafunderburg/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/data/ya_averaged_results.csv')
 # Tidying up the data
 ya_ndata<- ya_ndata %>% mutate(Age = 'YA')
 ya_ndata
@@ -69,7 +70,8 @@ sapply(ya_ndata, class)
 ya_ndata
 
 #This loads the data file as the variable "data"
-oa_ndata <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_averaged_results.csv')
+#oa_ndata <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_averaged_results.csv')
+oa_ndata <- read.csv('/Users/emmafunderburg/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/data/oa_averaged_results.csv')
 # Tidying up the data
 oa_ndata<- oa_ndata %>% mutate(Age = 'OA')
 oa_ndata
