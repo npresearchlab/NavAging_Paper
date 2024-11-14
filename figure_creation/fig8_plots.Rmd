@@ -320,7 +320,9 @@ p_orict <- ggplot(df_final, aes(x = factor(Cohort), y=Orientation_Time, fill=Coh
     position = position_jitter(seed = 1, width = .12)
   ) + scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#c5b3e2', 'oa_high' = '#7f00ff'))
 p_orict
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_orict.svg", height = 5, width = 5, plot=p_orict)
+#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_orict.svg", height = 5, width = 5, plot=p_orict)
+ggsave(file="~/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/figure_creation/plots/fig8_orict.svg", height = 5, width = 5, plot=p_orict)
+
 ```
 
 # Navigation Time
@@ -411,7 +413,9 @@ p_dt <- ggplot(df_final, aes(x = factor(Cohort), y=Distance, fill=Cohort)) +
     position = position_jitter(seed = 1, width = .12)
   ) + scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#c5b3e2', 'oa_high' = '#7f00ff'))
 p_dt
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_dt.svg", height = 5, width = 5, plot=p_dt)
+#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_dt.svg", height = 5, width = 5, plot=p_dt)
+ggsave(file="~/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/figure_creation/plots/fig8_dt.svg", height = 5, width = 5, plot=p_dt)
+
 ```
 
 # Speed
@@ -456,7 +460,9 @@ p_speed <- ggplot(df_final, aes(x = factor(Cohort), y=Speed, fill=Cohort)) +
     position = position_jitter(seed = 1, width = .12)
   ) + scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#c5b3e2', 'oa_high' = '#7f00ff'))
 p_speed
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_speed.svg", height = 5, width = 5, plot=p_speed)
+#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_speed.svg", height = 5, width = 5, plot=p_speed)
+ggsave(file="~/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/figure_creation/plots/fig8_speed.svg", height = 5, width = 5, plot=p_speed)
+
 ```
 
 # Dwell Time
@@ -501,7 +507,9 @@ p_dwell <- ggplot(df_final, aes(x = factor(Cohort), y=Mean_Dwell, fill=Cohort)) 
     position = position_jitter(seed = 1, width = .12)
   )+ scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#c5b3e2', 'oa_high' = '#7f00ff'))
 p_dwell
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_dwell.svg", height = 5, width = 5, plot=p_dwell)
+#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_dwell.svg", height = 5, width = 5, plot=p_dwell)
+ggsave(file="~/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/figure_creation/plots/fig8_dwell.svg", height = 5, width = 5, plot=p_dwell)
+
 ``` 
 
 # Teleportations
@@ -546,12 +554,16 @@ p_teleport <- ggplot(df_final, aes(x = factor(Cohort), y=Teleportations, fill=Co
     position = position_jitter(seed = 1, width = .12)
   ) + scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#c5b3e2', 'oa_high' = '#7f00ff'))
 p_teleport
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_teleport.svg", height = 5, width = 5, plot=p_teleport)
+#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_teleport.svg", height = 5, width = 5, plot=p_teleport)
+ggsave(file="~/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/figure_creation/plots/fig8_teleport.svg", height = 5, width = 5, plot=p_teleport)
+
 ```
 
 ```{r fig8, fig.height = 16, fig.width = 20, fig.align = "center"}
 p<-grid.arrange(p_speed, p_ct, p_orict, p_navct, p_dt, p_dwell, p_teleport, ncol=4, nrow=3)
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/composite_fig8.svg", height = 16, width =20, plot=p)
+#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/composite_fig8.svg", height = 16, width =20, plot=p)
+ggsave(file="~/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/figure_creation/plots/composite_fig8.svg", height = 16, width =20, plot=p)
+
 
 ```
 
