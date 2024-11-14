@@ -131,6 +131,67 @@ all_data <- all_data[order(all_data$Participant),]
 
 ```
 
+
+# LMM & ANOVA 
+```{r}
+
+
+# This runs ANOVA tests for all outcome measures
+outcome_measures <- c('Total_Time', 'Orientation_Time', 'Navigation_Time', 'Distance', 'Speed', 'Mean_Dwell', 'Teleportations')
+outcome_names <- c('ct', 'orict','navct','dt','speed', 'dwell', 'teleport')
+count <- 1
+
+# Looping through outcome measures
+for (outcome in outcome_measures) {
+  
+  # Running the linear mixed model (LMM)
+  lmm_formula <- as.formula(paste(outcome, "~ Block_num*nara_group + (1|Participant)"))
+  lmm_outcome <- lmer(lmm_formula, data = all_target_data)
+  assign(paste0("m_",outcome_names[count]), lmm_outcome)
+  
+  # Running the anova on the LMM
+  anova_formula <- paste0("m_",outcome_names[count])
+  anova <- anova(get(paste0("m_",outcome_names[count])))
+  assign(paste0("m_",outcome_names[count], "_anova"), anova)
+  
+  # Printing all anova outputs
+  cat("\nANOVA for", outcome, ":\n")
+  print(anova)
+  
+  # Running contrasts on LMM for BLOCK
+  contrast_b <- emmeans(get(paste0("m_",outcome_names[count])), ~Block_num)
+  assign(paste0("emm_m_",outcome_names[count], "_b"), contrast_b)
+  
+  # Running pairs on contrast
+  emm_pairs_b <- pairs(get(paste0("emm_m_",outcome_names[count], "_b")))
+  emm_pairs_b <- as.data.frame(emm_pairs_b)
+  assign(paste0("m_", outcome_names[count], "_block"), emm_pairs_b)
+  
+  # Running contrasts on LMM for TARGET
+  contrast_t <- emmeans(get(paste0("m_",outcome_names[count])), ~Target_Name)
+  assign(paste0("emm_m_",outcome_names[count], "_t"), contrast_t)
+  
+  # Running pairs on contrast
+  emm_pairs_t <- pairs(get(paste0("emm_m_",outcome_names[count], "_t")))
+  emm_pairs_t <- as.data.frame(emm_pairs_t)
+  assign(paste0("m_", outcome_names[count], "_targetonly"), emm_pairs_t)
+  
+  # Running contrasts on LMM for BLOCK:TARGET interaction
+  contrast_bt <- emmeans(get(paste0("m_",outcome_names[count])), ~Block_num|Target_Name)
+  assign(paste0("emm_m_",outcome_names[count]), contrast_bt)
+  
+  # Running pairs on contrast
+  emm_pairs_bt <- pairs(get(paste0("emm_m_",outcome_names[count])))
+  emm_pairs_bt <- as.data.frame(emm_pairs_bt)
+  assign(paste0("m_", outcome_names[count], "_blocktarget"), emm_pairs_bt)
+  
+  # Updating count variable to loop through outcome names
+  count <- count + 1
+}
+
+```
+
+
 # Dwell Time LMM
 ```{r}
 
