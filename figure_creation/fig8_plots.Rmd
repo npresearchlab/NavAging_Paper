@@ -224,6 +224,15 @@ desired_order <- c("ya", "oa_high", "oa_low")
 df_final$Cohort <- factor(df_final$Cohort, levels = desired_order)
 ```
 
+# Outlier Removal
+
+```{r}
+
+# Removing outlier - BNC39 Block 1 Target 5
+
+```
+
+
 
 ```{r ct}
 #Total_time by Block_num
