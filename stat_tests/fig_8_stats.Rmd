@@ -131,6 +131,67 @@ all_data <- all_data[order(all_data$Participant),]
 
 ```
 
+
+# LMM & ANOVA 
+```{r}
+
+
+# This runs ANOVA tests for all outcome measures
+outcome_measures <- c('Total_Time', 'Orientation_Time', 'Navigation_Time', 'Distance', 'Speed', 'Mean_Dwell', 'Teleportations')
+outcome_names <- c('ct', 'orict','navct','dt','speed', 'dwell', 'teleport')
+count <- 1
+
+# Looping through outcome measures
+#for (outcome in outcome_measures) {
+  
+  # Running the linear mixed model (LMM)
+  lmm_formula <- as.formula(paste(outcome, "~ Block_num*nara_group + (1|Participant)"))
+  lmm_outcome <- lmer(lmm_formula, data = all_data)
+  assign(paste0("m_",outcome_names[count]), lmm_outcome)
+  
+  # Running the anova on the LMM
+  anova_formula <- paste0("m_",outcome_names[count])
+  anova <- anova(get(paste0("m_",outcome_names[count])))
+  assign(paste0("m_",outcome_names[count], "_anova"), anova)
+  
+  # Printing all anova outputs
+  cat("\nANOVA for", outcome, ":\n")
+  print(anova)
+  
+  # Running contrasts on LMM for BLOCK
+  contrast_b <- emmeans(get(paste0("m_",outcome_names[count])), ~Block_num)
+  assign(paste0("emm_m_",outcome_names[count], "_b"), contrast_b)
+  
+  # Running pairs on contrast
+  emm_pairs_b <- pairs(get(paste0("emm_m_",outcome_names[count], "_b")))
+  emm_pairs_b <- as.data.frame(emm_pairs_b)
+  assign(paste0("m_", outcome_names[count], "_block"), emm_pairs_b)
+  
+  # Running contrasts on LMM for TARGET
+  contrast_t <- emmeans(get(paste0("m_",outcome_names[count])), ~Target_Name)
+  assign(paste0("emm_m_",outcome_names[count], "_t"), contrast_t)
+  
+  # Running pairs on contrast
+  emm_pairs_t <- pairs(get(paste0("emm_m_",outcome_names[count], "_t")))
+  emm_pairs_t <- as.data.frame(emm_pairs_t)
+  assign(paste0("m_", outcome_names[count], "_targetonly"), emm_pairs_t)
+  
+  # Running contrasts on LMM for BLOCK:TARGET interaction
+  contrast_bt <- emmeans(get(paste0("m_",outcome_names[count])), ~Block_num|Target_Name)
+  assign(paste0("emm_m_",outcome_names[count]), contrast_bt)
+  
+  # Running pairs on contrast
+  emm_pairs_bt <- pairs(get(paste0("emm_m_",outcome_names[count])))
+  emm_pairs_bt <- as.data.frame(emm_pairs_bt)
+  assign(paste0("m_", outcome_names[count], "_blocktarget"), emm_pairs_bt)
+  
+  # Updating count variable to loop through outcome names
+  count <- count + 1
+}
+
+```
+
+
 # Dwell Time LMM
 ```{r}
 
@@ -208,8 +269,232 @@ m_tele_anova
 
 ```
 
+# Code Below Updated from Figure 4
+
+```{r}
+# This runs ANOVA tests for all outcome measures
+outcome_measures <- c('Total_Time', 'Orientation_Time', 'Navigation_Time', 'Distance', 'Speed', 'Mean_Dwell', 'Teleportations')
+outcome_names <- c('ct', 'orict','navct','dt','speed', 'dwell', 'teleport')
+count <- 1
+
+# Looping through outcome measures
+for (outcome in outcome_measures) {
+  
+  # Running the linear mixed model (LMM)
+  lmm_formula <- as.formula(paste(outcome, "~ Block_num*nara_group + (1|Participant)"))
+  lmm_outcome <- lmer(lmm_formula, data = all_data)
+  assign(paste0("m_",outcome_names[count]), lmm_outcome)
+  
+  # Running the anova on the LMM
+  anova_formula <- paste0("m_",outcome_names[count])
+  anova <- anova(get(paste0("m_",outcome_names[count])))
+  assign(paste0("m_",outcome_names[count], "_anova"), anova)
+  
+  # Printing all anova outputs
+  cat("\nANOVA for", outcome, ":\n")
+  print(anova)
+  
+  # Running contrasts on LMM for BLOCK
+  contrast_b <- emmeans(get(paste0("m_",outcome_names[count])), ~Block_num)
+  assign(paste0("emm_m_",outcome_names[count], "_b"), contrast_b)
+  
+  # Running pairs on contrast
+  emm_pairs_b <- pairs(get(paste0("emm_m_",outcome_names[count], "_b")))
+  emm_pairs_b <- as.data.frame(emm_pairs_b)
+  assign(paste0("m_", outcome_names[count], "_block"), emm_pairs_b)
+  
+  # Running contrasts on LMM for NARA Group
+  contrast_t <- emmeans(get(paste0("m_",outcome_names[count])), ~nara_group)
+  assign(paste0("emm_m_",outcome_names[count], "_t"), contrast_t)
+  
+  # Running pairs on contrast
+  emm_pairs_t <- pairs(get(paste0("emm_m_",outcome_names[count], "_t")))
+  emm_pairs_t <- as.data.frame(emm_pairs_t)
+  assign(paste0("m_", outcome_names[count], "_targetonly"), emm_pairs_t)
+  
+  # Running contrasts on LMM for BLOCK:NARA Group interaction
+  contrast_bt <- emmeans(get(paste0("m_",outcome_names[count])), ~Block_num|nara_group)
+  assign(paste0("emm_m_",outcome_names[count]), contrast_bt)
+  
+  # Running pairs on contrast
+  emm_pairs_bt <- pairs(get(paste0("emm_m_",outcome_names[count])))
+  emm_pairs_bt <- as.data.frame(emm_pairs_bt)
+  assign(paste0("m_", outcome_names[count], "_blocknara"), emm_pairs_bt)
+  
+  # Updating count variable to loop through outcome names
+  count <- count + 1
+}
+```
 
 
+```{r}
+rm("anova")
+
+# List all dataframes in the global environment
+dataframes <- ls()
+
+# Filter dataframes that end with "anova"
+dataframes_to_save_anova <- dataframes[grep("anova$", dataframes)]
+
+# Create an empty list to store dataframes
+combined_dataframes_anova <- list()
+
+# Loop through the selected dataframes, combine them, and add a "Source" column
+for (df_name in dataframes_to_save_anova) {
+  # Get the dataframe by name
+  df <- get(df_name)
+  
+  # Add a "Source" column with the dataframe name
+  df$Source <- df_name
+  
+  # Append the modified dataframe to the list
+  combined_dataframes_anova[[df_name]] <- df
+}
+
+# Combine all dataframes into one giant dataframe
+final_combined_dataframe_anova <- do.call(rbind, combined_dataframes_anova)
+
+# Specify the directory where you want to save the CSV file
+#output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
+output_directory <- "/Users/emmafunderburg/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/stat_tests/"
+
+
+# Define the CSV file name
+csv_file <- paste0(output_directory, "fig8_anova_data.csv")
+
+# Save the combined dataframe as a CSV file
+write.csv(final_combined_dataframe_anova, file = csv_file, row.names = TRUE)
+
+# Print a message to confirm the save
+cat("Saved combined data as", csv_file, "\n")
+
+```
+
+
+```{r}
+
+# List all dataframes in the global environment
+dataframes <- ls()
+
+# Filter dataframes that end with "anova"
+dataframes_to_save_block <- dataframes[grep("block$", dataframes)]
+
+# Create an empty list to store dataframes
+combined_dataframes_block <- list()
+
+# Loop through the selected dataframes, combine them, and add a "Source" column
+for (df_name in dataframes_to_save_block) {
+  # Get the dataframe by name
+  df <- get(df_name)
+  
+  # Add a "Source" column with the dataframe name
+  df$Source <- df_name
+  
+  # Append the modified dataframe to the list
+  combined_dataframes_block[[df_name]] <- df
+}
+
+# Combine all dataframes into one giant dataframe
+final_combined_dataframe_block <- do.call(rbind, combined_dataframes_block)
+
+# Specify the directory where you want to save the CSV file
+#output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
+output_directory <- "/Users/emmafunderburg/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/stat_tests/"
+
+# Define the CSV file name
+csv_file <- paste0(output_directory, "fig8_all_block_data.csv")
+
+# Save the combined dataframe as a CSV file
+write.csv(final_combined_dataframe_block, file = csv_file, row.names = TRUE)
+
+# Print a message to confirm the save
+cat("Saved combined data as", csv_file, "\n")
+
+```
+
+
+
+```{r}
+
+# List all dataframes in the global environment
+dataframes2 <- ls()
+
+# Filter dataframes that end with "anova"
+dataframes_to_save_blocknara <- dataframes2[grep("blocktarget$", dataframes2)]
+
+# Create an empty list to store dataframes
+combined_dataframes_blocknara <- list()
+
+# Loop through the selected dataframes, combine them, and add a "Source" column
+for (df_name in combined_dataframes_blocknara) {
+  # Get the dataframe by name
+  df <- get(df_name)
+  
+  # Add a "Source" column with the dataframe name
+  df$Source <- df_name
+  
+  # Append the modified dataframe to the list
+  combined_dataframes_blocknara[[df_name]] <- df
+}
+
+# Combine all dataframes into one giant dataframe
+final_combined_dataframe_blocknara <- do.call(rbind, combined_dataframes_blocknara)
+
+# Specify the directory where you want to save the CSV file
+#output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
+output_directory <- "/Users/emmafunderburg/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/stat_tests/"
+
+
+# Define the CSV file name
+csv_file <- paste0(output_directory, "all_blocknara_data.csv")
+
+# Save the combined dataframe as a CSV file
+write.csv(final_combined_dataframe_blocknara, file = csv_file, row.names = TRUE)
+
+# Print a message to confirm the save
+cat("Saved combined data as", csv_file, "\n")
+```
+
+
+```{r}
+
+# List all dataframes in the global environment
+dataframes3 <- ls()
+
+# Filter dataframes that end with "anova"
+dataframes_to_save_targetonly <- dataframes3[grep("targetonly$", dataframes3)]
+
+# Create an empty list to store dataframes
+combined_dataframes_targetonly <- list()
+
+# Loop through the selected dataframes, combine them, and add a "Source" column
+for (df_name in dataframes_to_save_targetonly) {
+  # Get the dataframe by name
+  df <- get(df_name)
+  
+  # Add a "Source" column with the dataframe name
+  df$Source <- df_name
+  
+  # Append the modified dataframe to the list
+  combined_dataframes_targetonly[[df_name]] <- df
+}
+
+# Combine all dataframes into one giant dataframe
+final_combined_dataframe_targetonly <- do.call(rbind, combined_dataframes_targetonly)
+
+# Specify the directory where you want to save the CSV file
+#output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
+output_directory <- "/Users/emmafunderburg/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/stat_tests/"
+
+# Define the CSV file name
+csv_file <- paste0(output_directory, "all_nara_data.csv")
+
+# Save the combined dataframe as a CSV file
+write.csv(final_combined_dataframe_targetonly, file = csv_file, row.names = TRUE)
+
+# Print a message to confirm the save
+cat("Saved combined data as", csv_file, "\n")
+```
 
 
 

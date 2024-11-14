@@ -130,7 +130,8 @@ nav_data <- nav_data[order(nav_data$Participant),]
 
 # removing NAV054 (from analysis for now)
 
-all_data <- all_data[-c(49),]
+#all_data <- all_data[-c(49),]
+
 
 # add speed
 
@@ -139,7 +140,7 @@ df_Speed <- nav_data %>%
   summarise(mean = mean(Speed),
             sd = sd(Speed))
 
-all_data$Speed <- df_speed$mean
+all_data$Speed <- df_Speed$mean
 
 # add orientation time
 
