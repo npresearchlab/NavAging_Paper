@@ -1,0 +1,5 @@
+# ignoring all DS Store files
+*.DS_Store
+
+# ignoring all R history files
+*.RHistory
