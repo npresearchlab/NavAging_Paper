@@ -142,7 +142,7 @@ outcome_names <- c('ct', 'orict','navct','dt','speed', 'dwell', 'teleport')
 count <- 1
 
 # Looping through outcome measures
-for (outcome in outcome_measures) {
+#for (outcome in outcome_measures) {
   
   # Running the linear mixed model (LMM)
   lmm_formula <- as.formula(paste(outcome, "~ Block_num*nara_group + (1|Participant)"))
@@ -420,13 +420,13 @@ cat("Saved combined data as", csv_file, "\n")
 dataframes2 <- ls()
 
 # Filter dataframes that end with "anova"
-dataframes_to_save_blocktarget <- dataframes2[grep("blocktarget$", dataframes2)]
+dataframes_to_save_blocknara <- dataframes2[grep("blocktarget$", dataframes2)]
 
 # Create an empty list to store dataframes
-combined_dataframes_blocktarget <- list()
+combined_dataframes_blocknara <- list()
 
 # Loop through the selected dataframes, combine them, and add a "Source" column
-for (df_name in combined_dataframes_blocktarget) {
+for (df_name in combined_dataframes_blocknara) {
   # Get the dataframe by name
   df <- get(df_name)
   
@@ -434,20 +434,22 @@ for (df_name in combined_dataframes_blocktarget) {
   df$Source <- df_name
   
   # Append the modified dataframe to the list
-  combined_dataframes_blocktarget[[df_name]] <- df
+  combined_dataframes_blocknara[[df_name]] <- df
 }
 
 # Combine all dataframes into one giant dataframe
-final_combined_dataframe_blocktarget <- do.call(rbind, combined_dataframes_blocktarget)
+final_combined_dataframe_blocknara <- do.call(rbind, combined_dataframes_blocknara)
 
 # Specify the directory where you want to save the CSV file
-output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
+#output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
+output_directory <- "/Users/emmafunderburg/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/stat_tests/"
+
 
 # Define the CSV file name
-csv_file <- paste0(output_directory, "all_blocktarget_data.csv")
+csv_file <- paste0(output_directory, "all_blocknara_data.csv")
 
 # Save the combined dataframe as a CSV file
-write.csv(final_combined_dataframe_blocktarget, file = csv_file, row.names = TRUE)
+write.csv(final_combined_dataframe_blocknara, file = csv_file, row.names = TRUE)
 
 # Print a message to confirm the save
 cat("Saved combined data as", csv_file, "\n")
@@ -481,10 +483,11 @@ for (df_name in dataframes_to_save_targetonly) {
 final_combined_dataframe_targetonly <- do.call(rbind, combined_dataframes_targetonly)
 
 # Specify the directory where you want to save the CSV file
-output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
+#output_directory <- "/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/stat_tests/"
+output_directory <- "/Users/emmafunderburg/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/stat_tests/"
 
 # Define the CSV file name
-csv_file <- paste0(output_directory, "all_target_data.csv")
+csv_file <- paste0(output_directory, "all_nara_data.csv")
 
 # Save the combined dataframe as a CSV file
 write.csv(final_combined_dataframe_targetonly, file = csv_file, row.names = TRUE)
