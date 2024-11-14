@@ -163,18 +163,18 @@ non_nav_data <- read.csv('/Users/emmafunderburg/Desktop/Research/BORICH LAB/8_na
 # Tidying up the data
 names(non_nav_data)[1] <- 'Participant'
 names(non_nav_data)[2] <- 'Age'
-names(non_nav_data)[3] <- 'PSQI'
-names(non_nav_data)[4] <- 'SSS_Pre'
-names(non_nav_data)[5] <- 'SSS_Post'
-names(non_nav_data)[6] <- 'SBSOD'
-names(non_nav_data)[7] <- 'MiniCog'
-names(non_nav_data)[8] <- 'TrailsA'
-names(non_nav_data)[9] <- 'TrailsB'
-names(non_nav_data)[10] <- 'SetShifting'
-names(non_nav_data)[11] <- 'CorsiBlocks'
-names(non_nav_data)[12] <- 'SSQ_Pre'
-names(non_nav_data)[13] <- 'SSQ_Post'
-names(non_nav_data)[14] <- 'NARA'
+names(non_nav_data)[4] <- 'PSQI'
+names(non_nav_data)[5] <- 'SSS_Pre'
+names(non_nav_data)[6] <- 'SSS_Post'
+names(non_nav_data)[7] <- 'SBSOD'
+names(non_nav_data)[8] <- 'MiniCog'
+names(non_nav_data)[10] <- 'TrailsA'
+names(non_nav_data) [12] <- 'TrailsB'
+names(non_nav_data)[14] <- 'SetShifting'
+names(non_nav_data)[17] <- 'CorsiBlocks'
+names(non_nav_data)[18] <- 'SSQ_Pre'
+names(non_nav_data)[19] <- 'SSQ_Post'
+names(non_nav_data)[39] <- 'NARA'
 non_nav_data <- select(non_nav_data, -Age) 
 ```
 
@@ -273,7 +273,8 @@ p_ct <-ggplot(df_final, aes(x = factor(Cohort), y=Total_Time, fill=factor(Cohort
     position = position_jitter(seed = 1, width = .12)
   ) +scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#c5b3e2', 'oa_high' = '#7f00ff'))
 p_ct
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_ct.svg", height = 5, width = 5, plot=p_ct)
+#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_ct.svg", height = 5, width = 5, plot=p_ct)
+ggsave(file="~/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/figure_creation/plots/fig8_ct.svg", height = 5, width = 5, plot = p_ct)
 ```
 
 
@@ -364,7 +365,8 @@ p_navct <- ggplot(df_final, aes(x = factor(Cohort), y=Navigation_Time, fill=Coho
     position = position_jitter(seed = 1, width = .12)
   ) + scale_color_manual(values =c( 'ya' ='#FF9FAF', 'oa_low' = '#c5b3e2', 'oa_high' = '#7f00ff'))
 p_navct
-ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_navct.svg", height = 5, width = 5, plot=p_navct)
+#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig8_navct.svg", height = 5, width = 5, plot=p_navct)
+ggsave(file="~/Desktop/Research/BORICH LAB/8_navaging/NavAging_Paper/figure_creation/plots/fig8_navct.svg", height = 5, width = 5, plot=p_navct)
 ```
 
 # Distance
