@@ -104,6 +104,8 @@ oa_data
 
 oa_data$nara_group <- ifelse(oa_data$NARA>50.0, "oa_high", "oa_low")
 
+ya_data$nara_group <- "ya"
+
 # bind oa_data_low, oa_data_high, and ya_data
 
 all_data <- rbind(ya_data, oa_data)
