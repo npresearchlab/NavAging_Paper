@@ -102,7 +102,7 @@ oa_data
 
 # create variable with oa_high and oa_low
 
-oa_data$Cohort <- ifelse(oa_data$NARA>50.0, "oa_high", "oa_low")
+oa_data$nara_group <- ifelse(oa_data$NARA>50.0, "oa_high", "oa_low")
 
 # create data frame of OA high
 
@@ -118,15 +118,15 @@ oa_data$Cohort <- ifelse(oa_data$NARA>50.0, "oa_high", "oa_low")
 
 # add OA low label as nara_group
 
-oa_data_low$nara_group <- factor(c('OA Low'))
+#oa_data_low$nara_group <- factor(c('OA Low'))
 
 # add YA label as nara_group
 
-ya_data$nara_group <- factor(c('YA'))
+#ya_data$nara_group <- factor(c('YA'))
 
 # bind oa_data_low, oa_data_high, and ya_data
 
-all_data <- rbind(ya_data, oa_data_low, oa_data_high)
+all_data <- rbind(ya_data, oa_data)
 
 # alphabetize by participant
 
