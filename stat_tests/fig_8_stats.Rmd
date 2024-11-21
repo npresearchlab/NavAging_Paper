@@ -100,29 +100,15 @@ oa_data
 
 # data frame of YAs already created - ya_data
 
-# create data frame of OA high
+# create variable with oa_high and oa_low
 
-oa_data_high <- oa_data[-c(4,5,6,16,17,18,19,20,21,34,35,36,40,41,42,49,50,51,52,53,54,58,59,60,61,62,63,64,65,66),]
+oa_data$nara_group <- ifelse(oa_data$NARA>50.0, "oa_high", "oa_low")
 
-# add OA high label as nara_group
-
-oa_data_high$nara_group <- factor(c('OA High'))
-
-# create data frame of OA low 
-
-oa_data_low <- oa_data[c(4,5,6,16,17,18,19,20,21,34,35,36,40,41,42,49,50,51,52,53,54,58,59,60,61,62,63,64,65,66),]
-
-# add OA low label as nara_group
-
-oa_data_low$nara_group <- factor(c('OA Low'))
-
-# add YA label as nara_group
-
-ya_data$nara_group <- factor(c('YA'))
+ya_data$nara_group <- "ya"
 
 # bind oa_data_low, oa_data_high, and ya_data
 
-all_data <- rbind(ya_data, oa_data_low, oa_data_high)
+all_data <- rbind(ya_data, oa_data)
 
 # alphabetize by participant
 
@@ -145,7 +131,7 @@ count <- 1
 #for (outcome in outcome_measures) {
   
   # Running the linear mixed model (LMM)
-  lmm_formula <- as.formula(paste(outcome, "~ Block_num*nara_group + (1|Participant)"))
+  lmm_formula <- as.formula(paste(outcome, "~ Block_num*nara_group*Target_Name + (1|Participant)"))
   lmm_outcome <- lmer(lmm_formula, data = all_data)
   assign(paste0("m_",outcome_names[count]), lmm_outcome)
   
