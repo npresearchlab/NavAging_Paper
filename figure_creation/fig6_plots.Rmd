@@ -297,7 +297,7 @@ corr_nara_stats_oa
 corr_nara_three <-ggplot(non_nav_data_final, aes(x=age, y=nara, color = nara_age))+
   geom_point(size=2)+
   #labs(color = c('#FF9FAF','#5E7AFA'))+
-  #scale_color_manual(values =c('#5E7AFA','#FF9FAF'))+
+  scale_color_manual(values =c('#7f00fe','#c5b3de','#FF9FAF'))+
   labs(y="NARA Score (%)", x = 'Age')+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
@@ -311,4 +311,18 @@ corr_nara_three <-ggplot(non_nav_data_final, aes(x=age, y=nara, color = nara_age
   geom_smooth(aes(age, nara, group=nara_age), method="lm", se=TRUE, color = "#242526", fill = 'lightgray')
  
 corr_nara_three
+```
+
+```{r}
+non_nav_oa_high_data <- non_nav_data_final %>% filter(nara_age == 'OA_high')
+
+corr_nara_three_stats_oa_high <- cor.test(x=non_nav_oa_high_data$age, y=non_nav_oa_high_data$nara, method = 'spearman')
+
+corr_nara_three_stats_oa_high
+
+non_nav_oa_low_data <- non_nav_data_final %>% filter(nara_age == 'OA_low')
+
+corr_nara_three_stats_oa_low <- cor.test(x=non_nav_oa_low_data$age, y=non_nav_oa_low_data$nara, method = 'spearman')
+
+corr_nara_three_stats_oa_low
 ```
