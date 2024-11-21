@@ -311,6 +311,8 @@ corr_nara_three <-ggplot(non_nav_data_final, aes(x=age, y=nara, color = nara_age
   geom_smooth(aes(age, nara, group=nara_age), method="lm", se=TRUE, color = "#242526", fill = 'lightgray')
  
 corr_nara_three
+
+ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/fig6_corr_nara_three.svg", height = 5, width = 8, plot=corr_nara_three)
 ```
 
 ```{r}
