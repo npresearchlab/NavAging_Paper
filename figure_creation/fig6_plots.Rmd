@@ -268,7 +268,7 @@ corr_nara <-ggplot(non_nav_data_final, aes(x=age, y=nara, color = group))+
  
 corr_nara
 
-ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/fig6_corr_nara.svg", height = 5, width = 8, plot=corr_nara)
+#ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/fig6_corr_nara.svg", height = 5, width = 8, plot=corr_nara)
 ```
 
 ```{r}
@@ -291,13 +291,13 @@ corr_nara_stats_oa
 ```
 
 ```{r}
-non_nav_oa_high_data <- subset(non_nav_oa_data, nara > 50.00)
-non_nav_oa_low_data <- subset(non_nav_oa_data, nara < 50.00)
+#non_nav_oa_high_data <- subset(non_nav_oa_data, nara > 50.00)
+#non_nav_oa_low_data <- subset(non_nav_oa_data, nara < 50.00)
 
-corr_nara_three <-ggplot(non_nav_data_final, aes(x=age, y=nara, color = group))+
+corr_nara_three <-ggplot(non_nav_data_final, aes(x=age, y=nara, color = nara_age))+
   geom_point(size=2)+
   #labs(color = c('#FF9FAF','#5E7AFA'))+
-  scale_color_manual(values =c('#5E7AFA','#FF9FAF'))+
+  #scale_color_manual(values =c('#5E7AFA','#FF9FAF'))+
   labs(y="NARA Score (%)", x = 'Age')+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
@@ -308,7 +308,7 @@ corr_nara_three <-ggplot(non_nav_data_final, aes(x=age, y=nara, color = group))+
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))+
-  geom_smooth(aes(age,nara, group=group), method="lm", se=TRUE, color = "#242526", fill = 'lightgray')
+  geom_smooth(aes(age, nara, group=nara_age), method="lm", se=TRUE, color = "#242526", fill = 'lightgray')
  
 corr_nara_three
 ```
