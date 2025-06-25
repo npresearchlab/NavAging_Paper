@@ -145,6 +145,10 @@ oa_nav_data$Target_Name <- factor(oa_nav_data$Target_Name, levels = desired_orde
 nav_data <- rbind(ya_nav_data, oa_nav_data)
 ```
 
+```{r}
+path_to_figs <- "/Volumes/YB_Drive/NavAging_Paper/figure_creation/plots/fig2"
+```
+
 ```{r organizing data, include=FALSE}
 b1 <- subset(data, Block_num == 1)
 rownames(b1) <- NULL
@@ -217,7 +221,7 @@ p_ct
 #ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_ct.svg", height = 5, width = 5, plot=p_ct)
 
 # YB SAVE FILE CODE
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig2_ct.svg", height = 5, width = 5, plot=p_ct)
+ggsave(file=paste0(path_to_figs, "_ct.svg"), height = 5, width = 5, plot=p_ct)
 ```
 
 
@@ -268,7 +272,7 @@ p_orict
 #ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_orict.svg", height = 5, width = 5, plot=p_orict)
 
 # YB SAVE FILE CODE
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig2_orict.svg", height = 5, width = 5, plot=p_orict)
+ggsave(file=paste0(path_to_figs, "_orict.svg"), height = 5, width = 5, plot=p_orict)
 ```
 
 # Navigation Time
@@ -314,11 +318,8 @@ p_navct <- ggplot(mean_data, aes(x = factor(Age), y=Navigation_Time, fill=Age)) 
   ) + scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
 p_navct
 
-#AK SAVE FILE CODE
-#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_navct.svg", height = 5, width = 5, plot=p_navct)
-
 # YB SAVE FILE CODE
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig2_navct.svg", height = 5, width = 5, plot=p_navct)
+ggsave(file=paste0(path_to_figs, "_navct.svg"), height = 5, width = 5, plot=p_navct)
 ```
 
 # Distance
@@ -368,7 +369,7 @@ p_dt
 #ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_dt.svg", height = 5, width = 5, plot=p_dt)
 
 # YB SAVE FILE CODE
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig2_dt.svg", height = 5, width = 5, plot=p_dt)
+ggsave(file=paste0(path_to_figs, "_dt.svg"), height = 5, width = 5, plot=p_dt)
 ```
 
 # Speed
@@ -418,7 +419,7 @@ p_speed
 #ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_speed.svg", height = 5, width = 5, plot=p_speed)
 
 # YB SAVE FILE CODE
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig2_speed.svg", height = 5, width = 5, plot=p_speed)
+ggsave(file=paste0(path_to_figs, "_speed.svg"), height = 5, width = 5, plot=p_speed)
 ```
 
 # Dwell Time
@@ -468,7 +469,7 @@ p_dwell
 #ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_dwell.svg", height = 5, width = 5, plot=p_dwell)
 
 # YB SAVE FILE CODE
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig2_dwell.svg", height = 5, width = 5, plot=p_dwell)
+ggsave(file=paste0(path_to_figs, "_dwell.svg"), height = 5, width = 5, plot=p_dwell)
 ``` 
 
 # Teleportations
@@ -518,7 +519,7 @@ p_teleport
 #ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig2_teleport.svg", height = 5, width = 5, plot=p_teleport)
 
 # YB SAVE FILE CODE
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/fig2_teleport.svg", height = 5, width = 5, plot=p_teleport)
+ggsave(file=paste0(path_to_figs, "_teleport.svg"), height = 5, width = 5, plot=p_teleport)
 ```
 
 ```{r fig8, fig.height = 16, fig.width = 20, fig.align = "center"}
@@ -528,6 +529,6 @@ p<-grid.arrange(p_speed, p_ct, p_orict, p_navct, p_dt, p_dwell, p_teleport, ncol
 #ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/composite_fig2.svg", height = 16, width =20, plot=p)
 
 #YB SAVE FILE CODE
-ggsave(file="/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/figure_creation/plots/composite_fig2.svg", height = 16, width =20, plot=p)
+ggsave(file=paste0(path_to_figs, "_composite.svg"), height = 16, width =20, plot=p)
 ```
 
