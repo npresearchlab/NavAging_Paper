@@ -44,11 +44,8 @@ library(gridExtra)
 ```{r reading data, include=FALSE}
 #This data chunk loads and tidies up the data
 
-#AK LOADING DATA
-#ya_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_averaged_results.csv')
-
 #YB LOADING DATA
-ya_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/ya_averaged_results.csv')
+ya_data <- read.csv('/Volumes/YB_Drive/NavAging_Paper/data/ya_averaged_results.csv')
 
 # Tidying up the data
 ya_data<- ya_data %>% mutate(Age = 'YA')
@@ -69,11 +66,8 @@ ya_data$Block_num <- as.factor(ya_data$Block_num)
 sapply(ya_data, class)
 ya_data
 
-#AK LOADING DATA
-#oa_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_averaged_results.csv')
-
 #YB LOADING DATA
-oa_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/oa_averaged_results.csv')
+oa_data <- read.csv('/Volumes/YB_Drive/NavAging_Paper/data/oa_averaged_results.csv')
 
 # Tidying up the data
 oa_data<- oa_data %>% mutate(Age = 'OA')
@@ -98,11 +92,8 @@ data <- rbind(ya_data, oa_data)
 ```
 
 ```{r reading more data, include=FALSE}
-#AK LOADING DATA
-#ya_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_merged_results.csv')
-
 #YB LOADING DATA
-ya_nav_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/ya_merged_results.csv')
+ya_nav_data <- read.csv('/Volumes/YB_Drive/NavAging_Paper/data/ya_merged_results.csv')
 
 # Tidying up the data
 ya_nav_data<- ya_nav_data %>% mutate(Age = 'YA')
@@ -126,11 +117,8 @@ desired_order <- c("Automobile shop", "Police station ", "Fire Station", "Bank",
 # Reorder the levels of Target_Name
 ya_nav_data$Target_Name <- factor(ya_nav_data$Target_Name, levels = desired_order)
 
-#AK LOADING DATA
-#oa_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_merged_results.csv')
-
 #YB LOADING DATA
-oa_nav_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/oa_merged_results.csv')
+oa_nav_data <- read.csv('/Volumes/YB_Drive/NavAging_Paper/data/oa_merged_results.csv')
 
 # Tidying up the data
 oa_nav_data<- oa_nav_data %>% mutate(Age = 'OA')
@@ -156,31 +144,6 @@ oa_nav_data$Target_Name <- factor(oa_nav_data$Target_Name, levels = desired_orde
 
 nav_data <- rbind(ya_nav_data, oa_nav_data)
 ```
-
-```{r reading more data, include=FALSE}
-#AK LOADING DATA
-#non_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/non_nav_data.csv')
-
-#YB LOADING DATA
-non_nav_data <- read.csv('/Users/yasminebassil/Documents/Emory/3_Research/Projects/NavAging_Paper/data/non_nav_data.csv')
-
-# Tidying up the data
-#names(non_nav_data)[1] <- 'Participant'
-#names(non_nav_data)[2] <- 'Age'
-#names(non_nav_data)[3] <- 'PSQI'
-#names(non_nav_data)[4] <- 'SSS_Pre'
-#names(non_nav_data)[5] <- 'SSS_Post'
-#names(non_nav_data)[6] <- 'SBSOD'
-#names(non_nav_data)[7] <- 'MiniCog'
-#names(non_nav_data)[8] <- 'TrailsA'
-#names(non_nav_data)[9] <- 'TrailsB'
-#names(non_nav_data)[10] <- 'SetShifting'
-#names(non_nav_data)[11] <- 'CorsiBlocks'
-#names(non_nav_data)[12] <- 'SSQ_Pre'
-#names(non_nav_data)[13] <- 'SSQ_Post'
-#names(non_nav_data)[14] <- 'NARA'
-```
-
 
 ```{r organizing data, include=FALSE}
 b1 <- subset(data, Block_num == 1)
