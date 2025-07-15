@@ -33,9 +33,18 @@ library(grid)
 library(gridExtra)
 ```
 
+```{r}
+ya_data <- read.csv('/Volumes/YB_Drive/NavAging_Paper/data/ya_averaged_results.csv')
+ya_nav_data <- read.csv('/Volumes/YB_Drive/NavAging_Paper/data/ya_merged_results.csv')
+oa_data <- read.csv('/Volumes/YB_Drive/NavAging_Paper/data/oa_averaged_results.csv')
+oa_nav_data <- read.csv('/Volumes/YB_Drive/NavAging_Paper/data/oa_merged_results.csv')
+non_nav_data <- read.csv('/Volumes/YB_Drive/NavAging_Paper/data/non_nav_data.csv')
+
+# CHANGE THE END DEPENDING ON YOUR FIG NUMBER
+path_to_figs <- "/Volumes/YB_Drive/NavAging_Paper/figure_creation/plots/fig5_stretched"
+```
+
 ```{r reading more data, include=FALSE}
-#This loads the data file as the variable "data"
-ya_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_averaged_results.csv')
 # Tidying up the data
 ya_nav_data<- ya_nav_data %>% mutate(Age = 'YA')
 names(ya_nav_data)[1] <- 'index'
@@ -53,9 +62,6 @@ ya_nav_data <- ya_nav_data[ -c(1) ]
 ya_nav_data$Block_num <- as.factor(ya_nav_data$Block_num)
 sapply(ya_nav_data, class)
 
-
-#This loads the data file as the variable "data"
-oa_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_averaged_results.csv')
 # Tidying up the data
 oa_nav_data<- oa_nav_data %>% mutate(Age = 'OA')
 names(oa_nav_data)[1] <- 'index'
@@ -77,8 +83,6 @@ nav_data <- rbind(ya_nav_data, oa_nav_data)
 ```
 
 ```{r reading more data, include=FALSE}
-#This loads the data file as the variable "data"
-non_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/non_nav_data.csv')
 # Tidying up the data
 names(non_nav_data)[1] <- 'Participant'
 names(non_nav_data)[2] <- 'Age'
