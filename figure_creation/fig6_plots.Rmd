@@ -31,12 +31,18 @@ library(ggthemes)
 library(gghalves)
 ```
 
-```{r reading data, include=FALSE}
-#This data chunk loads and tidies up the data
+```{r}
+ya_data <- read.csv('/Volumes/YB_Drive/NavAging_Paper/data/ya_averaged_results.csv')
+ya_nav_data <- read.csv('/Volumes/YB_Drive/NavAging_Paper/data/ya_merged_results.csv')
+oa_data <- read.csv('/Volumes/YB_Drive/NavAging_Paper/data/oa_averaged_results.csv')
+oa_nav_data <- read.csv('/Volumes/YB_Drive/NavAging_Paper/data/oa_merged_results.csv')
+non_nav_data <- read.csv('/Volumes/YB_Drive/NavAging_Paper/data/non_nav_data.csv')
 
-#This loads the data file as the variable "data"
-#ya_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_averaged_results.csv')
-ya_data <- read.csv('~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/data/ya_averaged_results.csv')
+# CHANGE THE END DEPENDING ON YOUR FIG NUMBER
+path_to_figs <- "/Volumes/YB_Drive/NavAging_Paper/figure_creation/plots/fig6"
+```
+
+```{r reading data, include=FALSE}
 # Tidying up the data
 ya_data<- ya_data %>% mutate(Age = 'YA')
 ya_data
@@ -56,9 +62,6 @@ ya_data$Block_num <- as.factor(ya_data$Block_num)
 sapply(ya_data, class)
 ya_data
 
-#This loads the data file as the variable "data"
-#oa_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_averaged_results.csv')
-oa_data <- read.csv('~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/data/oa_averaged_results.csv')
 # Tidying up the data
 oa_data<- oa_data %>% mutate(Age = 'OA')
 oa_data
@@ -82,9 +85,6 @@ data <- rbind(ya_data, oa_data)
 ```
 
 ```{r reading more data, include=FALSE}
-#This loads the data file as the variable "data"
-#ya_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/ya_merged_results.csv')
-ya_nav_data <- read.csv('~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/data/ya_merged_results.csv')
 
 # Tidying up the data
 ya_nav_data<- ya_nav_data %>% mutate(Age = 'YA')
@@ -108,9 +108,6 @@ desired_order <- c("Automobile shop", "Police station ", "Fire Station", "Bank",
 # Reorder the levels of Target_Name
 ya_nav_data$Target_Name <- factor(ya_nav_data$Target_Name, levels = desired_order)
 
-#This loads the data file as the variable "data"
-#oa_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/oa_merged_results.csv')
-oa_nav_data <- read.csv('~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/data/ya_merged_results.csv')
 # Tidying up the data
 oa_nav_data<- oa_nav_data %>% mutate(Age = 'OA')
 names(oa_nav_data)[1] <- 'index'
@@ -134,28 +131,6 @@ desired_order <- c("Automobile shop", "Police station ", "Fire Station", "Bank",
 oa_nav_data$Target_Name <- factor(oa_nav_data$Target_Name, levels = desired_order)
 
 nav_data <- rbind(ya_nav_data, oa_nav_data)
-```
-
-```{r reading more data, include=FALSE}
-#This loads the data file as the variable "data"
-#non_nav_data <- read.csv('~/Desktop/Research/NPRL/Papers/NavAging_Paper/data_analysis/non_nav_data.csv')
-non_nav_data <- read.csv('~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/data/non_nav_data.csv')
-# Tidying up the data
-names(non_nav_data)[1] <- 'Participant'
-names(non_nav_data)[2] <- 'Age'
-names(non_nav_data)[3] <- 'PSQI'
-names(non_nav_data)[4] <- 'SSS_Pre'
-names(non_nav_data)[5] <- 'SSS_Post'
-names(non_nav_data)[6] <- 'SBSOD'
-names(non_nav_data)[7] <- 'MiniCog'
-names(non_nav_data)[8] <- 'TrailsA'
-names(non_nav_data)[9] <- 'TrailsB'
-names(non_nav_data)[10] <- 'SetShifting'
-names(non_nav_data)[11] <- 'CorsiBlocks'
-names(non_nav_data)[12] <- 'SSQ_Pre'
-names(non_nav_data)[13] <- 'SSQ_Post'
-names(non_nav_data)[14] <- 'NARA'
-non_nav_data <- select(non_nav_data, -Age) 
 ```
 
 ```{r organizing data, include=FALSE}
@@ -182,17 +157,14 @@ for (i in 1:nrow(b3)) {
 }
 
 mean_data$Age <- factor(mean_data$Age, levels=c("YA", "OA"))
-df_merge <- merge(mean_data,non_nav_data,by="Participant") 
 ```
 
 
 
 ```{r}
-df_merge_drop <- select(df_merge, c('Participant','Age','NARA'))
-df_merge_drop<- df_merge_drop[!duplicated(df_merge_drop), ]
-data_plot <- ggplot(df_merge_drop, aes(x=Age, y=NARA, color = Age))+
+data_plot <- ggplot(non_nav_data, aes(x=group, y=nara, color = group))+
   geom_point(size=2, position=position_jitter(h=0,w=0.15),show.legend = TRUE) +
-  scale_color_manual(values =c('#FF9FAF','#5E7AFA'))+
+  scale_color_manual(values =c('#5E7AFA','#FF9FAF'))+
   scale_x_discrete(limits = c("YA", "OA"))+
   stat_summary(fun.args = list(mean_se), geom="crossbar",  width=.3, size = .5,  color="#242526") +
   stat_summary( fun = "mean",fun.args = list(mult=1), geom="point", size = 1.5, color="black") +
@@ -204,15 +176,16 @@ data_plot <- ggplot(df_merge_drop, aes(x=Age, y=NARA, color = Age))+
   theme(plot.title = element_text(hjust = 0.5))+
   theme(legend.position = 'none')
 data_plot
-#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig6_nara.svg", height = 5, width = 5, plot=p_ct)
+
+ggsave(file=paste0(path_to_figs, "_nara_bar.svg"), height = 5, width = 5, plot=data_plot)
 ```
+
 ```{r}
-#df_merge_drop <- select(df_merge, c('Participant','Age','NARA'))
-#df_merge_drop<- df_merge_drop[!duplicated(df_merge_drop), ]
-rain_nara <-ggplot(df_merge_drop, aes(x = factor(Age), y=NARA, fill=Age)) +
-  scale_fill_manual(values =c('#FF9FAF','#5E7AFA'))+
+rain_nara <-ggplot(non_nav_data, aes(x = factor(group), y=nara, fill=group)) +
+  scale_fill_manual(values =c('#5E7AFA','#FF9FAF'))+
   scale_y_continuous(breaks = scales::pretty_breaks(n= 4))+
   labs(color= "Participant", y="NARA Score (%)", x = ' ')+
+  scale_x_discrete(limits = c("YA", "OA"))+
   theme_classic()+
   theme(axis.line = element_line(linewidth = .5, colour = "#242526"))+
   theme(axis.ticks = element_line(linewidth = .2, colour = "#242526"))+
@@ -238,19 +211,19 @@ rain_nara <-ggplot(df_merge_drop, aes(x = factor(Age), y=NARA, fill=Age)) +
     alpha = 0.5
   )+
   geom_half_point(
-    aes(color = Age),
+    aes(color = group),
     side = 'l',
     range_scale = .4,
     alpha = .3,
-    position = position_jitter(seed = 1, width = .12)
-  ) +scale_color_manual(values =c('#FF9FAF','#5E7AFA'))
+    position = position_jitter(seed = 1, width = .12, height = 0)
+  ) +scale_color_manual(values =c('#5E7AFA','#FF9FAF'))
 rain_nara
-#ggsave(file="~/Desktop/Research/NPRL/Papers/NavAging_Paper/figure_creation/plots/fig6_rain_nara.svg", height = 5, width = 5, plot=p_ct)
+
+ggsave(file=paste0(path_to_figs, "_nara_rain.svg"), plot=data_plot)
 ```
 
 ```{r}
-non_nav_data_final <- read.csv('~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/stat_tests/non_nav_data_final.csv')
-corr_nara <-ggplot(non_nav_data_final, aes(x=age, y=nara, color = group))+
+corr_nara <-ggplot(non_nav_data, aes(x=age, y=nara, color = group))+
   geom_point(size=2)+
   #labs(color = c('#FF9FAF','#5E7AFA'))+
   scale_color_manual(values =c('#5E7AFA','#FF9FAF'))+
@@ -268,33 +241,41 @@ corr_nara <-ggplot(non_nav_data_final, aes(x=age, y=nara, color = group))+
  
 corr_nara
 
-#ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/fig6_corr_nara.svg", height = 5, width = 8, plot=corr_nara)
+
+ggsave(file=paste0(path_to_figs, "_nara_corr.svg"), height = 5, width = 5, plot=data_plot)
 ```
 
 ```{r}
-corr_nara_stats <- cor.test(x=non_nav_data_final$age, y=non_nav_data_final$nara, method = 'spearman')
+corr_nara_stats <- cor.test(x=non_nav_data$age, y=non_nav_data$nara, method = 'spearman')
 
 corr_nara_stats
 
-non_nav_ya_data <- non_nav_data_final %>% filter(group == 'YA')
+non_nav_ya_data <- non_nav_data %>% filter(group == 'YA')
 
 ##Filter by group in non_nav_data_final
 corr_nara_stats_ya <- cor.test(x=non_nav_ya_data$age, y=non_nav_ya_data$nara, method = 'spearman')
 
 corr_nara_stats_ya
 
-non_nav_oa_data <- non_nav_data_final %>% filter(group == 'OA')
+non_nav_oa_data <- non_nav_data %>% filter(group == 'OA')
 
 corr_nara_stats_oa <- cor.test(x=non_nav_oa_data$age, y=non_nav_oa_data$nara, method = 'spearman')
 
 corr_nara_stats_oa
 ```
+```{r}
+# Labeling non_nav_data dataframe
+
+# Create nara_labels column based on participant type and NARA scores
+non_nav_data$nara_labels <- ifelse(non_nav_data$group == "OA" & non_nav_data$nara > 50, "oa_high",
+                             ifelse(non_nav_data$group == "OA" & non_nav_data$nara < 50, "oa_low",
+                             ifelse(non_nav_data$group == "YA", "YA", NA)))
+```
+
 
 ```{r}
-#non_nav_oa_high_data <- subset(non_nav_oa_data, nara > 50.00)
-#non_nav_oa_low_data <- subset(non_nav_oa_data, nara < 50.00)
 
-corr_nara_three <-ggplot(non_nav_data_final, aes(x=age, y=nara, color = nara_age))+
+corr_nara_three <-ggplot(non_nav_data, aes(x=age, y=nara, color = nara_labels))+
   geom_point(size=2)+
   #labs(color = c('#FF9FAF','#5E7AFA'))+
   scale_color_manual(values =c('#7f00fe','#c5b3de','#FF9FAF'))+
@@ -308,21 +289,21 @@ corr_nara_three <-ggplot(non_nav_data_final, aes(x=age, y=nara, color = nara_age
   theme(axis.text.y = element_text(size=20))+
   theme(axis.title.y = element_text(size=20))+
   theme(axis.title.x = element_text(size=20))+
-  geom_smooth(aes(age, nara, group=nara_age), method="lm", se=TRUE, color = "#242526", fill = 'lightgray')
+  geom_smooth(aes(age,nara, group=nara_labels), method="lm", se=TRUE, color = "#242526", fill = 'lightgray')
  
 corr_nara_three
 
-#ggsave(file="~/Desktop/NPRL (RS)/NAVIGATION/NavAging_Paper/figure_creation/plots/fig6_corr_nara_three.svg", height = 5, width = 8, plot=corr_nara_three)
+ggsave(file=paste0(path_to_figs, "_nara_three.svg"), height = 5, width = 5, plot=corr_nara_three)
 ```
 
 ```{r}
-non_nav_oa_high_data <- non_nav_data_final %>% filter(nara_age == 'OA_high')
+non_nav_oa_high_data <- non_nav_data %>% filter(nara_labels == 'oa_high')
 
 corr_nara_three_stats_oa_high <- cor.test(x=non_nav_oa_high_data$age, y=non_nav_oa_high_data$nara, method = 'spearman')
 
 corr_nara_three_stats_oa_high
 
-non_nav_oa_low_data <- non_nav_data_final %>% filter(nara_age == 'OA_low')
+non_nav_oa_low_data <- non_nav_data %>% filter(nara_labels == 'oa_low')
 
 corr_nara_three_stats_oa_low <- cor.test(x=non_nav_oa_low_data$age, y=non_nav_oa_low_data$nara, method = 'spearman')
 
