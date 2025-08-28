@@ -149,7 +149,7 @@ save_plot <- function(plot, filename, width = 5, height = 5) {
 p_ct <- create_raincloud_plot(
   mean_data, 
   "Total_Time", 
-  "Mean Total Time (s)", 
+  "Average Total Time (s)", 
   y_limits = c(0, 168)
 )
 
@@ -157,14 +157,14 @@ p_ct <- create_raincloud_plot(
 p_orict <- create_raincloud_plot(
   mean_data, 
   "Orientation_Time", 
-  "Mean Orientation Time (s)"
+  "Average Orientation Time (s)"
 )
 
 # Navigation Time plot
 p_navct <- create_raincloud_plot(
   mean_data, 
   "Navigation_Time", 
-  "Mean Navigation Time (s)", 
+  "Average Navigation Time (s)", 
   y_limits = c(0, 168)
 )
 
@@ -172,14 +172,14 @@ p_navct <- create_raincloud_plot(
 p_dt <- create_raincloud_plot(
   mean_data, 
   "Distance", 
-  "Mean Distance Traveled (m)"
+  "Average Distance Traveled (m)"
 )
 
 # Speed plot
 p_speed <- create_raincloud_plot(
   mean_data, 
   "Speed", 
-  "Mean Speed (m/s)", 
+  "Average Speed (m/s)", 
   y_limits = c(0, 30)
 )
 
@@ -187,7 +187,7 @@ p_speed <- create_raincloud_plot(
 p_dwell <- create_raincloud_plot(
   mean_data, 
   "Mean_Dwell", 
-  "Mean Dwell Time (s)", 
+  "Average Dwell Duration (s)", 
   y_limits = c(0, 3)
 )
 
@@ -195,15 +195,15 @@ p_dwell <- create_raincloud_plot(
 p_teleport <- create_raincloud_plot(
   mean_data, 
   "Teleportations", 
-  "Mean Teleportations (count)", 
+  "Average Teleportations (count)", 
   y_limits = c(0, 150)
 )
 
 # Mean Teleport Distance plot
-p_teleport_dist <- create_raincloud_plot(
+p_teleport_dt <- create_raincloud_plot(
   mean_data, 
   "Mean_Teleport_Distance", 
-  "Mean Teleport Distance (m)"
+  "Average Teleport Distance (m)"
 )
 ```
 
@@ -216,7 +216,7 @@ save_plot(p_dt, "fig2_dt")
 save_plot(p_speed, "fig2_speed")
 save_plot(p_dwell, "fig2_dwell")
 save_plot(p_teleport, "fig2_teleport")
-save_plot(p_teleport_dist, "fig2_teleport_dist")
+save_plot(p_teleport_dt, "fig2_teleport_dt")
 ```
 
 ```{r create-composite-figure, fig.height=20, fig.width=20, fig.align="center"}
@@ -224,7 +224,7 @@ save_plot(p_teleport_dist, "fig2_teleport_dist")
 # 4 columns, 3 rows layout
 composite_plot <- grid.arrange(
   p_speed, p_ct, p_orict, p_navct,           # Row 1
-  p_dt, p_dwell, p_teleport, p_teleport_dist, # Row 2
+  p_dt, p_dwell, p_teleport, p_teleport_dt, # Row 2
   ncol = 4, 
   nrow = 2
 )
