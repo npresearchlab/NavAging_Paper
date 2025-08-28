@@ -60,6 +60,7 @@ mean_data <- all_data %>%
     Speed = mean(Speed, na.rm = TRUE),
     Mean_Dwell = mean(Mean_Dwell, na.rm = TRUE),
     Teleportations = mean(Teleportations, na.rm = TRUE),
+    Mean_Teleport_Distance = mean(Mean_Teleport_Distance, na.rm = TRUE),
     .groups = 'drop'
   )
 
@@ -171,14 +172,14 @@ p_navct <- create_raincloud_plot(
 p_dt <- create_raincloud_plot(
   mean_data, 
   "Distance", 
-  "Mean Distance Traveled (VR Units)"
+  "Mean Distance Traveled (m)"
 )
 
 # Speed plot
 p_speed <- create_raincloud_plot(
   mean_data, 
   "Speed", 
-  "Mean Speed (VR Unit/s)", 
+  "Mean Speed (m/s)", 
   y_limits = c(0, 30)
 )
 
@@ -197,6 +198,13 @@ p_teleport <- create_raincloud_plot(
   "Mean Teleportations (count)", 
   y_limits = c(0, 150)
 )
+
+# Mean Teleport Distance plot
+p_teleport_dist <- create_raincloud_plot(
+  mean_data, 
+  "Mean_Teleport_Distance", 
+  "Mean Teleport Distance (m)"
+)
 ```
 
 ```{r save-individual-plots, include=FALSE}
@@ -208,20 +216,21 @@ save_plot(p_dt, "fig2_dt")
 save_plot(p_speed, "fig2_speed")
 save_plot(p_dwell, "fig2_dwell")
 save_plot(p_teleport, "fig2_teleport")
+save_plot(p_teleport_dist, "fig2_teleport_dist")
 ```
 
-```{r create-composite-figure, fig.height=16, fig.width=20, fig.align="center"}
+```{r create-composite-figure, fig.height=20, fig.width=20, fig.align="center"}
 # Create composite figure with all plots arranged in a grid
-# 4 columns, 3 rows layout (with one empty space)
+# 4 columns, 3 rows layout
 composite_plot <- grid.arrange(
-  p_speed, p_ct, p_orict, p_navct,     # Row 1
-  p_dt, p_dwell, p_teleport,           # Row 2 (3 plots)
+  p_speed, p_ct, p_orict, p_navct,           # Row 1
+  p_dt, p_dwell, p_teleport, p_teleport_dist, # Row 2
   ncol = 4, 
   nrow = 2
 )
 
 # Save composite figure
-save_plot(composite_plot, "fig2_composite", width = 20, height = 16)
+save_plot(composite_plot, "fig2_composite", width = 20, height = 20)
 ```
 
 ```{r summary-statistics, include=FALSE}
@@ -231,7 +240,7 @@ save_plot(composite_plot, "fig2_composite", width = 20, height = 16)
 summary_stats <- mean_data %>%
   pivot_longer(
     cols = c(Total_Time, Orientation_Time, Navigation_Time, Distance, 
-             Speed, Mean_Dwell, Teleportations),
+             Speed, Mean_Dwell, Teleportations, Mean_Teleport_Distance),
     names_to = "Measure",
     values_to = "Value"
   ) %>%
@@ -248,38 +257,4 @@ summary_stats <- mean_data %>%
 
 print("Summary statistics by age group and measure:")
 print(summary_stats)
-```
-
-```{r optional-statistical-tests, eval=FALSE, include=FALSE}
-# Optional: Run statistical tests comparing age groups
-# Uncomment and run this chunk if you want statistical comparisons
-
-library(broom)
-
-# Function to run t-tests for each measure
-run_comparisons <- function(data) {
-  measures <- c("Total_Time", "Orientation_Time", "Navigation_Time", 
-                "Distance", "Speed", "Mean_Dwell", "Teleportations")
-  
-  results <- map_dfr(measures, function(measure) {
-    formula_str <- paste(measure, "~ Age")
-    t_test_result <- t.test(as.formula(formula_str), data = data)
-    
-    tibble(
-      Measure = measure,
-      t_statistic = round(t_test_result$statistic, 3),
-      p_value = round(t_test_result$p.value, 4),
-      YA_mean = round(t_test_result$estimate[1], 2),
-      OA_mean = round(t_test_result$estimate[2], 2),
-      significant = p_value < 0.05
-    )
-  })
-  
-  return(results)
-}
-
-# Run comparisons
-statistical_results <- run_comparisons(mean_data)
-print("Statistical comparisons between age groups:")
-print(statistical_results)
 ```

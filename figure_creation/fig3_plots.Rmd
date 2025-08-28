@@ -74,13 +74,13 @@ change_data <- nav_data %>%
   
   # Select variables for change calculation
   select(Participant, Block_Num, Total_Time, Orientation_Time, 
-         Navigation_Time, Distance, Speed, Mean_Dwell, Teleportations) %>%
+         Navigation_Time, Distance, Speed, Mean_Dwell, Teleportations, Mean_Teleport_Distance) %>%
   
   # Reshape data to wide format for easy subtraction
   pivot_wider(
     names_from = Block_Num,
     values_from = c(Total_Time, Orientation_Time, Navigation_Time, 
-                   Distance, Speed, Mean_Dwell, Teleportations),
+                   Distance, Speed, Mean_Dwell, Teleportations, Mean_Teleport_Distance),
     names_sep = "_Block_"
   ) %>%
   
@@ -92,7 +92,8 @@ change_data <- nav_data %>%
     Distance_Change = Distance_Block_3 - Distance_Block_1,
     Speed_Change = Speed_Block_3 - Speed_Block_1,
     Mean_Dwell_Change = Mean_Dwell_Block_3 - Mean_Dwell_Block_1,
-    Teleportations_Change = Teleportations_Block_3 - Teleportations_Block_1
+    Teleportations_Change = Teleportations_Block_3 - Teleportations_Block_1,
+    Mean_Teleport_Distance_Change = Mean_Teleport_Distance_Block_3 - Mean_Teleport_Distance_Block_1
   ) %>%
   
   # Keep only participant, target, and change scores
@@ -189,14 +190,15 @@ save_plot <- function(plot, filename, width = 5, height = 5) {
 
 # Define plot specifications in a data frame for easy management
 plot_specs <- tribble(
-  ~var_name,           ~label,                        ~y_limits,   ~y_breaks,
-  "Total_Time",        "Total Time (s)",              c(0, 275),   seq(0, 300, 50),
-  "Orientation_Time",  "Orientation Time (s)",        NULL,        NULL,
-  "Navigation_Time",   "Navigation Time (s)",         c(0, 275),   seq(0, 300, 50),
-  "Distance",          "Distance Traveled (VR Units)", NULL,        seq(0, 1200, 200),
-  "Speed",             "Speed (VR Unit/s)",           NULL,        seq(0, 30, 5),
-  "Mean_Dwell",        "Dwell Time (s)",              c(0, 5),     seq(0, 5, 1),
-  "Teleportations",    "Teleportations (count)",      NULL,        NULL
+  ~var_name,                ~label,                              ~y_limits,   ~y_breaks,
+  "Total_Time",             "Total Time (s)",                    c(0, 275),   seq(0, 300, 50),
+  "Orientation_Time",       "Orientation Time (s)",              NULL,        NULL,
+  "Navigation_Time",        "Navigation Time (s)",               c(0, 275),   seq(0, 300, 50),
+  "Distance",               "Distance Traveled (m)",       NULL,        seq(0, 1200, 200),
+  "Speed",                  "Speed (m/s)",                 NULL,        seq(0, 30, 5),
+  "Mean_Dwell",             "Dwell Time (s)",                    c(0, 5),     seq(0, 5, 1),
+  "Teleportations",         "Teleportations (count)",            NULL,        NULL,
+  "Mean_Teleport_Distance", "Mean Teleport Distance (m)", NULL,        NULL
 )
 
 # Create all plots using purrr::map (functional programming approach)
@@ -212,7 +214,7 @@ plots <- map2(plot_specs$var_name, plot_specs$label, function(var, label) {
 })
 
 # Name the plots for easy reference
-names(plots) <- paste0("p_", c("ct", "orict", "navct", "dt", "speed", "dwell", "teleport"))
+names(plots) <- paste0("p_", c("ct", "orict", "navct", "dt", "speed", "dwell", "teleport", "teleport_dist"))
 
 # Extract individual plots
 p_ct <- plots$p_ct
@@ -222,28 +224,29 @@ p_dt <- plots$p_dt
 p_speed <- plots$p_speed
 p_dwell <- plots$p_dwell
 p_teleport <- plots$p_teleport
+p_teleport_dist <- plots$p_teleport_dist
 ```
 
 ```{r save-individual-plots, include=FALSE}
 # Save all individual plots efficiently
 plot_names <- c("fig3_ct", "fig3_orict", "fig3_navct", "fig3_dt", 
-                "fig3_speed", "fig3_dwell", "fig3_teleport")
+                "fig3_speed", "fig3_dwell", "fig3_teleport", "fig3_teleport_dist")
 
 walk2(plots, plot_names, ~ save_plot(.x, .y))
 ```
 
-```{r create-composite-figure, fig.height=16, fig.width=20, fig.align="center"}
+```{r create-composite-figure, fig.height=20, fig.width=20, fig.align="center"}
 # Create composite figure with all plots arranged in a grid
-# 4 columns, 2 rows layout (with one empty space)
+# 4 columns, 2 rows layout
 composite_plot <- grid.arrange(
-  p_speed, p_ct, p_orict, p_navct,     # Row 1
-  p_dt, p_dwell, p_teleport,           # Row 2 (3 plots)
+  p_speed, p_ct, p_orict, p_navct,               # Row 1
+  p_dt, p_dwell, p_teleport, p_teleport_dist,    # Row 2
   ncol = 4, 
   nrow = 2
 )
 
 # Save composite figure
-save_plot(composite_plot, "fig3_composite", width = 20, height = 16)
+save_plot(composite_plot, "fig3_composite", width = 20, height = 20)
 ```
 
 ```{r summary-statistics, include=FALSE}
@@ -251,7 +254,7 @@ save_plot(composite_plot, "fig3_composite", width = 20, height = 16)
 summary_stats <- nav_data %>%
   pivot_longer(
     cols = c(Total_Time, Orientation_Time, Navigation_Time, Distance, 
-             Speed, Mean_Dwell, Teleportations),
+             Speed, Mean_Dwell, Teleportations, Mean_Teleport_Distance),
     names_to = "Measure",
     values_to = "Value"
   ) %>%
@@ -265,34 +268,4 @@ summary_stats <- nav_data %>%
 
 print("Summary statistics by age group, block, and measure:")
 print(summary_stats)
-```
-
-```{r optional-change-analysis, eval=FALSE, include=FALSE}
-# Optional: Analyze change scores from Block 1 to Block 3
-# Uncomment and run this chunk if you want to examine learning effects
-
-change_summary <- change_data %>%
-  # Add age information back
-  left_join(
-    nav_data %>% select(Participant, Age) %>% distinct(),
-    by = "Participant"
-  ) %>%
-  
-  # Calculate summary statistics for change scores
-  pivot_longer(
-    cols = ends_with("_Change"),
-    names_to = "Measure",
-    values_to = "Change_Score"
-  ) %>%
-  group_by(Age, Measure) %>%
-  summarise(
-    n = n(),
-    mean_change = round(mean(Change_Score, na.rm = TRUE), 2),
-    se_change = round(std.error(Change_Score), 3),
-    significant_improvement = mean_change < 0,  # Negative = improvement for most measures
-    .groups = 'drop'
-  )
-
-print("Change scores from Block 1 to Block 3:")
-print(change_summary)
 ```
