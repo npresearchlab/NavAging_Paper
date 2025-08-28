@@ -20,7 +20,7 @@ library(scales)       # Scale formatting
 ```{r setup-paths, include=FALSE}
 # Define file paths - MODIFY THESE FOR YOUR SYSTEM
 data_path <- "/Volumes/YB_Drive/NavAging_Paper/data"
-output_path <- "/Volumes/YB_Drive/NavAging_Paper/figure_creation/plots/"
+output_path <- "/Volumes/YB_Drive/NavAging_Paper/figure_creation/plots"
 ```
 
 ```{r load-and-process-data, include=FALSE}
