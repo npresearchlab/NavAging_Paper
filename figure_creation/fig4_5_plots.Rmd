@@ -1,5 +1,5 @@
 ---
-title: "Figure 3 Code - Optimized"
+title: "Figures 4 & 5 Code - Optimized"
 output: html_document
 date: "06/26/25"
 ---
@@ -196,9 +196,9 @@ plot_specs <- tribble(
   "Navigation_Time",        "Navigation Time (s)",               c(0, 275),   seq(0, 300, 50),
   "Distance",               "Distance Traveled (m)",       NULL,        seq(0, 1200, 200),
   "Speed",                  "Speed (m/s)",                 NULL,        seq(0, 30, 5),
-  "Mean_Dwell",             "Dwell Time (s)",                    c(0, 5),     seq(0, 5, 1),
+  "Mean_Dwell",             "Dwell Duration (s)",                    c(0, 5),     seq(0, 5, 1),
   "Teleportations",         "Teleportations (count)",            NULL,        NULL,
-  "Mean_Teleport_Distance", "Mean Teleport Distance (m)", NULL,        NULL
+  "Mean_Teleport_Distance", "Teleport Distance (m)", NULL,        NULL
 )
 
 # Create all plots using purrr::map (functional programming approach)
@@ -214,7 +214,7 @@ plots <- map2(plot_specs$var_name, plot_specs$label, function(var, label) {
 })
 
 # Name the plots for easy reference
-names(plots) <- paste0("p_", c("ct", "orict", "navct", "dt", "speed", "dwell", "teleport", "teleport_dist"))
+names(plots) <- paste0("p_", c("ct", "orict", "navct", "dt", "speed", "dwell", "teleport", "teleport_dt"))
 
 # Extract individual plots
 p_ct <- plots$p_ct
@@ -224,13 +224,13 @@ p_dt <- plots$p_dt
 p_speed <- plots$p_speed
 p_dwell <- plots$p_dwell
 p_teleport <- plots$p_teleport
-p_teleport_dist <- plots$p_teleport_dist
+p_teleport_dt <- plots$p_teleport_dt
 ```
 
 ```{r save-individual-plots, include=FALSE}
 # Save all individual plots efficiently
-plot_names <- c("fig3_ct", "fig3_orict", "fig3_navct", "fig3_dt", 
-                "fig3_speed", "fig3_dwell", "fig3_teleport", "fig3_teleport_dist")
+plot_names <- c("fig4_5_ct", "fig4_5_orict", "fig4_5_navct", "fig4_5_dt", 
+                "fig4_5_speed", "fig4_5_dwell", "fig4_5_teleport", "fig4_5_teleport_dt")
 
 walk2(plots, plot_names, ~ save_plot(.x, .y))
 ```
@@ -240,13 +240,13 @@ walk2(plots, plot_names, ~ save_plot(.x, .y))
 # 4 columns, 2 rows layout
 composite_plot <- grid.arrange(
   p_speed, p_ct, p_orict, p_navct,               # Row 1
-  p_dt, p_dwell, p_teleport, p_teleport_dist,    # Row 2
+  p_dt, p_dwell, p_teleport, p_teleport_dt,    # Row 2
   ncol = 4, 
   nrow = 2
 )
 
 # Save composite figure
-save_plot(composite_plot, "fig3_composite", width = 20, height = 20)
+save_plot(composite_plot, "fig4_5_composite", width = 20, height = 20)
 ```
 
 ```{r summary-statistics, include=FALSE}
