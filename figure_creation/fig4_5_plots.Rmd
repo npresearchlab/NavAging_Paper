@@ -229,8 +229,8 @@ p_teleport_dt <- plots$p_teleport_dt
 
 ```{r save-individual-plots, include=FALSE}
 # Save all individual plots efficiently
-plot_names <- c("fig4_5_ct", "fig4_5_orict", "fig4_5_navct", "fig4_5_dt", 
-                "fig4_5_speed", "fig4_5_dwell", "fig4_5_teleport", "fig4_5_teleport_dt")
+plot_names <- c("fig4_5_ct", "fig4_5_orict", "fig4_navct", "fig4_dt", 
+                "fig4_speed", "fig5_dwell", "fig5_teleport", "fig5_teleport_dt")
 
 walk2(plots, plot_names, ~ save_plot(.x, .y))
 ```

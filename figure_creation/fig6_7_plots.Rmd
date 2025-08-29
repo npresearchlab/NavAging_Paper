@@ -33,7 +33,7 @@ load_merged_data <- function(file_path, age_group) {
     select(-1) %>%  # Remove first column (index)
     mutate(
       Age = age_group,
-      Block_num = as.factor(Block_num)
+      Block_Num = as.factor(Block_Num)
     )
   
   # Set consistent target ordering
@@ -90,15 +90,15 @@ print(paste("Calculated target averages for", nrow(target_data_all), "participan
 calculate_change_scores <- function(data) {
   data %>%
     # Keep only Block 1 and Block 3 for change calculation
-    filter(Block_num %in% c("1", "3")) %>%
+    filter(Block_Num %in% c("1", "3")) %>%
     
     # Select variables for change calculation
-    select(Participant, Target_Name, Block_num, Total_Time, Orientation_Time, 
+    select(Participant, Target_Name, Block_Num, Total_Time, Orientation_Time, 
            Navigation_Time, Distance, Speed, Mean_Dwell, Teleportations, Mean_Teleport_Distance) %>%
     
     # Reshape data to wide format for easy subtraction
     pivot_wider(
-      names_from = Block_num,
+      names_from = Block_Num,
       values_from = c(Total_Time, Orientation_Time, Navigation_Time, 
                      Distance, Speed, Mean_Dwell, Teleportations, Mean_Teleport_Distance),
       names_sep = "_Block_"
@@ -259,8 +259,8 @@ p_teleport_dt <- plots$p_teleport_dt
 
 ```{r save-individual-plots, include=FALSE}
 # Save all individual plots efficiently
-plot_names <- c("fig6_7_ct", "fig6_7_orict", "fig6_7_navct", "fig6_7_dt", 
-                "fig6_7_speed", "fig6_7_dwell", "fig6_7_teleport", "fig6_7_teleport_dist")
+plot_names <- c("fig6_7_ct", "fig6_7_orict", "fig6_navct", "fig6_dt", 
+                "fig6_speed", "fig7_dwell", "fig7_teleport", "fig7_teleport_dt")
 
 walk2(plots, plot_names, ~ save_plot(.x, .y))
 ```

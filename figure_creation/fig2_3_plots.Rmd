@@ -211,12 +211,12 @@ p_teleport_dt <- create_raincloud_plot(
 # Save all individual plots
 save_plot(p_ct, "fig2_3_ct")
 save_plot(p_orict, "fig2_3_orict") 
-save_plot(p_navct, "fig2_3_navct")
-save_plot(p_dt, "fig2_3_dt")
-save_plot(p_speed, "fig2_3_speed")
-save_plot(p_dwell, "fig2_3_dwell")
-save_plot(p_teleport, "fig2_3_teleport")
-save_plot(p_teleport_dt, "fig2_3_teleport_dt")
+save_plot(p_navct, "fig2_navct")
+save_plot(p_dt, "fig2_dt")
+save_plot(p_speed, "fig2_speed")
+save_plot(p_dwell, "fig3_dwell")
+save_plot(p_teleport, "fig3_teleport")
+save_plot(p_teleport_dt, "fig3_teleport_dt")
 ```
 
 ```{r create-composite-figure, fig.height=20, fig.width=20, fig.align="center"}

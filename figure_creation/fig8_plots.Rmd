@@ -97,16 +97,16 @@ nara_data <- non_nav_data %>%
   # Create NARA performance labels
   mutate(
     # Standardize group names to match other datasets
-    group = factor(ifelse(group == "YA", "YA", "OA"), levels = c("YA", "OA")),
+    Group = factor(Group, levels = c("YA", "OA")),
     
     # Create three-group classification based on NARA performance
     nara_labels = case_when(
-      group == "YA" ~ "YA",
-      group == "OA" & nara > 50 ~ "oa_high", 
-      group == "OA" & nara <= 50 ~ "oa_low",
+      Group == "YA" ~ "YA",
+      Group == "OA" & NARA > 50 ~ "OA High", 
+      Group == "OA" & NARA <= 50 ~ "OA Low",
       TRUE ~ NA_character_
     ),
-    nara_labels = factor(nara_labels, levels = c("YA", "oa_high", "oa_low"))
+    nara_labels = factor(nara_labels, levels = c("YA", "OA High", "OA Low"))
   )
 
 print("NARA data summary:")
@@ -127,7 +127,7 @@ save_plot <- function(plot, filename, width = 5, height = 5) {
 
 # Function to create NARA raincloud plot
 create_nara_raincloud <- function(data, colors = c('#FF9FAF', '#5E7AFA')) {
-  ggplot(data, aes(x = group, y = nara, fill = group, color = group)) +
+  ggplot(data, aes(x = Group, y = NARA, fill = Group, color = Group)) +
     scale_fill_manual(values = colors) +
     scale_color_manual(values = colors) +
     scale_y_continuous(breaks = pretty_breaks(n = 4)) +
@@ -164,8 +164,8 @@ create_nara_raincloud <- function(data, colors = c('#FF9FAF', '#5E7AFA')) {
 }
 
 # Function to create scatter plots with correlation lines
-create_correlation_plot <- function(data, color_var = "group", colors = c('#FF9FAF', '#5E7AFA')) {
-  ggplot(data, aes(x = age, y = nara, color = .data[[color_var]])) +
+create_correlation_plot <- function(data, color_var = "Group", colors = c('#FF9FAF', '#5E7AFA')) {
+  ggplot(data, aes(x = Age, y = NARA, color = .data[[color_var]])) +
     geom_point(size = 2) +
     scale_color_manual(values = colors) +
     labs(y = "NARA Score (%)", x = "Age") +
@@ -220,15 +220,15 @@ save_plot(plot_nara_three, "fig8_nara_three")
 # Generate summary statistics for NARA data
 
 nara_summary <- nara_data %>%
-  group_by(group) %>%
+  group_by(Group) %>%
   summarise(
     n = n(),
-    mean_nara = round(mean(nara, na.rm = TRUE), 2),
-    sd_nara = round(sd(nara, na.rm = TRUE), 2),
-    median_nara = round(median(nara, na.rm = TRUE), 2),
-    min_nara = round(min(nara, na.rm = TRUE), 2),
-    max_nara = round(max(nara, na.rm = TRUE), 2),
-    mean_age = round(mean(age, na.rm = TRUE), 1),
+    mean_nara = round(mean(NARA, na.rm = TRUE), 2),
+    sd_nara = round(sd(NARA, na.rm = TRUE), 2),
+    median_nara = round(median(NARA, na.rm = TRUE), 2),
+    min_nara = round(min(NARA, na.rm = TRUE), 2),
+    max_nara = round(max(NARA, na.rm = TRUE), 2),
+    mean_age = round(mean(Age, na.rm = TRUE), 1),
     .groups = 'drop'
   )
 
@@ -240,9 +240,9 @@ nara_three_summary <- nara_data %>%
   group_by(nara_labels) %>%
   summarise(
     n = n(),
-    mean_nara = round(mean(nara, na.rm = TRUE), 2),
-    sd_nara = round(sd(nara, na.rm = TRUE), 2),
-    mean_age = round(mean(age, na.rm = TRUE), 1),
+    mean_nara = round(mean(NARA, na.rm = TRUE), 2),
+    sd_nara = round(sd(NARA, na.rm = TRUE), 2),
+    mean_age = round(mean(Age, na.rm = TRUE), 1),
     .groups = 'drop'
   )
 
