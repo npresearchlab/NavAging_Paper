@@ -1,0 +1,217 @@
+---
+title: "Stats Main LMM"
+author: "Yasmine Bassil"
+date: "2025-09-08"
+output: html_document
+---
+
+```{r global-options, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r loading libraries, include=FALSE}
+# This code chunk loads various libraries necessary to complete the data analysis and produce graphics
+library(tidyverse)
+library(stringr)
+library(ez)
+library(cowplot)
+library(viridis)
+library(viridisLite)
+library("readxl")
+library("ggcorrplot")
+library(dplyr)
+library(ltm)
+library(plotrix)
+library("viridis")
+library("paletteer")
+library(ggpubr)
+library(rstatix)
+library(lme4)
+library(lmerTest)
+library(patchwork)
+library(emmeans)
+```
+
+```{r load-data, include=FALSE}
+# Load older adults data
+oa_data <- read_csv("/Volumes/YB_Drive/NavAging_Paper/data/oa_merged_results.csv")
+oa_data$Age_Group <- "OA"
+oa_data <- oa_data %>% select(-1)
+
+# Load younger adults data  
+ya_data <- read_csv("/Volumes/YB_Drive/NavAging_Paper/data/ya_merged_results.csv")
+ya_data$Age_Group <- "YA"
+ya_data <- ya_data %>% select(-1)
+
+# Combine both datasets
+nav_data <- bind_rows(oa_data, ya_data)
+nav_data$Block_Num <- as.factor(nav_data$Block_Num)
+
+# Convert Age_Group to factor
+nav_data$Age_Group <- factor(nav_data$Age_Group, levels = c("YA", "OA"))
+
+# Check data structure
+cat("Total observations:", nrow(nav_data), "\n")
+cat("Younger adults observations:", sum(nav_data$Age_Group == "YA"), "\n")
+cat("Older adults observations:", sum(nav_data$Age_Group == "OA"), "\n")
+```
+
+```{r initializing-variables}
+# Define your list of outcome variables
+outcome_vars <- c("Total_Time", "Orientation_Time", "Navigation_Time", 
+                  "Distance", "Speed", "Mean_Dwell", 
+                  "Teleportations", "Mean_Teleport_Distance")
+
+# Initialize empty dataframes to store all results
+all_model_results <- data.frame()
+all_contrasts_age <- data.frame()
+all_contrasts_block <- data.frame()
+all_contrasts_interaction <- data.frame()
+all_interaction_changes <- data.frame()
+```
+
+```{r standardize-contrast-columns}
+# Standardize contrast column names
+standardize_contrast_columns <- function(df) {
+  # Check what contrast columns exist
+  contrast_cols <- grep("^contrast", names(df), value = TRUE)
+  
+  if (length(contrast_cols) > 0) {
+    # If there are multiple contrast columns, merge them
+    if (length(contrast_cols) > 1) {
+      # Merge contrast1 and contrast columns (or any combination)
+      df$Contrast_Description <- apply(df[, contrast_cols, drop = FALSE], 1, 
+                                     function(x) paste(na.omit(x), collapse = " | "))
+      # Remove the original contrast columns
+      df <- df[, !names(df) %in% contrast_cols]
+    } else {
+      # If only one contrast column, rename it
+      names(df)[names(df) == contrast_cols] <- "Contrast_Description"
+    }
+  }
+  names(df)[names(df) == "Contrast_Description"] <- "contrast"
+  return(df)
+}
+```
+
+```{r run-models}
+
+# Loop through each outcome
+for (outcome in outcome_vars) {
+  
+  # Create the formula dynamically
+  formula_str <- paste(outcome, "~ Age_Group * Block_Num + (1|Target_Name) + (1|Participant)")
+  model_formula <- as.formula(formula_str)
+  
+  # Run the model
+  m_outcome <- lmer(model_formula, data = nav_data)
+  m_summary <- summary(m_outcome)
+  m_anova <- anova(m_outcome)
+  
+  # Extract model results
+  results_df <- data.frame(
+    Outcome = outcome,  # Add outcome column
+    Term = rownames(coef(m_summary)),
+    coef(m_summary),
+    row.names = NULL
+  )
+  
+  # Clean up column names
+  names(results_df) <- c("Outcome", "Term", "Estimate", "Std_Error", "df", "t_value", "p_value")
+  
+  # Add to main results dataframe
+  all_model_results <- rbind(all_model_results, results_df)
+  
+  # Get emmeans and contrasts
+  emm_age <- emmeans(m_outcome, ~ Age_Group)
+  emm_block <- emmeans(m_outcome, ~ Block_Num)
+  emm_interaction <- emmeans(m_outcome, ~ Age_Group * Block_Num)
+  
+  # Get pairwise contrasts with FDR correction AND confidence intervals
+  contrasts_age <- summary(pairs(emm_age, adjust = "fdr"), infer = TRUE)
+  contrasts_block <- summary(pairs(emm_block, adjust = "fdr"), infer = TRUE)
+  contrasts_interaction <- summary(pairs(emm_interaction, adjust = "fdr"), infer = TRUE)
+  
+  # Step 1: Get consecutive block changes within each age group  
+  block_changes_within_age <- contrast(emm_interaction, "consec", simple = "Age_Group", combine = FALSE, adjust = "none")
+
+  # Step 2: Compare the block changes between age groups
+  age_diff_in_block_changes <- summary(contrast(block_changes_within_age, "revpairwise", 
+                                                by = "contrast", adjust = "fdr"), infer = TRUE)
+
+  # Convert to dataframe
+  interaction_changes_df <- data.frame(
+    Outcome = outcome,
+    Correction = "FDR_within_outcome", 
+    Contrast_Type = "Block_change_difference_OA_vs_YA",
+    as.data.frame(age_diff_in_block_changes)
+    )
+  
+  # Merging contrast columns into one
+  interaction_changes_df <- standardize_contrast_columns(interaction_changes_df)
+  
+  # Convert to dataframes and add correction info
+  contrasts_age_df <- data.frame(
+    Outcome = outcome, 
+    Correction = "FDR_within_outcome",
+    as.data.frame(contrasts_age)
+  )
+  contrasts_block_df <- data.frame(
+    Outcome = outcome,
+    Correction = "FDR_within_outcome",
+    as.data.frame(contrasts_block)
+  )
+  contrasts_interaction_df <- data.frame(
+    Outcome = outcome,
+    Correction = "FDR_within_outcome",
+    as.data.frame(contrasts_interaction)
+  )
+
+  # Format p-values in contrast dataframes
+  contrasts_age_df$p.value <- ifelse(contrasts_age_df$p.value < 0.001,
+                                      sprintf("%.2e", contrasts_age_df$p.value),
+                                      sprintf("%.6f", contrasts_age_df$p.value))
+  contrasts_block_df$p.value <- ifelse(contrasts_block_df$p.value < 0.001,
+                                       sprintf("%.2e", contrasts_block_df$p.value),
+                                       sprintf("%.6f", contrasts_block_df$p.value))
+  contrasts_interaction_df$p.value <- ifelse(contrasts_interaction_df$p.value < 0.001,
+                                             sprintf("%.2e", contrasts_interaction_df$p.value),
+                                             sprintf("%.6f", contrasts_interaction_df$p.value))
+  interaction_changes_df$p.value <- ifelse(interaction_changes_df$p.value < 0.001,
+                                         sprintf("%.2e", interaction_changes_df$p.value),
+                                         sprintf("%.6f", interaction_changes_df$p.value))
+  # Format confidence intervals (if you want consistent formatting)
+  if("lower.CL" %in% names(contrasts_age_df) && "upper.CL" %in% names(contrasts_age_df)) {
+    contrasts_age_df$CI <- sprintf("[%.3f, %.3f]", contrasts_age_df$lower.CL, contrasts_age_df$upper.CL)
+    }
+  if("lower.CL" %in% names(contrasts_block_df) && "upper.CL" %in% names(contrasts_block_df)) {
+    contrasts_block_df$CI <- sprintf("[%.3f, %.3f]", contrasts_block_df$lower.CL, contrasts_block_df$upper.CL)
+    }
+  if("lower.CL" %in% names(contrasts_interaction_df) && "upper.CL" %in% names(contrasts_interaction_df)) {
+    contrasts_interaction_df$CI <- sprintf("[%.3f, %.3f]", contrasts_interaction_df$lower.CL, contrasts_interaction_df$upper.CL)
+    }
+  if("lower.CL" %in% names(interaction_changes_df) && "upper.CL" %in% names(interaction_changes_df)) {
+    interaction_changes_df$CI <- sprintf("[%.3f, %.3f]", interaction_changes_df$lower.CL, interaction_changes_df$upper.CL)
+    }
+  
+  # Add to main contrast dataframes
+  all_contrasts_age <- rbind(all_contrasts_age, contrasts_age_df)
+  all_contrasts_block <- rbind(all_contrasts_block, contrasts_block_df)
+  all_contrasts_interaction <- rbind(all_contrasts_interaction, contrasts_interaction_df)
+  all_interaction_changes <- rbind(all_interaction_changes, interaction_changes_df)
+  
+  # Print progress
+  cat("Completed analysis for:", outcome, "\n")
+}
+```
+
+```{r saving-results}
+# Save all results to CSV files
+write.csv(all_model_results, "all_model_results.csv", row.names = FALSE)
+write.csv(all_contrasts_age, "all_contrasts_age_group.csv", row.names = FALSE)
+write.csv(all_contrasts_block, "all_contrasts_block_num.csv", row.names = FALSE)
+write.csv(all_contrasts_interaction, "all_contrasts_interaction.csv", row.names = FALSE)
+write.csv(all_interaction_changes, "all_interaction_changes.csv", row.names = FALSE)
+
+cat("Analysis complete! All results saved to CSV files.\n")
+```

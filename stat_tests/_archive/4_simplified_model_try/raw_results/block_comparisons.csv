@@ -1,0 +1,9 @@
+"contrast","estimate","SE","df","z.ratio","p.value","outcome","comparison_type","p.value.adj"
+"(nothing)",NA,NA,NA,NA,NA,"Total_Time","block",NA
+"(nothing)",NA,NA,NA,NA,NA,"Orientation_Time","block",NA
+"(nothing)",NA,NA,NA,NA,NA,"Navigation_Time","block",NA
+"(nothing)",NA,NA,NA,NA,NA,"Distance","block",NA
+"(nothing)",NA,NA,NA,NA,NA,"Speed","block",NA
+"(nothing)",NA,NA,NA,NA,NA,"Mean_Dwell","block",NA
+"(nothing)",NA,NA,NA,NA,NA,"Teleportations","block",NA
+"(nothing)",NA,NA,NA,NA,NA,"Mean_Teleport_Distance","block",NA

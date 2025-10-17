@@ -1,0 +1,17 @@
+"contrast","Age_Group","estimate","SE","df","z.ratio","p.value","outcome","comparison_type","p.value.adj"
+"(nothing)","YA",NA,NA,NA,NA,NA,"Total_Time","block_by_age",NA
+"(nothing)","OA",NA,NA,NA,NA,NA,"Total_Time","block_by_age",NA
+"(nothing)","YA",NA,NA,NA,NA,NA,"Orientation_Time","block_by_age",NA
+"(nothing)","OA",NA,NA,NA,NA,NA,"Orientation_Time","block_by_age",NA
+"(nothing)","YA",NA,NA,NA,NA,NA,"Navigation_Time","block_by_age",NA
+"(nothing)","OA",NA,NA,NA,NA,NA,"Navigation_Time","block_by_age",NA
+"(nothing)","YA",NA,NA,NA,NA,NA,"Distance","block_by_age",NA
+"(nothing)","OA",NA,NA,NA,NA,NA,"Distance","block_by_age",NA
+"(nothing)","YA",NA,NA,NA,NA,NA,"Speed","block_by_age",NA
+"(nothing)","OA",NA,NA,NA,NA,NA,"Speed","block_by_age",NA
+"(nothing)","YA",NA,NA,NA,NA,NA,"Mean_Dwell","block_by_age",NA
+"(nothing)","OA",NA,NA,NA,NA,NA,"Mean_Dwell","block_by_age",NA
+"(nothing)","YA",NA,NA,NA,NA,NA,"Teleportations","block_by_age",NA
+"(nothing)","OA",NA,NA,NA,NA,NA,"Teleportations","block_by_age",NA
+"(nothing)","YA",NA,NA,NA,NA,NA,"Mean_Teleport_Distance","block_by_age",NA
+"(nothing)","OA",NA,NA,NA,NA,NA,"Mean_Teleport_Distance","block_by_age",NA

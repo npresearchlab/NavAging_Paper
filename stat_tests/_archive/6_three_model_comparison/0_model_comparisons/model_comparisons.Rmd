@@ -1,0 +1,407 @@
+---
+title: "Model Comparison Analysis - Effect Consistency and Significance Changes"
+author: "Yasmine Bassil"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    toc: yes
+    toc_float: yes
+    theme: flatly
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Model Comparison: Effect Consistency Analysis
+
+This analysis focuses on whether results, interpretations, and significance levels change when switching between different model specifications.
+
+## Load Required Libraries
+
+```{r load-libraries}
+library(lme4)        # For linear mixed effects models
+library(lmerTest)    # For p-values in lmer
+library(broom.mixed) # For tidy model outputs
+library(dplyr)       # For data manipulation
+library(readr)       # For reading CSV files
+library(knitr)       # For nice tables
+library(ggplot2)     # For plotting
+library(tidyr)       # For data reshaping
+library(purrr)       # For functional programming
+```
+
+## Load and Prepare Data
+
+```{r load-data}
+# Load both datasets
+oa_data <- read_csv("/Volumes/YB_Drive/NavAging_Paper/data/oa_merged_results.csv")
+ya_data <- read_csv("/Volumes/YB_Drive/NavAging_Paper/data/ya_merged_results.csv")
+
+# Add Age group variable and combine datasets
+oa_data$Age <- "OA"
+ya_data$Age <- "YA"
+
+# Remove the index column (first column) and combine
+oa_data <- oa_data %>% select(-1)
+ya_data <- ya_data %>% select(-1)
+
+# Combine datasets
+combined_data <- bind_rows(oa_data, ya_data)
+
+# Convert categorical variables to factors
+combined_data <- combined_data %>%
+  mutate(
+    Age = factor(Age, levels = c("YA", "OA")),  # YA as reference level
+    Target_Name = factor(Target_Name),
+    Participant = factor(Participant),
+    Block_Num = factor(Block_Num, levels = c("1", "2", "3"))  # Block 1 as reference level
+  )
+
+# Define outcome variables
+outcome_vars <- c("Total_Time", "Orientation_Time", "Navigation_Time", 
+                  "Distance", "Speed", "Mean_Dwell", 
+                  "Teleportations", "Mean_Teleport_Distance")
+
+cat("Dataset prepared. Analyzing", length(outcome_vars), "outcome variables.\n")
+```
+
+## Analysis Function for Effect Comparison
+
+```{r analysis-function}
+# Function to extract and compare effects across models
+compare_model_effects <- function(dv_name, data) {
+  
+  # Define model formulas
+  formula1 <- as.formula(paste(dv_name, "~ Age * Block_Num * Target_Name + (1|Participant)"))
+  formula2 <- as.formula(paste(dv_name, "~ Age * Block_Num + (1|Target_Name) + (1|Participant)"))
+  formula3 <- as.formula(paste(dv_name, "~ Age * Block_Num + (1|Participant)"))
+  
+  # Fit models
+  model1 <- lmer(formula1, data = data)
+  model2 <- lmer(formula2, data = data)
+  model3 <- lmer(formula3, data = data)
+  
+  # Extract fixed effects for each model
+  effects1 <- broom.mixed::tidy(model1, effects = "fixed") %>% 
+    mutate(Model = "Model 1", DV = dv_name)
+  effects2 <- broom.mixed::tidy(model2, effects = "fixed") %>% 
+    mutate(Model = "Model 2", DV = dv_name)
+  effects3 <- broom.mixed::tidy(model3, effects = "fixed") %>% 
+    mutate(Model = "Model 3", DV = dv_name)
+  
+  # Combine all effects
+  all_effects <- bind_rows(effects1, effects2, effects3) %>%
+    mutate(
+      significant = p.value < 0.05,
+      effect_size_category = case_when(
+        abs(estimate) < 0.2 ~ "Small",
+        abs(estimate) < 0.5 ~ "Medium", 
+        TRUE ~ "Large"
+      )
+    )
+  
+  return(all_effects)
+}
+
+# Function to identify effects that change across models
+identify_effect_changes <- function(effects_df) {
+  
+  # Focus on key effects that appear in multiple models
+  common_effects <- effects_df %>%
+    group_by(DV, term) %>%
+    summarise(n_models = n(), .groups = 'drop') %>%
+    filter(n_models >= 2) %>%
+    pull(term) %>%
+    unique()
+  
+  # Analyze changes for common effects
+  effect_changes <- effects_df %>%
+    filter(term %in% common_effects) %>%
+    group_by(DV, term) %>%
+    summarise(
+      n_models = n(),
+      significance_changes = length(unique(significant)) > 1,
+      min_p = min(p.value),
+      max_p = max(p.value),
+      p_value_range = max_p - min_p,
+      min_estimate = min(estimate),
+      max_estimate = max(estimate),
+      estimate_range = max_estimate - min_estimate,
+      estimate_sign_changes = (min_estimate < 0 & max_estimate > 0) | (min_estimate > 0 & max_estimate < 0),
+      models_significant = paste(Model[significant], collapse = ", "),
+      models_nonsignificant = paste(Model[!significant], collapse = ", "),
+      .groups = 'drop'
+    ) %>%
+    mutate(
+      substantial_change = significance_changes | estimate_sign_changes | (estimate_range > abs(min_estimate) * 0.5)
+    )
+  
+  return(effect_changes)
+}
+```
+
+## Run Analysis for All Outcome Variables
+
+```{r run-analysis}
+# Get effects for all outcome variables
+all_effects_list <- map(outcome_vars, ~compare_model_effects(.x, combined_data))
+names(all_effects_list) <- outcome_vars
+
+# Combine all effects into one dataframe
+all_effects_combined <- bind_rows(all_effects_list)
+
+# Identify changes for each outcome variable
+effect_changes_list <- map(all_effects_list, identify_effect_changes)
+all_changes_combined <- bind_rows(effect_changes_list)
+
+cat("Analysis completed for all outcome variables.\n")
+```
+
+## Summary of Effect Consistency Across Models
+
+```{r effect-consistency-summary}
+# Overall summary of which effects are most stable across models
+stability_summary <- all_changes_combined %>%
+  group_by(term) %>%
+  summarise(
+    n_variables = n(),
+    variables_with_sig_changes = sum(significance_changes),
+    variables_with_sign_changes = sum(estimate_sign_changes),
+    variables_with_substantial_changes = sum(substantial_change),
+    prop_substantial_changes = variables_with_substantial_changes / n_variables,
+    avg_p_range = mean(p_value_range, na.rm = TRUE),
+    avg_estimate_range = mean(estimate_range, na.rm = TRUE),
+    .groups = 'drop'
+  ) %>%
+  arrange(desc(prop_substantial_changes))
+
+cat("Effect Stability Summary (sorted by most unstable):\n")
+kable(stability_summary, digits = 3)
+```
+
+## Variables with Significance Changes
+
+```{r significance-changes}
+# Focus on cases where significance changes between models
+sig_changes <- all_changes_combined %>%
+  filter(significance_changes == TRUE) %>%
+  select(DV, term, min_p, max_p, models_significant, models_nonsignificant) %>%
+  arrange(DV, term)
+
+cat("Effects that change significance across models:\n")
+if(nrow(sig_changes) > 0) {
+  kable(sig_changes, digits = 4)
+} else {
+  cat("No effects change significance across models.\n")
+}
+```
+
+## Effects with Sign Changes
+
+```{r sign-changes}
+# Identify effects that change direction (sign) across models
+sign_changes <- all_changes_combined %>%
+  filter(estimate_sign_changes == TRUE) %>%
+  select(DV, term, min_estimate, max_estimate) %>%
+  arrange(DV, term)
+
+cat("Effects that change direction (sign) across models:\n")
+if(nrow(sign_changes) > 0) {
+  kable(sign_changes, digits = 4)
+} else {
+  cat("No effects change direction across models.\n")
+}
+```
+
+## Model-Specific Effects Analysis
+
+```{r model-specific-effects}
+# Identify effects that only appear in certain models
+effects_by_model <- all_effects_combined %>%
+  group_by(term) %>%
+  summarise(
+    models_present = paste(unique(Model), collapse = ", "),
+    n_models = length(unique(Model)),
+    variables_present = paste(unique(DV), collapse = ", "),
+    n_variables = length(unique(DV)),
+    .groups = 'drop'
+  ) %>%
+  arrange(n_models, term)
+
+cat("Effects by model presence:\n")
+kable(effects_by_model, digits = 3)
+```
+
+## Detailed Comparison for Key Effects
+
+```{r detailed-key-effects}
+# Focus on main effects and key interactions
+key_terms <- c("AgeOA", "Block_Num2", "Block_Num3", "AgeOA:Block_Num2", "AgeOA:Block_Num3")
+
+detailed_comparison <- all_effects_combined %>%
+  filter(term %in% key_terms) %>%
+  select(DV, Model, term, estimate, std.error, p.value, significant) %>%
+  arrange(DV, term, Model)
+
+# Create a wide format for easier comparison
+comparison_wide <- detailed_comparison %>%
+  pivot_wider(
+    names_from = Model,
+    values_from = c(estimate, p.value, significant),
+    names_sep = "_"
+  )
+
+cat("Detailed comparison of key effects across models:\n")
+kable(comparison_wide, digits = 4)
+```
+
+## Visualization of Effect Consistency
+
+```{r effect-consistency-plots, fig.width=12, fig.height=8}
+# Plot showing how estimates change across models for key effects
+if(nrow(detailed_comparison) > 0) {
+  
+  # Age effects plot
+  age_effects <- detailed_comparison %>%
+    filter(term == "AgeOA")
+  
+  if(nrow(age_effects) > 0) {
+    age_plot <- ggplot(age_effects, aes(x = Model, y = estimate, color = significant)) +
+      geom_point(size = 3) +
+      geom_line(aes(group = DV), alpha = 0.5) +
+      geom_hline(yintercept = 0, linetype = "dashed", color = "gray") +
+      facet_wrap(~DV, scales = "free_y", ncol = 4) +
+      scale_color_manual(values = c("TRUE" = "red", "FALSE" = "black")) +
+      labs(
+        title = "Age Effect Consistency Across Models",
+        subtitle = "Lines connect the same variable across models",
+        y = "Effect Size (Beta Coefficient)",
+        x = "Model",
+        color = "Significant"
+      ) +
+      theme_minimal() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    
+    print(age_plot)
+  }
+  
+  # Block effects plot (Block 2 vs Block 1)
+  block2_effects <- detailed_comparison %>%
+    filter(term == "Block_Num2")
+  
+  if(nrow(block2_effects) > 0) {
+    block_plot <- ggplot(block2_effects, aes(x = Model, y = estimate, color = significant)) +
+      geom_point(size = 3) +
+      geom_line(aes(group = DV), alpha = 0.5) +
+      geom_hline(yintercept = 0, linetype = "dashed", color = "gray") +
+      facet_wrap(~DV, scales = "free_y", ncol = 4) +
+      scale_color_manual(values = c("TRUE" = "red", "FALSE" = "black")) +
+      labs(
+        title = "Block 2 Effect Consistency Across Models",
+        subtitle = "Lines connect the same variable across models",
+        y = "Effect Size (Beta Coefficient)",
+        x = "Model",
+        color = "Significant"
+      ) +
+      theme_minimal() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    
+    print(block_plot)
+  }
+}
+```
+
+## Interaction Effects Analysis
+
+```{r interaction-analysis}
+# Focus on interaction effects and how they vary across models
+interaction_effects <- all_effects_combined %>%
+  filter(grepl(":", term)) %>%  # Interaction terms contain ":"
+  group_by(DV, term) %>%
+  summarise(
+    n_models_present = n(),
+    models_present = paste(Model, collapse = ", "),
+    significant_in_models = paste(Model[significant], collapse = ", "),
+    min_p = min(p.value),
+    max_p = max(p.value),
+    min_estimate = min(estimate),
+    max_estimate = max(estimate),
+    .groups = 'drop'
+  ) %>%
+  arrange(DV, term)
+
+cat("Interaction effects across models:\n")
+kable(interaction_effects, digits = 4)
+```
+
+## Summary and Recommendations
+
+```{r summary-recommendations}
+# Calculate summary statistics
+total_effects_analyzed <- nrow(all_changes_combined)
+effects_with_sig_changes <- sum(all_changes_combined$significance_changes)
+effects_with_sign_changes <- sum(all_changes_combined$estimate_sign_changes)
+effects_with_substantial_changes <- sum(all_changes_combined$substantial_change)
+
+cat("EFFECT CONSISTENCY ANALYSIS SUMMARY:\n")
+cat(paste(rep("=", 50), collapse=""), "\n\n")
+
+cat("OVERALL STABILITY:\n")
+cat("- Total effects analyzed:", total_effects_analyzed, "\n")
+cat("- Effects with significance changes:", effects_with_sig_changes, 
+    "(", round(effects_with_sig_changes/total_effects_analyzed*100, 1), "%)\n")
+cat("- Effects with sign changes:", effects_with_sign_changes,
+    "(", round(effects_with_sign_changes/total_effects_analyzed*100, 1), "%)\n")
+cat("- Effects with substantial changes:", effects_with_substantial_changes,
+    "(", round(effects_with_substantial_changes/total_effects_analyzed*100, 1), "%)\n\n")
+
+# Most stable effects
+stable_effects <- stability_summary %>%
+  filter(prop_substantial_changes == 0) %>%
+  pull(term)
+
+if(length(stable_effects) > 0) {
+  cat("MOST STABLE EFFECTS (no substantial changes across models):\n")
+  for(effect in stable_effects) {
+    cat("-", effect, "\n")
+  }
+  cat("\n")
+}
+
+# Least stable effects  
+unstable_effects <- stability_summary %>%
+  filter(prop_substantial_changes > 0.5) %>%
+  pull(term)
+
+if(length(unstable_effects) > 0) {
+  cat("LEAST STABLE EFFECTS (substantial changes in >50% of variables):\n")
+  for(effect in unstable_effects) {
+    cat("-", effect, "\n")
+  }
+  cat("\n")
+}
+
+cat("INTERPRETATION RECOMMENDATIONS:\n")
+if(effects_with_sig_changes == 0 && effects_with_sign_changes == 0) {
+  cat("- Your results are HIGHLY ROBUST across model specifications\n")
+  cat("- Model choice does not affect interpretation or conclusions\n")
+  cat("- You can confidently report results from any of the three models\n")
+} else if(effects_with_sig_changes <= 2 && effects_with_sign_changes == 0) {
+  cat("- Your results are MOSTLY ROBUST with minor significance variations\n")
+  cat("- Core interpretations remain consistent across models\n")
+  cat("- Consider reporting results from the theoretically most appropriate model\n")
+} else {
+  cat("- Your results show MODERATE SENSITIVITY to model specification\n")
+  cat("- Carefully consider which random effects structure is most appropriate\n")
+  cat("- Report sensitivity analysis showing results across multiple models\n")
+  cat("- Focus interpretation on effects that are consistent across models\n")
+}
+```
+
+---
+
+This analysis focuses specifically on whether your conclusions would change based on model choice, rather than statistical fit metrics. It identifies which effects are robust across specifications and which are sensitive to modeling decisions.
