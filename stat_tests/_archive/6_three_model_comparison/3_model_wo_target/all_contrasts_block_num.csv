@@ -1,0 +1,25 @@
+Outcome,Correction,contrast,estimate,SE,df,t.ratio,p.value
+Total_Time,FDR_within_outcome,Block_Num1 - Block_Num2,42.81025375,4.551315489,116,9.406127493,8.78E-16
+Total_Time,FDR_within_outcome,Block_Num1 - Block_Num3,53.91139642,4.551315489,116,11.84523388,3.19E-21
+Total_Time,FDR_within_outcome,Block_Num2 - Block_Num3,11.10114267,4.551315489,116,2.439106386,0.016239
+Orientation_Time,FDR_within_outcome,Block_Num1 - Block_Num2,3.041850772,0.349848418,116,8.69476783,3.99E-14
+Orientation_Time,FDR_within_outcome,Block_Num1 - Block_Num3,3.939496955,0.349848418,116,11.26058244,7.55E-20
+Orientation_Time,FDR_within_outcome,Block_Num2 - Block_Num3,0.897646183,0.349848418,116,2.56581461,0.011568
+Navigation_Time,FDR_within_outcome,Block_Num1 - Block_Num2,38.77791456,4.18496283,116,9.266011701,1.87E-15
+Navigation_Time,FDR_within_outcome,Block_Num1 - Block_Num3,49.00461779,4.18496283,116,11.70969009,6.64E-21
+Navigation_Time,FDR_within_outcome,Block_Num2 - Block_Num3,10.22670324,4.18496283,116,2.443678391,0.016044
+Distance,FDR_within_outcome,Block_Num1 - Block_Num2,149.6520117,19.81413561,116,7.552790322,1.6E-11
+Distance,FDR_within_outcome,Block_Num1 - Block_Num3,191.8059291,19.81413561,116,9.680257207,3.99E-16
+Distance,FDR_within_outcome,Block_Num2 - Block_Num3,42.15391737,19.81413561,116,2.127466885,0.035499
+Speed,FDR_within_outcome,Block_Num1 - Block_Num2,-3.535532004,0.334648106,116,-10.56492459,1.65E-18
+Speed,FDR_within_outcome,Block_Num1 - Block_Num3,-6.274151282,0.334648106,116,-18.74850378,1.98E-36
+Speed,FDR_within_outcome,Block_Num2 - Block_Num3,-2.738619277,0.334648106,116,-8.18357919,3.99E-13
+Mean_Dwell,FDR_within_outcome,Block_Num1 - Block_Num2,0.495320083,0.051175466,116,9.678858234,2.01E-16
+Mean_Dwell,FDR_within_outcome,Block_Num1 - Block_Num3,0.671535943,0.051175466,116,13.12222421,3.41E-24
+Mean_Dwell,FDR_within_outcome,Block_Num2 - Block_Num3,0.17621586,0.051175466,116,3.44336598,0.0008
+Teleportations,FDR_within_outcome,Block_Num1 - Block_Num2,24.86875,4.110877924,116,6.049498541,2.73E-08
+Teleportations,FDR_within_outcome,Block_Num1 - Block_Num3,31.975,4.110877924,116,7.778143889,9.98E-12
+Teleportations,FDR_within_outcome,Block_Num2 - Block_Num3,7.10625,4.110877924,116,1.728645348,0.086533
+Mean_Teleport_Distance,FDR_within_outcome,Block_Num1 - Block_Num2,0.369365095,0.0587148,116,6.290834542,8.67E-09
+Mean_Teleport_Distance,FDR_within_outcome,Block_Num1 - Block_Num3,0.437358566,0.0587148,116,7.448864035,5.46E-11
+Mean_Teleport_Distance,FDR_within_outcome,Block_Num2 - Block_Num3,0.067993471,0.0587148,116,1.158029494,0.249231

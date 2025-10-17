@@ -1,0 +1,9 @@
+Outcome,Correction,contrast,estimate,SE,df,t.ratio,p.value
+Total_Time,FDR_within_outcome,YA - OA,-41.75116461,6.454644136,58,-6.468391399,2.28E-08
+Orientation_Time,FDR_within_outcome,YA - OA,-3.181026384,0.490216242,57.99984906,-6.489026906,2.10E-08
+Navigation_Time,FDR_within_outcome,YA - OA,-38.58393831,6.145592684,58,-6.278310376,4.72E-08
+Distance,FDR_within_outcome,YA - OA,-146.3630835,31.27924976,58,-4.679238941,1.77E-05
+Speed,FDR_within_outcome,YA - OA,4.885073094,0.846094716,58,5.773671673,3.21E-07
+Mean_Dwell,FDR_within_outcome,YA - OA,-0.280838822,0.098188017,58,-2.860214832,0.005876
+Teleportations,FDR_within_outcome,YA - OA,-31.64305556,6.636909359,58,-4.767739598,1.29E-05
+Mean_Teleport_Distance,FDR_within_outcome,YA - OA,0.535658243,0.201865802,58,2.653536348,0.010261

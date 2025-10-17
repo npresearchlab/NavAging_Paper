@@ -1,0 +1,229 @@
+---
+title: "P-Value Extraction"
+author: "Yasmine Bassil"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+    theme: flatly
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Overview
+
+This R Markdown document extracts specific p-values from linear mixed model results for sensitivity analysis. The process involves:
+
+1. Reading the sensitivity analysis specifications from `pval_template.xlsx`
+2. Loading three CSV files containing contrast results
+3. Matching and extracting the corresponding p-values
+4. Saving the results with the extracted p-values
+
+# Load Required Libraries
+
+```{r load-libraries}
+library(readxl)
+library(dplyr)
+library(readr)
+library(knitr)
+library(DT)
+library(ggplot2)
+```
+
+# Read Data Files
+
+## Sensitivity Analysis Specifications
+
+```{r read-sensitivity}
+# Read the sensitivity analysis file (updated filename)
+model_data <- read_excel("/Volumes/YB_Drive/NavAging_Paper/stat_tests/4_cohorts_lmm/pval_template_cohorts.xlsx")
+
+# Display the first few rows
+kable(head(model_data), 
+      caption = "First 6 rows of Template Data Specifications")
+
+# Show summary of databases and outcomes
+cat("Unique databases:", paste(unique(model_data$Database), collapse = ", "), "\n")
+cat("Unique outcomes:", paste(unique(model_data$Outcome), collapse = ", "), "\n")
+cat("Total rows to process:", nrow(model_data), "\n")
+```
+
+## Linear Mixed Model Results
+
+```{r read-data}
+# Read all three data CSV files
+age_group_data <- read_csv("/Volumes/YB_Drive/NavAging_Paper/stat_tests/4_cohorts_lmm/all_contrasts_age_group.csv")
+interaction_data <- read_csv("/Volumes/YB_Drive/NavAging_Paper/stat_tests/4_cohorts_lmm/all_contrasts_interaction.csv")
+interaction_changes_data <- read_csv("/Volumes/YB_Drive/NavAging_Paper/stat_tests/4_cohorts_lmm/all_interaction_changes.csv")
+
+cat("Age group data dimensions:", dim(age_group_data), "\n")
+cat("Interaction data dimensions:", dim(interaction_data), "\n")
+cat("Interaction changes data dimensions:", dim(interaction_changes_data), "\n")
+```
+
+### Preview of Data Files
+
+```{r preview-data}
+# Preview age group data
+kable(head(age_group_data), 
+      caption = "Age Group Contrasts Data (First 6 rows)",
+      digits = 6)
+
+# Preview interaction data  
+kable(head(interaction_data), 
+      caption = "Interaction Contrasts Data (First 6 rows)",
+      digits = 6)
+
+# Preview interaction changes data
+kable(head(interaction_changes_data), 
+      caption = "Interaction Changes Contrasts Data (First 6 rows)",
+      digits = 6)
+```
+
+# P-value Extraction Function
+
+```{r extraction-function}
+# Function to extract p-value based on database, outcome, and contrast
+extract_pvalue <- function(database, outcome, contrast) {
+  
+  # Select the appropriate dataset based on database name
+  if (database == "all_contrasts_age_group") {
+    data_source <- age_group_data
+  } else if (database == "all_contrasts_interaction") {
+    data_source <- interaction_data
+  } else if (database == "all_interaction_changes") {
+    data_source <- interaction_changes_data
+  } else {
+    warning(paste("Unknown database:", database))
+    return(NA)
+  }
+  
+  # Filter for the specific outcome and contrast
+  filtered_data <- data_source %>%
+    filter(Outcome == outcome & contrast == !!contrast)
+  
+  # Check if we found exactly one match
+  if (nrow(filtered_data) == 0) {
+    warning(paste("No match found for:", database, outcome, contrast))
+    return(NA)
+  } else if (nrow(filtered_data) > 1) {
+    warning(paste("Multiple matches found for:", database, outcome, contrast, "- using first match"))
+  }
+  
+  # Return the p-value
+  return(filtered_data$p.value[1])
+}
+```
+
+# Extract P-values
+
+```{r extract-pvalues}
+# Apply the function to extract p-values for all rows in sensitivity analysis
+pvalue_extraction_results <- model_data %>%
+  rowwise() %>%
+  mutate(
+    p_value = extract_pvalue(Database, Outcome, contrast)
+  ) %>%
+  ungroup()
+
+# Display the results
+cat("Sensitivity Analysis Results with P-values:\n")
+```
+
+# Results
+
+## Complete Results Table
+
+```{r display-results}
+# Create an interactive table with the results
+datatable(pvalue_extraction_results, 
+          caption = "Sensitivity Analysis Results with Extracted P-values",
+          options = list(pageLength = 15, scrollX = TRUE),
+          filter = 'top') %>%
+  formatSignif(columns = 'p_value', digits = 3)
+```
+
+## Summary Statistics
+
+```{r summary-stats}
+# Check for any missing p-values
+missing_pvalues <- pvalue_extraction_results %>%
+  filter(is.na(p_value))
+
+# Create summary table
+summary_stats <- data.frame(
+  Metric = c("Total rows processed", 
+             "P-values successfully extracted", 
+             "Missing p-values"),
+  Count = c(nrow(pvalue_extraction_results),
+            sum(!is.na(pvalue_extraction_results$p_value)),
+            sum(is.na(pvalue_extraction_results$p_value)))
+)
+
+kable(summary_stats, caption = "Extraction Summary")
+```
+
+## Missing P-values (if any)
+
+```{r missing-pvalues}
+if (nrow(missing_pvalues) > 0) {
+  cat("Warning: The following rows have missing p-values:\n")
+  kable(missing_pvalues, caption = "Rows with Missing P-values")
+} else {
+  cat("✓ All p-values successfully extracted!\n")
+}
+```
+
+# Results by Database
+
+```{r results-by-database}
+# Summary of results by database
+database_summary <- pvalue_extraction_results %>%
+  group_by(Database) %>%
+  summarise(
+    Total_rows = n(),
+    Successful_extractions = sum(!is.na(p_value)),
+    Missing_pvalues = sum(is.na(p_value)),
+    Significant_results = sum(p_value < 0.05, na.rm = TRUE),
+    .groups = 'drop'
+  )
+
+kable(database_summary, caption = "Summary by Database")
+```
+
+# Results by Outcome
+
+```{r results-by-outcome}
+# Summary of results by outcome
+outcome_summary <- pvalue_extraction_results %>%
+  group_by(Outcome) %>%
+  summarise(
+    Total_rows = n(),
+    Successful_extractions = sum(!is.na(p_value)),
+    Missing_pvalues = sum(is.na(p_value)),
+    Significant_results = sum(p_value < 0.05, na.rm = TRUE),
+    Mean_pvalue = mean(p_value, na.rm = TRUE),
+    .groups = 'drop'
+  )
+
+kable(outcome_summary, caption = "Summary by Outcome", digits = 4)
+```
+
+# Save Results
+
+```{r save-results}
+# Save the results back to a CSV file
+write_csv(pvalue_extraction_results, "final_pvalues_cohorts.csv")
+
+cat("✓ Results saved to: final_pvalues_cohorts.csv\n")
+```
+
+# Session Information
+
+```{r session-info}
+sessionInfo()
+```

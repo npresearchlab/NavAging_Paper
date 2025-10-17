@@ -1,0 +1,447 @@
+---
+title: "Optimized Age × Block Mixed Effects Analysis"
+output: html_document
+date: "2023-05-13"
+---
+
+```{r global-options, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r setup, include=FALSE}
+# Clear environment
+rm(list = ls())
+
+# Load required libraries
+required_packages <- c(
+  "tidyverse", "lme4", "lmerTest", "emmeans", "dplyr"
+)
+
+invisible(lapply(required_packages, function(pkg) {
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg)
+    library(pkg, character.only = TRUE)
+  }
+}))
+```
+
+```{r data-loading, include=FALSE}
+# Define file paths
+data_path <- '/Volumes/YB_Drive/NavAging_Paper/data'
+base_path <- '/Volumes/YB_Drive/NavAging_Paper/stat_tests'  # For saving results
+
+# Function to load and standardize data
+load_and_standardize <- function(file_path, age_group) {
+  if (!file.exists(file_path)) {
+    warning(paste("File not found:", file_path))
+    return(NULL)
+  }
+  
+  data <- read.csv(file_path)
+  
+  # Remove index column if present
+  if (names(data)[1] %in% c("X", "index", "")) {
+    data <- data[, -1]
+  }
+  
+  # Standardize and add age group
+  data <- data %>%
+    mutate(
+      Block_Num = as.factor(Block_Num),
+      Age = factor(age_group, levels = c("YA", "OA"))
+    )
+  
+  return(data)
+}
+
+# Load averaged data (without Target_Name)
+ya_data <- load_and_standardize(file.path(data_path, 'ya_averaged_results.csv'), "YA")
+oa_data <- load_and_standardize(file.path(data_path, 'oa_averaged_results.csv'), "OA")
+
+# Combine data
+all_data <- bind_rows(ya_data, oa_data)
+
+cat("Data loaded successfully.\n")
+cat("Sample size by age group:\n")
+print(table(all_data$Age))
+cat("\nSample size by block:\n")
+print(table(all_data$Block_Num))
+```
+
+```{r analysis-functions, include=FALSE}
+# Function to run mixed effects analysis for Age × Block
+run_mixed_effects_analysis <- function(data, outcome_measures, output_dir = NULL) {
+  
+  results <- map(outcome_measures, function(outcome) {
+    
+    cat("\n=== Analyzing", outcome, "===\n")
+    
+    # Check if outcome exists
+    if (!outcome %in% names(data)) {
+      warning(paste("Outcome", outcome, "not found in data"))
+      return(NULL)
+    }
+    
+    # Build and fit mixed effects model: Age × Block with random intercepts
+    formula_str <- paste(outcome, "~ Age * Block_Num + (1|Participant)")
+    model_formula <- as.formula(formula_str)
+    
+    tryCatch({
+      # Fit linear mixed model
+      model <- lmer(model_formula, data = data)
+      
+      # Extract model summary (coefficients, t-values, p-values)
+      model_summary <- summary(model)
+      
+      # Get Type III F-tests for fixed effects (optional)
+      anova_results <- anova(model, type = "III")
+      
+      # Emmeans for Age × Block interaction
+      emm_age_block <- emmeans(model, ~ Age * Block_Num)
+      
+      # Pairwise comparisons (all combinations)
+      pairwise_comparisons <- tryCatch({
+        contrast(emm_age_block, method = "pairwise") %>%
+          as.data.frame() %>%
+          mutate(
+            outcome = outcome,
+            p.adj = p.adjust(p.value, method = "bonferroni"),
+            significant = p.adj < 0.05
+          )
+      }, error = function(e) {
+        cat("Warning: Could not compute pairwise comparisons for", outcome, "\n")
+        data.frame()
+      })
+      
+      # Interaction contrasts (slope differences)
+      interaction_contrasts <- tryCatch({
+        contrast(emm_age_block, interaction = "pairwise") %>%
+          as.data.frame() %>%
+          mutate(
+            outcome = outcome,
+            p.adj = p.adjust(p.value, method = "bonferroni"),
+            significant = p.adj < 0.05
+          )
+      }, error = function(e) {
+        cat("Warning: Could not compute interaction contrasts for", outcome, "\n")
+        data.frame()
+      })
+      
+      # Simple effects: Age differences within each block
+      simple_age_effects <- tryCatch({
+        emmeans(model, pairwise ~ Age | Block_Num) %>%
+          .$contrasts %>%
+          as.data.frame() %>%
+          mutate(
+            outcome = outcome,
+            p.adj = p.adjust(p.value, method = "bonferroni"),
+            significant = p.adj < 0.05
+          )
+      }, error = function(e) {
+        cat("Warning: Could not compute simple age effects for", outcome, "\n")
+        data.frame()
+      })
+      
+      # Simple effects: Block differences within each age group  
+      simple_block_effects <- tryCatch({
+        emmeans(model, pairwise ~ Block_Num | Age) %>%
+          .$contrasts %>%
+          as.data.frame() %>%
+          mutate(
+            outcome = outcome,
+            p.adj = p.adjust(p.value, method = "bonferroni"),
+            significant = p.adj < 0.05
+          )
+      }, error = function(e) {
+        cat("Warning: Could not compute simple block effects for", outcome, "\n")
+        data.frame()
+      })
+      
+      # Extract means for plotting
+      means_data <- emm_age_block %>%
+        as.data.frame() %>%
+        mutate(outcome = outcome)
+      
+      cat("Linear mixed model fitted successfully for", outcome, "\n")
+      
+      return(list(
+        outcome = outcome,
+        model = model,
+        model_summary = model_summary,
+        fixed_effects_tests = anova_results,
+        emmeans = emm_age_block,
+        pairwise_comparisons = pairwise_comparisons,
+        interaction_contrasts = interaction_contrasts,
+        simple_age_effects = simple_age_effects,
+        simple_block_effects = simple_block_effects,
+        means = means_data
+      ))
+      
+    }, error = function(e) {
+      warning(paste("Error fitting model for", outcome, ":", e$message))
+      return(NULL)
+    })
+  })
+  
+  names(results) <- outcome_measures
+  return(results)
+}
+
+# Function to create summary tables
+create_summary_tables <- function(results) {
+  
+  # Linear mixed model summary with coefficients
+  lmm_summary <- map_dfr(results, function(result) {
+    if (is.null(result) || is.null(result$model_summary)) return(NULL)
+    
+    tryCatch({
+      coef_df <- result$model_summary$coefficients %>%
+        as.data.frame() %>%
+        rownames_to_column("Coefficient") %>%
+        mutate(Outcome = result$outcome) %>%
+        select(Outcome, Coefficient, Estimate, `Std. Error`, `t value`, everything())
+      
+      return(coef_df)
+    }, error = function(e) {
+      cat("Warning: Could not extract coefficients for", result$outcome, "\n")
+      return(NULL)
+    })
+  })
+  
+  # Fixed effects F-tests (Type III)
+  fixed_effects_tests <- map_dfr(results, function(result) {
+    if (is.null(result) || is.null(result$fixed_effects_tests)) return(NULL)
+    
+    tryCatch({
+      result$fixed_effects_tests %>%
+        as.data.frame() %>%
+        rownames_to_column("Effect") %>%
+        mutate(Outcome = result$outcome) %>%
+        select(Outcome, Effect, everything())
+    }, error = function(e) {
+      cat("Warning: Could not extract F-tests for", result$outcome, "\n")
+      return(NULL)
+    })
+  })
+  
+  # Significant pairwise comparisons
+  significant_pairwise <- map_dfr(results, function(result) {
+    if (is.null(result) || is.null(result$pairwise_comparisons) || nrow(result$pairwise_comparisons) == 0) return(NULL)
+    
+    tryCatch({
+      # Check what columns exist
+      available_cols <- names(result$pairwise_comparisons)
+      
+      # Find the contrast column (could be named differently)
+      contrast_col <- if ("contrast" %in% available_cols) {
+        "contrast"
+      } else if (any(grepl("contrast", available_cols, ignore.case = TRUE))) {
+        available_cols[grepl("contrast", available_cols, ignore.case = TRUE)][1]
+      } else {
+        available_cols[1]  # Use first column as fallback
+      }
+      
+      if ("significant" %in% available_cols && any(result$pairwise_comparisons$significant)) {
+        result$pairwise_comparisons %>%
+          filter(significant) %>%
+          select(outcome, !!sym(contrast_col), estimate, SE, p.value, p.adj)
+      } else {
+        NULL
+      }
+    }, error = function(e) {
+      cat("Warning: Could not process pairwise comparisons for", result$outcome, "\n")
+      return(NULL)
+    })
+  })
+  
+  # Significant interaction contrasts
+  significant_interactions <- map_dfr(results, function(result) {
+    if (is.null(result) || is.null(result$interaction_contrasts) || nrow(result$interaction_contrasts) == 0) return(NULL)
+    
+    tryCatch({
+      # Check what columns exist
+      available_cols <- names(result$interaction_contrasts)
+      
+      # Find the contrast column
+      contrast_col <- if ("contrast" %in% available_cols) {
+        "contrast"
+      } else if (any(grepl("contrast", available_cols, ignore.case = TRUE))) {
+        available_cols[grepl("contrast", available_cols, ignore.case = TRUE)][1]
+      } else {
+        available_cols[1]
+      }
+      
+      if ("significant" %in% available_cols && any(result$interaction_contrasts$significant)) {
+        result$interaction_contrasts %>%
+          filter(significant) %>%
+          select(outcome, !!sym(contrast_col), estimate, SE, p.value, p.adj)
+      } else {
+        NULL
+      }
+    }, error = function(e) {
+      cat("Warning: Could not process interaction contrasts for", result$outcome, "\n")
+      return(NULL)
+    })
+  })
+  
+  # Age effects within blocks - get ALL comparisons, not just significant ones
+  age_effects_by_block <- map_dfr(results, function(result) {
+    if (is.null(result) || is.null(result$simple_age_effects) || nrow(result$simple_age_effects) == 0) return(NULL)
+    
+    tryCatch({
+      # Get all age effects, not just significant ones
+      result$simple_age_effects %>%
+        select(outcome, everything()) %>%
+        arrange(outcome)
+    }, error = function(e) {
+      cat("Warning: Could not process age effects by block for", result$outcome, "\n")
+      return(NULL)
+    })
+  })
+  
+  return(list(
+    lmm_summary = lmm_summary,
+    fixed_effects_tests = fixed_effects_tests,
+    significant_pairwise = significant_pairwise,
+    significant_interactions = significant_interactions,
+    age_effects_by_block = age_effects_by_block
+  ))
+}
+```
+
+```{r run-analysis}
+# Define outcome measures
+outcome_measures <- c('Total_Time', 'Orientation_Time', 'Navigation_Time', 
+                     'Distance', 'Speed', 'Mean_Dwell', 'Teleportations',
+                     'Mean_Teleport_Distance')
+
+cat("Running mixed effects analyses for Age × Block interactions...\n")
+cat("Outcome measures:", paste(outcome_measures, collapse = ", "), "\n")
+
+# Run analyses
+results <- run_mixed_effects_analysis(all_data, outcome_measures)
+
+# Create summary tables
+summary_tables <- create_summary_tables(results)
+
+# Display linear mixed model results
+cat("\n=== LINEAR MIXED MODEL COEFFICIENTS ===\n")
+print(knitr::kable(summary_tables$lmm_summary, digits = 4))
+
+cat("\n=== FIXED EFFECTS F-TESTS ===\n") 
+print(knitr::kable(summary_tables$fixed_effects_tests, digits = 4))
+
+# Display significant findings
+if (nrow(summary_tables$significant_pairwise) > 0) {
+  cat("\n=== SIGNIFICANT PAIRWISE COMPARISONS ===\n")
+  print(knitr::kable(summary_tables$significant_pairwise, digits = 4))
+} else {
+  cat("\nNo significant pairwise comparisons found.\n")
+}
+
+if (nrow(summary_tables$significant_interactions) > 0) {
+  cat("\n=== SIGNIFICANT INTERACTION CONTRASTS (Slope Differences) ===\n")
+  print(knitr::kable(summary_tables$significant_interactions, digits = 4))
+} else {
+  cat("\nNo significant interaction contrasts found.\n")
+}
+
+if (nrow(summary_tables$age_effects_by_block) > 0) {
+  cat("\n=== SIGNIFICANT AGE EFFECTS BY BLOCK ===\n")
+  print(knitr::kable(summary_tables$age_effects_by_block, digits = 4))
+} else {
+  cat("\nNo significant age effects within blocks found.\n")
+}
+```
+
+```{r save-results}
+# Create output directory
+output_dir <- file.path(base_path, "stats_figs2_3_results")
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+
+# Save summary tables
+write.csv(summary_tables$lmm_summary, 
+          file.path(output_dir, "lmm_coefficients_summary.csv"), 
+          row.names = FALSE)
+
+write.csv(summary_tables$fixed_effects_tests, 
+          file.path(output_dir, "fixed_effects_f_tests.csv"), 
+          row.names = FALSE)
+
+write.csv(summary_tables$significant_pairwise, 
+          file.path(output_dir, "significant_pairwise_comparisons.csv"), 
+          row.names = FALSE)
+
+write.csv(summary_tables$significant_interactions, 
+          file.path(output_dir, "significant_interaction_contrasts.csv"), 
+          row.names = FALSE)
+
+write.csv(summary_tables$age_effects_by_block, 
+          file.path(output_dir, "age_effects_by_block.csv"), 
+          row.names = FALSE)
+
+# Save detailed results for each outcome
+for (outcome in outcome_measures) {
+  if (!is.null(results[[outcome]])) {
+    
+    # Save all pairwise comparisons
+    write.csv(results[[outcome]]$pairwise_comparisons,
+              file.path(output_dir, paste0(outcome, "_all_pairwise.csv")),
+              row.names = FALSE)
+    
+    # Save interaction contrasts
+    write.csv(results[[outcome]]$interaction_contrasts,
+              file.path(output_dir, paste0(outcome, "_interaction_contrasts.csv")),
+              row.names = FALSE)
+    
+    # Save simple effects
+    write.csv(results[[outcome]]$simple_age_effects,
+              file.path(output_dir, paste0(outcome, "_age_effects_by_block.csv")),
+              row.names = FALSE)
+    
+    write.csv(results[[outcome]]$simple_block_effects,
+              file.path(output_dir, paste0(outcome, "_block_effects_by_age.csv")),
+              row.names = FALSE)
+    
+    # Save means for plotting
+    write.csv(results[[outcome]]$means,
+              file.path(output_dir, paste0(outcome, "_means.csv")),
+              row.names = FALSE)
+  }
+}
+
+cat("\n=== RESULTS SAVED ===\n")
+cat("Output directory:", output_dir, "\n")
+cat("Files saved:\n")
+cat("- Summary tables (4 files)\n")
+cat("- Detailed results for each outcome (5 files per outcome)\n")
+cat("- Total files:", length(list.files(output_dir)), "\n")
+```
+
+```{r descriptive-stats}
+# Generate descriptive statistics by Age and Block
+descriptive_stats <- all_data %>%
+  group_by(Age, Block_Num) %>%
+  summarise(
+    across(all_of(outcome_measures), 
+           list(mean = ~mean(.x, na.rm = TRUE),
+                sd = ~sd(.x, na.rm = TRUE)),
+           .names = "{.col}_{.fn}"),
+    .groups = 'drop'
+  )
+
+# Save descriptive statistics
+write.csv(descriptive_stats,
+          file.path(output_dir, "descriptive_statistics_age_block.csv"),
+          row.names = FALSE)
+
+cat("\n=== DESCRIPTIVE STATISTICS ===\n")
+print(knitr::kable(descriptive_stats[, 1:8], digits = 2)) # Show first few columns
+```
+
+```{r session-info}
+cat("\n=== SESSION INFORMATION ===\n")
+print(sessionInfo())
+```

@@ -1,0 +1,145 @@
+Figure_Num,Database,Outcome,contrast,p_value,estimate
+Figure5A,all_contrasts_age_group,Speed,OA_High - OA_Low,0.025195,NA
+Figure5A,all_contrasts_age_group,Speed,OA_High - YA,NA,NA
+Figure5A,all_contrasts_age_group,Speed,OA_Low - YA,NA,NA
+Figure5B,all_contrasts_age_group,Distance,OA_High - OA_Low,6.68e-6,NA
+Figure5B,all_contrasts_age_group,Distance,OA_High - YA,NA,NA
+Figure5B,all_contrasts_age_group,Distance,OA_Low - YA,NA,NA
+Figure5C,all_contrasts_age_group,Navigation_Time,OA_High - OA_Low,2.26e-7,NA
+Figure5C,all_contrasts_age_group,Navigation_Time,OA_High - YA,NA,NA
+Figure5C,all_contrasts_age_group,Navigation_Time,OA_Low - YA,NA,NA
+Figure5D,all_contrasts_interaction,Speed,OA_High Block_Num1 - OA_Low Block_Num1,0.166294,NA
+Figure5D,all_contrasts_interaction,Speed,OA_High Block_Num1 - YA Block_Num1,NA,NA
+Figure5D,all_contrasts_interaction,Speed,OA_Low Block_Num1 - YA Block_Num1,NA,NA
+Figure5E,all_contrasts_interaction,Distance,OA_High Block_Num1 - OA_Low Block_Num1,0.0046,NA
+Figure5E,all_contrasts_interaction,Distance,OA_High Block_Num1 - YA Block_Num1,NA,NA
+Figure5E,all_contrasts_interaction,Distance,OA_Low Block_Num1 - YA Block_Num1,NA,NA
+Figure5F,all_contrasts_interaction,Navigation_Time,OA_High Block_Num1 - OA_Low Block_Num1,5.78e-5,NA
+Figure5F,all_contrasts_interaction,Navigation_Time,OA_High Block_Num1 - YA Block_Num1,NA,NA
+Figure5F,all_contrasts_interaction,Navigation_Time,OA_Low Block_Num1 - YA Block_Num1,NA,NA
+Figure5D,all_contrasts_interaction,Speed,OA_High Block_Num2 - OA_Low Block_Num2,0.050323,NA
+Figure5D,all_contrasts_interaction,Speed,OA_High Block_Num2 - YA Block_Num2,NA,NA
+Figure5D,all_contrasts_interaction,Speed,OA_Low Block_Num2 - YA Block_Num2,NA,NA
+Figure5E,all_contrasts_interaction,Distance,OA_High Block_Num2 - OA_Low Block_Num2,4.41e-5,NA
+Figure5E,all_contrasts_interaction,Distance,OA_High Block_Num2 - YA Block_Num2,NA,NA
+Figure5E,all_contrasts_interaction,Distance,OA_Low Block_Num2 - YA Block_Num2,NA,NA
+Figure5F,all_contrasts_interaction,Navigation_Time,OA_High Block_Num2 - OA_Low Block_Num2,5.5e-6,NA
+Figure5F,all_contrasts_interaction,Navigation_Time,OA_High Block_Num2 - YA Block_Num2,NA,NA
+Figure5F,all_contrasts_interaction,Navigation_Time,OA_Low Block_Num2 - YA Block_Num2,NA,NA
+Figure5D,all_contrasts_interaction,Speed,OA_High Block_Num3 - OA_Low Block_Num3,0.008835,NA
+Figure5D,all_contrasts_interaction,Speed,OA_High Block_Num3 - YA Block_Num3,NA,NA
+Figure5D,all_contrasts_interaction,Speed,OA_Low Block_Num3 - YA Block_Num3,NA,NA
+Figure5E,all_contrasts_interaction,Distance,OA_High Block_Num3 - OA_Low Block_Num3,0.0025,NA
+Figure5E,all_contrasts_interaction,Distance,OA_High Block_Num3 - YA Block_Num3,NA,NA
+Figure5E,all_contrasts_interaction,Distance,OA_Low Block_Num3 - YA Block_Num3,NA,NA
+Figure5F,all_contrasts_interaction,Navigation_Time,OA_High Block_Num3 - OA_Low Block_Num3,0.001282,NA
+Figure5F,all_contrasts_interaction,Navigation_Time,OA_High Block_Num3 - YA Block_Num3,NA,NA
+Figure5F,all_contrasts_interaction,Navigation_Time,OA_Low Block_Num3 - YA Block_Num3,NA,NA
+Figure5D,all_contrasts_interaction,Speed,YA Block_Num1 - YA Block_Num2,1.3199999999999998e-32,NA
+Figure5D,all_contrasts_interaction,Speed,OA_High Block_Num1 - OA_High Block_Num2,9.87e-6,NA
+Figure5D,all_contrasts_interaction,Speed,OA_Low Block_Num1 - OA_Low Block_Num2,0.004679,NA
+Figure5D,all_contrasts_interaction,Speed,YA Block_Num2 - YA Block_Num3,7.35e-17,NA
+Figure5D,all_contrasts_interaction,Speed,OA_High Block_Num2 - OA_High Block_Num3,1.59e-5,NA
+Figure5D,all_contrasts_interaction,Speed,OA_Low Block_Num2 - OA_Low Block_Num3,0.009949,NA
+Figure5E,all_contrasts_interaction,Distance,YA Block_Num1 - YA Block_Num2,3.24e-5,NA
+Figure5E,all_contrasts_interaction,Distance,OA_High Block_Num1 - OA_High Block_Num2,5.29e-5,NA
+Figure5E,all_contrasts_interaction,Distance,OA_Low Block_Num1 - OA_Low Block_Num2,0.018649,NA
+Figure5E,all_contrasts_interaction,Distance,YA Block_Num2 - YA Block_Num3,0.456151,NA
+Figure5E,all_contrasts_interaction,Distance,OA_High Block_Num2 - OA_High Block_Num3,0.500113,NA
+Figure5E,all_contrasts_interaction,Distance,OA_Low Block_Num2 - OA_Low Block_Num3,0.080195,NA
+Figure5F,all_contrasts_interaction,Navigation_Time,YA Block_Num1 - YA Block_Num2,1.91e-6,NA
+Figure5F,all_contrasts_interaction,Navigation_Time,OA_High Block_Num1 - OA_High Block_Num2,1.92e-8,NA
+Figure5F,all_contrasts_interaction,Navigation_Time,OA_Low Block_Num1 - OA_Low Block_Num2,3.16e-6,NA
+Figure5F,all_contrasts_interaction,Navigation_Time,YA Block_Num2 - YA Block_Num3,0.382326,NA
+Figure5F,all_contrasts_interaction,Navigation_Time,OA_High Block_Num2 - OA_High Block_Num3,0.36354,NA
+Figure5F,all_contrasts_interaction,Navigation_Time,OA_Low Block_Num2 - OA_Low Block_Num3,0.019634,NA
+Figure5D,all_interaction_changes,Speed,Block_Num2 - Block_Num1 | OA_High - YA,4.62e-4,NA
+Figure5D,all_interaction_changes,Speed,Block_Num3 - Block_Num2 | OA_High - YA,0.131304,NA
+Figure5D,all_interaction_changes,Speed,Block_Num2 - Block_Num1 | OA_Low - YA,7.37e-6,NA
+Figure5D,all_interaction_changes,Speed,Block_Num3 - Block_Num2 | OA_Low - YA,0.007152,NA
+Figure5D,all_interaction_changes,Speed,Block_Num2 - Block_Num1 | OA_Low - OA_High,0.319133,NA
+Figure5D,all_interaction_changes,Speed,Block_Num3 - Block_Num2 | OA_Low - OA_High,0.319133,NA
+Figure5E,all_interaction_changes,Distance,Block_Num2 - Block_Num1 | OA_High - YA,0.601891,NA
+Figure5E,all_interaction_changes,Distance,Block_Num3 - Block_Num2 | OA_High - YA,0.922161,NA
+Figure5E,all_interaction_changes,Distance,Block_Num2 - Block_Num1 | OA_Low - YA,0.691522,NA
+Figure5E,all_interaction_changes,Distance,Block_Num3 - Block_Num2 | OA_Low - YA,0.691522,NA
+Figure5E,all_interaction_changes,Distance,Block_Num2 - Block_Num1 | OA_Low - OA_High,0.553954,NA
+Figure5E,all_interaction_changes,Distance,Block_Num3 - Block_Num2 | OA_Low - OA_High,0.553954,NA
+Figure5F,all_interaction_changes,Navigation_Time,Block_Num2 - Block_Num1 | OA_High - YA,0.110385,NA
+Figure5F,all_interaction_changes,Navigation_Time,Block_Num3 - Block_Num2 | OA_High - YA,0.808144,NA
+Figure5F,all_interaction_changes,Navigation_Time,Block_Num2 - Block_Num1 | OA_Low - YA,0.229884,NA
+Figure5F,all_interaction_changes,Navigation_Time,Block_Num3 - Block_Num2 | OA_Low - YA,0.195962,NA
+Figure5F,all_interaction_changes,Navigation_Time,Block_Num2 - Block_Num1 | OA_Low - OA_High,0.651164,NA
+Figure5F,all_interaction_changes,Navigation_Time,Block_Num3 - Block_Num2 | OA_Low - OA_High,0.651164,NA
+Figure6A,all_contrasts_age_group,Mean_Dwell,OA_High - OA_Low,0.101911,NA
+Figure6A,all_contrasts_age_group,Mean_Dwell,OA_High - YA,NA,NA
+Figure6A,all_contrasts_age_group,Mean_Dwell,OA_Low - YA,NA,NA
+Figure6B,all_contrasts_age_group,Teleportations,OA_High - OA_Low,8.42e-4,NA
+Figure6B,all_contrasts_age_group,Teleportations,OA_High - YA,NA,NA
+Figure6B,all_contrasts_age_group,Teleportations,OA_Low - YA,NA,NA
+Figure6C,all_contrasts_age_group,Mean_Teleport_Distance,OA_High - OA_Low,0.469065,NA
+Figure6C,all_contrasts_age_group,Mean_Teleport_Distance,OA_High - YA,NA,NA
+Figure6C,all_contrasts_age_group,Mean_Teleport_Distance,OA_Low - YA,NA,NA
+Figure6D,all_contrasts_interaction,Mean_Dwell,OA_High Block_Num1 - OA_Low Block_Num1,0.009151,NA
+Figure6D,all_contrasts_interaction,Mean_Dwell,OA_High Block_Num1 - YA Block_Num1,NA,NA
+Figure6D,all_contrasts_interaction,Mean_Dwell,OA_Low Block_Num1 - YA Block_Num1,NA,NA
+Figure6E,all_contrasts_interaction,Teleportations,OA_High Block_Num1 - OA_Low Block_Num1,0.048827,NA
+Figure6E,all_contrasts_interaction,Teleportations,OA_High Block_Num1 - YA Block_Num1,NA,NA
+Figure6E,all_contrasts_interaction,Teleportations,OA_Low Block_Num1 - YA Block_Num1,NA,NA
+Figure6F,all_contrasts_interaction,Mean_Teleport_Distance,OA_High Block_Num1 - OA_Low Block_Num1,0.489356,NA
+Figure6F,all_contrasts_interaction,Mean_Teleport_Distance,OA_High Block_Num1 - YA Block_Num1,NA,NA
+Figure6F,all_contrasts_interaction,Mean_Teleport_Distance,OA_Low Block_Num1 - YA Block_Num1,NA,NA
+Figure6D,all_contrasts_interaction,Mean_Dwell,OA_High Block_Num2 - OA_Low Block_Num2,0.309074,NA
+Figure6D,all_contrasts_interaction,Mean_Dwell,OA_High Block_Num2 - YA Block_Num2,NA,NA
+Figure6D,all_contrasts_interaction,Mean_Dwell,OA_Low Block_Num2 - YA Block_Num2,NA,NA
+Figure6E,all_contrasts_interaction,Teleportations,OA_High Block_Num2 - OA_Low Block_Num2,0.001015,NA
+Figure6E,all_contrasts_interaction,Teleportations,OA_High Block_Num2 - YA Block_Num2,NA,NA
+Figure6E,all_contrasts_interaction,Teleportations,OA_Low Block_Num2 - YA Block_Num2,NA,NA
+Figure6F,all_contrasts_interaction,Mean_Teleport_Distance,OA_High Block_Num2 - OA_Low Block_Num2,0.699484,NA
+Figure6F,all_contrasts_interaction,Mean_Teleport_Distance,OA_High Block_Num2 - YA Block_Num2,NA,NA
+Figure6F,all_contrasts_interaction,Mean_Teleport_Distance,OA_Low Block_Num2 - YA Block_Num2,NA,NA
+Figure6D,all_contrasts_interaction,Mean_Dwell,OA_High Block_Num3 - OA_Low Block_Num3,0.307238,NA
+Figure6D,all_contrasts_interaction,Mean_Dwell,OA_High Block_Num3 - YA Block_Num3,NA,NA
+Figure6D,all_contrasts_interaction,Mean_Dwell,OA_Low Block_Num3 - YA Block_Num3,NA,NA
+Figure6E,all_contrasts_interaction,Teleportations,OA_High Block_Num3 - OA_Low Block_Num3,0.02121,NA
+Figure6E,all_contrasts_interaction,Teleportations,OA_High Block_Num3 - YA Block_Num3,NA,NA
+Figure6E,all_contrasts_interaction,Teleportations,OA_Low Block_Num3 - YA Block_Num3,NA,NA
+Figure6F,all_contrasts_interaction,Mean_Teleport_Distance,OA_High Block_Num3 - OA_Low Block_Num3,0.491463,NA
+Figure6F,all_contrasts_interaction,Mean_Teleport_Distance,OA_High Block_Num3 - YA Block_Num3,NA,NA
+Figure6F,all_contrasts_interaction,Mean_Teleport_Distance,OA_Low Block_Num3 - YA Block_Num3,NA,NA
+Figure6D,all_contrasts_interaction,Mean_Dwell,YA Block_Num1 - YA Block_Num2,6.82e-16,NA
+Figure6D,all_contrasts_interaction,Mean_Dwell,OA_High Block_Num1 - OA_High Block_Num2,1.59e-10,NA
+Figure6D,all_contrasts_interaction,Mean_Dwell,OA_Low Block_Num1 - OA_Low Block_Num2,4.7e-21,NA
+Figure6D,all_contrasts_interaction,Mean_Dwell,YA Block_Num2 - YA Block_Num3,0.006243,NA
+Figure6D,all_contrasts_interaction,Mean_Dwell,OA_High Block_Num2 - OA_High Block_Num3,0.004721,NA
+Figure6D,all_contrasts_interaction,Mean_Dwell,OA_Low Block_Num2 - OA_Low Block_Num3,0.009151,NA
+Figure6E,all_contrasts_interaction,Teleportations,YA Block_Num1 - YA Block_Num2,6.26e-4,NA
+Figure6E,all_contrasts_interaction,Teleportations,OA_High Block_Num1 - OA_High Block_Num2,3.4e-4,NA
+Figure6E,all_contrasts_interaction,Teleportations,OA_Low Block_Num1 - OA_Low Block_Num2,0.076468,NA
+Figure6E,all_contrasts_interaction,Teleportations,YA Block_Num2 - YA Block_Num3,0.534884,NA
+Figure6E,all_contrasts_interaction,Teleportations,OA_High Block_Num2 - OA_High Block_Num3,0.594471,NA
+Figure6E,all_contrasts_interaction,Teleportations,OA_Low Block_Num2 - OA_Low Block_Num3,0.12319,NA
+Figure6F,all_contrasts_interaction,Mean_Teleport_Distance,YA Block_Num1 - YA Block_Num2,5.58e-10,NA
+Figure6F,all_contrasts_interaction,Mean_Teleport_Distance,OA_High Block_Num1 - OA_High Block_Num2,6.34e-8,NA
+Figure6F,all_contrasts_interaction,Mean_Teleport_Distance,OA_Low Block_Num1 - OA_Low Block_Num2,3.06e-11,NA
+Figure6F,all_contrasts_interaction,Mean_Teleport_Distance,YA Block_Num2 - YA Block_Num3,0.699484,NA
+Figure6F,all_contrasts_interaction,Mean_Teleport_Distance,OA_High Block_Num2 - OA_High Block_Num3,0.035846,NA
+Figure6F,all_contrasts_interaction,Mean_Teleport_Distance,OA_Low Block_Num2 - OA_Low Block_Num3,0.489356,NA
+Figure6D,all_interaction_changes,Mean_Dwell,Block_Num2 - Block_Num1 | OA_High - YA,0.669454,NA
+Figure6D,all_interaction_changes,Mean_Dwell,Block_Num3 - Block_Num2 | OA_High - YA,0.669454,NA
+Figure6D,all_interaction_changes,Mean_Dwell,Block_Num2 - Block_Num1 | OA_Low - YA,0.001123,NA
+Figure6D,all_interaction_changes,Mean_Dwell,Block_Num3 - Block_Num2 | OA_Low - YA,0.512298,NA
+Figure6D,all_interaction_changes,Mean_Dwell,Block_Num2 - Block_Num1 | OA_Low - OA_High,0.014508,NA
+Figure6D,all_interaction_changes,Mean_Dwell,Block_Num3 - Block_Num2 | OA_Low - OA_High,0.97122,NA
+Figure6E,all_interaction_changes,Teleportations,Block_Num2 - Block_Num1 | OA_High - YA,0.509092,NA
+Figure6E,all_interaction_changes,Teleportations,Block_Num3 - Block_Num2 | OA_High - YA,0.970559,NA
+Figure6E,all_interaction_changes,Teleportations,Block_Num2 - Block_Num1 | OA_Low - YA,0.664435,NA
+Figure6E,all_interaction_changes,Teleportations,Block_Num3 - Block_Num2 | OA_Low - YA,0.664435,NA
+Figure6E,all_interaction_changes,Teleportations,Block_Num2 - Block_Num1 | OA_Low - OA_High,0.569129,NA
+Figure6E,all_interaction_changes,Teleportations,Block_Num3 - Block_Num2 | OA_Low - OA_High,0.569129,NA
+Figure6F,all_interaction_changes,Mean_Teleport_Distance,Block_Num2 - Block_Num1 | OA_High - YA,0.434473,NA
+Figure6F,all_interaction_changes,Mean_Teleport_Distance,Block_Num3 - Block_Num2 | OA_High - YA,0.130323,NA
+Figure6F,all_interaction_changes,Mean_Teleport_Distance,Block_Num2 - Block_Num1 | OA_Low - YA,0.051977,NA
+Figure6F,all_interaction_changes,Mean_Teleport_Distance,Block_Num3 - Block_Num2 | OA_Low - YA,0.642014,NA
+Figure6F,all_interaction_changes,Mean_Teleport_Distance,Block_Num2 - Block_Num1 | OA_Low - OA_High,0.449147,NA
+Figure6F,all_interaction_changes,Mean_Teleport_Distance,Block_Num3 - Block_Num2 | OA_Low - OA_High,0.449147,NA

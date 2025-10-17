@@ -1,0 +1,274 @@
+---
+title: "Linear Mixed Model Comparison Analysis - All Outcome Measures"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Linear Mixed Model Analysis - All Outcome Measures
+
+This document compares three different linear mixed models across all outcome measures to analyze the effects of Age, Block Number, and Target Name.
+
+## Load Required Libraries
+
+```{r load-libraries}
+library(lme4)        # For linear mixed effects models
+library(lmerTest)    # For p-values in lmer
+library(broom.mixed) # For tidy model outputs
+library(dplyr)       # For data manipulation
+library(readr)       # For reading CSV files
+library(knitr)       # For nice tables
+library(ggplot2)     # For plotting
+library(car)         # For Anova function
+library(performance) # For model comparison metrics
+library(purrr)       # For functional programming
+library(tidyr)       # For data reshaping
+```
+
+## Load and Prepare Data
+
+```{r load-data}
+# Load both datasets
+oa_data <- read_csv("/Volumes/YB_Drive/NavAging_Paper/data/oa_merged_results.csv")
+ya_data <- read_csv("/Volumes/YB_Drive/NavAging_Paper/data/ya_merged_results.csv")
+
+# Add Age group variable and combine datasets
+oa_data$Age <- "OA"
+ya_data$Age <- "YA"
+
+# Remove the index column (first column) and combine
+oa_data <- oa_data %>% select(-1)  # Remove "Unnamed: 0" column
+ya_data <- ya_data %>% select(-1)  # Remove the unnamed first column
+
+# Combine datasets
+combined_data <- bind_rows(oa_data, ya_data)
+
+# Convert categorical variables to factors
+combined_data <- combined_data %>%
+  mutate(
+    Age = factor(Age, levels = c("YA", "OA")),  # YA as reference level
+    Target_Name = factor(Target_Name),
+    Participant = factor(Participant),
+    Block_Num = factor(Block_Num, levels = c("1", "2", "3"))  # Block 1 as reference level
+  )
+
+# Display basic information about the combined dataset
+cat("Dataset dimensions:", dim(combined_data), "\n")
+cat("Age group counts:\n")
+print(table(combined_data$Age))
+```
+
+```{r data-summary}
+# Summary of the dataset
+summary(combined_data)
+```
+
+## Define Outcome Variables and Analysis Function
+
+```{r define-variables}
+# Define all outcome variables to analyze
+outcome_vars <- c("Total_Time", "Orientation_Time", "Navigation_Time", 
+                  "Distance", "Speed", "Mean_Dwell", 
+                  "Teleportations", "Mean_Teleport_Distance")
+
+cat("Analyzing the following outcome variables:\n")
+for(i in seq_along(outcome_vars)) {
+  cat(i, ".", outcome_vars[i], "\n")
+}
+```
+
+```{r analysis-function}
+# Function to run all three models for a given outcome variable
+run_model_comparison <- function(dv_name, data) {
+  
+  # Create formula dynamically
+  formula1 <- as.formula(paste(dv_name, "~ Age * Block_Num * Target_Name + (1|Participant)"))
+  formula2 <- as.formula(paste(dv_name, "~ Age * Block_Num + (1|Target_Name) + (1|Participant)"))
+  formula3 <- as.formula(paste(dv_name, "~ Age * Block_Num + (1|Participant)"))
+  
+  # Fit models
+  model1 <- lmer(formula1, data = data)
+  model2 <- lmer(formula2, data = data)
+  model3 <- lmer(formula3, data = data)
+  
+  # Extract fixed effects
+  model1_fixed <- broom.mixed::tidy(model1, effects = "fixed") %>% mutate(Model = "Model 1")
+  model2_fixed <- broom.mixed::tidy(model2, effects = "fixed") %>% mutate(Model = "Model 2")
+  model3_fixed <- broom.mixed::tidy(model3, effects = "fixed") %>% mutate(Model = "Model 3")
+  
+  # Combine fixed effects
+  all_fixed <- bind_rows(model1_fixed, model2_fixed, model3_fixed) %>%
+    mutate(DV = dv_name) %>%
+    select(DV, Model, term, estimate, std.error, statistic, p.value)
+  
+  # Model fit statistics
+  fit_stats <- data.frame(
+    DV = dv_name,
+    Model = c("Model 1", "Model 2", "Model 3"),
+    AIC = c(AIC(model1), AIC(model2), AIC(model3)),
+    BIC = c(BIC(model1), BIC(model2), BIC(model3)),
+    LogLikelihood = c(logLik(model1)[1], logLik(model2)[1], logLik(model3)[1]),
+    Deviance = c(deviance(model1), deviance(model2), deviance(model3))
+  )
+  
+  # Likelihood ratio tests
+  lrt_3vs2 <- anova(model3, model2)
+  lrt_2vs1 <- tryCatch(anova(model2, model1), error = function(e) NULL)
+  
+  return(list(
+    models = list(model1 = model1, model2 = model2, model3 = model3),
+    fixed_effects = all_fixed,
+    fit_stats = fit_stats,
+    lrt_3vs2 = lrt_3vs2,
+    lrt_2vs1 = lrt_2vs1,
+    dv_name = dv_name
+  ))
+}
+```
+
+## Run Analysis for All Outcome Variables
+
+```{r run-all-analyses, results='hide'}
+# Run analysis for all outcome variables
+all_results <- map(outcome_vars, ~run_model_comparison(.x, combined_data))
+names(all_results) <- outcome_vars
+
+cat("Analysis completed for all", length(outcome_vars), "outcome variables.\n")
+```
+
+## Combined Results Summary
+
+### Model Fit Comparison Across All Variables
+
+```{r combined-fit-stats}
+# Combine fit statistics for all variables
+all_fit_stats <- map_dfr(all_results, ~.x$fit_stats)
+
+# Find best models for each outcome
+best_models <- all_fit_stats %>%
+  group_by(DV) %>%
+  summarise(
+    Best_AIC = Model[which.min(AIC)],
+    Best_BIC = Model[which.min(BIC)],
+    AIC_diff = min(AIC) - max(AIC),
+    BIC_diff = min(BIC) - max(BIC)
+  )
+
+cat("Best Fitting Models by Outcome Variable:\n")
+kable(best_models, digits = 3)
+
+cat("\n\nComplete Model Fit Statistics:\n")
+kable(all_fit_stats, digits = 3)
+```
+
+### Fixed Effects Summary Across All Variables
+
+```{r combined-fixed-effects}
+# Combine all fixed effects
+all_fixed_effects <- map_dfr(all_results, ~.x$fixed_effects)
+
+# Focus on Age and Block_Num effects
+key_effects <- all_fixed_effects %>%
+  filter(term %in% c("AgeOA", "Block_Num")) %>%
+  mutate(
+    Significant = ifelse(p.value < 0.05, "***", 
+                        ifelse(p.value < 0.1, "*", "")),
+    CI_lower = estimate - 1.96 * std.error,
+    CI_upper = estimate + 1.96 * std.error
+  ) %>%
+  select(DV, Model, term, estimate, std.error, p.value, Significant)
+
+cat("Age Effects (OA vs YA) Across All Models and Variables:\n")
+age_effects <- key_effects %>% 
+  filter(term == "AgeOA") %>%
+  arrange(DV, Model)
+kable(age_effects, digits = 4)
+
+cat("\n\nBlock Number Effects Across All Models and Variables:\n")
+block_effects <- key_effects %>% 
+  filter(term == "Block_Num") %>%
+  arrange(DV, Model)
+kable(block_effects, digits = 4)
+```
+
+## Detailed Results by Outcome Variable
+
+```{r detailed-results, results='asis'}
+# Generate detailed results for each outcome variable
+for(var_name in outcome_vars) {
+  cat("\n\n## ", var_name, " Analysis\n\n")
+  
+  results <- all_results[[var_name]]
+  
+  cat("### Model Summaries for", var_name, "\n\n")
+  
+  # Model 1
+  cat("#### Model 1: Age + Block_Num + Target_Name as Fixed, Participant as Random\n\n")
+  cat("```\n")
+  print(summary(results$models$model1))
+  cat("```\n\n")
+  
+  # Model 2  
+  cat("#### Model 2: Age + Block_Num as Fixed, Target_Name + Participant as Random\n\n")
+  cat("```\n")
+  print(summary(results$models$model2))
+  cat("```\n\n")
+  
+  # Model 3
+  cat("#### Model 3: Age + Block_Num as Fixed, Participant as Random\n\n")
+  cat("```\n")
+  print(summary(results$models$model3))
+  cat("```\n\n")
+  
+  # Fixed effects table
+  cat("### Fixed Effects Comparison for", var_name, "\n\n")
+  fixed_table <- results$fixed_effects %>%
+    select(-DV) %>%
+    mutate(p.value = round(p.value, 4),
+           estimate = round(estimate, 4),
+           std.error = round(std.error, 4))
+  print(kable(fixed_table))
+  cat("\n\n")
+  
+  # Model fit
+  cat("### Model Fit Statistics for", var_name, "\n\n")
+  fit_table <- results$fit_stats %>%
+    select(-DV) %>%
+    mutate(across(where(is.numeric), ~round(.x, 3)))
+  print(kable(fit_table))
+  cat("\n\n")
+  
+  # Best model
+  best_aic <- results$fit_stats$Model[which.min(results$fit_stats$AIC)]
+  best_bic <- results$fit_stats$Model[which.min(results$fit_stats$BIC)]
+  
+  cat("**Best model for", var_name, ":**\n")
+  cat("- By AIC:", best_aic, "\n")
+  cat("- By BIC:", best_bic, "\n\n")
+  
+  # Likelihood ratio tests
+  if(!is.null(results$lrt_3vs2)) {
+    cat("### Likelihood Ratio Test: Model 3 vs Model 2\n\n")
+    cat("```\n")
+    print(results$lrt_3vs2)
+    cat("```\n\n")
+  }
+  
+  if(!is.null(results$lrt_2vs1)) {
+    cat("### Likelihood Ratio Test: Model 2 vs Model 1\n\n")
+    cat("```\n")
+    print(results$lrt_2vs1)
+    cat("```\n\n")
+  }
+}
+```
+

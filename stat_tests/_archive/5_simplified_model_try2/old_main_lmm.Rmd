@@ -1,0 +1,338 @@
+---
+title: "Optimized Stats Code - Age and Block Fixed Effects, Target and Participant Random"
+output: html_document
+date: "2025-09-07"
+---
+
+```{r global-options, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r loading-libraries, include=FALSE}
+# Load required libraries
+library(tidyverse)
+library(stringr)
+library(ez)
+library(cowplot)
+library(viridis)
+library(viridisLite)
+library(readxl)
+library(ggcorrplot)
+library(dplyr)
+library(ltm)
+library(plotrix)
+library(paletteer)
+library(ggpubr)
+library(rstatix)
+library(lme4)
+library(lmerTest)
+library(emmeans)
+library(patchwork)
+```
+
+```{r load-data, include=FALSE}
+# Load older adults data
+oa_data <- read_csv("/Volumes/YB_Drive/NavAging_Paper/data/oa_merged_results.csv")
+oa_data$Age_Group <- "OA"
+oa_data <- oa_data %>% select(-1)
+
+# Load younger adults data  
+ya_data <- read_csv("/Volumes/YB_Drive/NavAging_Paper/data/ya_merged_results.csv")
+ya_data$Age_Group <- "YA"
+ya_data <- ya_data %>% select(-1)
+
+# Combine both datasets
+nav_data <- bind_rows(oa_data, ya_data)
+
+# Convert Age_Group to factor
+nav_data$Age_Group <- factor(nav_data$Age_Group, levels = c("YA", "OA"))
+
+# Check data structure
+cat("Total observations:", nrow(nav_data), "\n")
+cat("Younger adults observations:", sum(nav_data$Age_Group == "YA"), "\n")
+cat("Older adults observations:", sum(nav_data$Age_Group == "OA"), "\n")
+```
+
+```{r analysis-functions, include=FALSE}
+# Function to run mixed effects models with Age and Block as fixed, Target and Participant as random
+run_mixed_model <- function(data, outcome_var) {
+  
+  # Model: Age_Group * Block_Num (fixed) + (1|Target_Name) + (1|Participant) (random)
+  formula_str <- paste(outcome_var, "~ Age_Group * Block_Num + (1|Target_Name) + (1|Participant)")
+  
+  tryCatch({
+    model <- lmer(as.formula(formula_str), data = data)
+    return(model)
+  }, error = function(e) {
+    cat("Error fitting model for", outcome_var, ":", e$message, "\n")
+    return(NULL)
+  })
+}
+
+# Function to extract and organize emmeans comparisons
+extract_emmeans_comparisons <- function(model, outcome_var) {
+  
+  if (is.null(model)) {
+    return(list())
+  }
+  
+  results <- list()
+  
+  tryCatch({
+    # Age group comparisons (main effect)
+    emm_age <- emmeans(model, ~ Age_Group)
+    results$age_group <- as.data.frame(pairs(emm_age))
+    
+    # Block comparisons (main effect)
+    emm_block <- emmeans(model, ~ Block_Num)
+    results$block <- as.data.frame(pairs(emm_block))
+    
+    # Age group comparisons within each block
+    emm_age_by_block <- emmeans(model, ~ Age_Group | Block_Num)
+    age_by_block_df <- as.data.frame(pairs(emm_age_by_block))
+    
+    # Extract the actual block numbers from the emmeans object
+    block_levels <- levels(emm_age_by_block@grid$Block_Num)
+    
+    # Add proper block numbers
+    age_by_block_df$Block_Num <- rep(block_levels, each = length(unique(age_by_block_df$contrast)))
+    
+    results$age_by_block <- age_by_block_df
+    
+    # Block comparisons within each age group
+    emm_block_by_age <- emmeans(model, ~ Block_Num | Age_Group)
+    block_by_age_df <- as.data.frame(pairs(emm_block_by_age))
+    
+    # Extract the actual age group levels
+    age_levels <- levels(emm_block_by_age@grid$Age_Group)
+    
+    # Add proper age group labels
+    block_by_age_df$Age_Group <- rep(age_levels, each = length(unique(block_by_age_df$contrast)))
+    
+    results$block_by_age <- block_by_age_df
+    
+    # Add outcome variable name to all results
+    results <- map(results, ~ {
+      .x$outcome <- outcome_var
+      return(.x)
+    })
+    
+  }, error = function(e) {
+    cat("Error extracting emmeans for", outcome_var, ":", e$message, "\n")
+  })
+  
+  return(results)
+}
+```
+
+```{r run-all-analyses, include=FALSE}
+# Define outcome variables
+#outcome_vars <- c("Total_Time", "Orientation_Time", "Navigation_Time", 
+                  #"Distance", "Speed", "Mean_Dwell", 
+                  #"Teleportations", "Mean_Teleport_Distance")
+
+# Testing only one outcome
+outcome_vars <- c("Total_Time")
+
+# Run models and extract results
+all_models <- list()
+all_results <- list()
+
+for (var in outcome_vars) {
+  cat("Running analysis for:", var, "\n")
+  
+  # Run model
+  model <- run_mixed_model(nav_data, var)
+  all_models[[var]] <- model
+  
+  if (!is.null(model)) {
+    # Extract ANOVA results
+    anova_result <- anova(model)
+    anova_result$outcome <- var
+    anova_result$Source <- paste0("m_", tolower(gsub("_", "", var)), "_anova")
+    
+    # Extract emmeans comparisons
+    emmeans_results <- extract_emmeans_comparisons(model, var)
+    
+    # Store results
+    all_results[[var]] <- list(
+      anova = anova_result,
+      emmeans = emmeans_results
+    )
+  } else {
+    cat("Skipping", var, "due to model fitting issues\n")
+  }
+}
+```
+
+```{r organize-results, include=FALSE}
+# Combine ANOVA results
+combined_anova <- map_dfr(all_results, ~ {
+  if (!is.null(.x$anova)) {
+    .x$anova
+  }
+})
+
+# Combine emmeans results by comparison type
+combined_age_group <- map_dfr(all_results, ~ {
+  if ("age_group" %in% names(.x$emmeans)) {
+    .x$emmeans$age_group %>% mutate(comparison_type = "age_group")
+  }
+})
+
+combined_block <- map_dfr(all_results, ~ {
+  if ("block" %in% names(.x$emmeans)) {
+    .x$emmeans$block %>% mutate(comparison_type = "block")
+  }
+})
+
+combined_age_by_block <- map_dfr(all_results, ~ {
+  if ("age_by_block" %in% names(.x$emmeans)) {
+    .x$emmeans$age_by_block %>% mutate(comparison_type = "age_by_block")
+  }
+})
+
+combined_block_by_age <- map_dfr(all_results, ~ {
+  if ("block_by_age" %in% names(.x$emmeans)) {
+    .x$emmeans$block_by_age %>% mutate(comparison_type = "block_by_age")
+  }
+})
+
+# Apply FDR corrections
+if (nrow(combined_age_group) > 0) {
+  combined_age_group <- combined_age_group %>%
+    group_by(outcome) %>%
+    mutate(p.value.adj = p.adjust(p.value, method = "fdr")) %>%
+    ungroup()
+}
+
+if (nrow(combined_block) > 0) {
+  combined_block <- combined_block %>%
+    group_by(outcome) %>%
+    mutate(p.value.adj = p.adjust(p.value, method = "fdr")) %>%
+    ungroup()
+}
+
+if (nrow(combined_age_by_block) > 0) {
+  combined_age_by_block <- combined_age_by_block %>%
+    group_by(outcome, Block_Num) %>%
+    mutate(p.value.adj = p.adjust(p.value, method = "fdr")) %>%
+    ungroup()
+}
+
+if (nrow(combined_block_by_age) > 0) {
+  combined_block_by_age <- combined_block_by_age %>%
+    group_by(outcome, Age_Group) %>%
+    mutate(p.value.adj = p.adjust(p.value, method = "fdr")) %>%
+    ungroup()
+}
+```
+
+```{r create-summary-objects, include=FALSE}
+# Create main effects summary from ANOVA results
+main_effects_summary <- combined_anova %>%
+  select(outcome, Source, everything()) %>%
+  arrange(outcome)
+
+# Create interaction summary
+interaction_summary <- list()
+
+# ANOVA results for interactions
+interaction_summary$anova <- combined_anova %>%
+  filter(grepl(":", rownames(.)) | grepl("Age_Group:Block_Num", Source)) %>%
+  select(outcome, Source, everything())
+
+# Significant age differences by block
+interaction_summary$age_by_block <- combined_age_by_block %>%
+  filter(p.value.adj < 0.05) %>%
+  select(outcome, Block_Num, contrast, estimate, SE, p.value, p.value.adj)
+
+# Significant learning effects by age group  
+interaction_summary$block_by_age <- combined_block_by_age %>%
+  filter(p.value.adj < 0.05) %>%
+  select(outcome, Age_Group, contrast, estimate, SE, p.value, p.value.adj)
+```
+
+```{r save-results-streamlined, include=FALSE}
+# Create output directory
+output_dir <- "/Volumes/YB_Drive/NavAging_Paper/stat_tests"
+dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+
+# 1. ANOVA RESULTS - All in one file
+write.csv(combined_anova, file.path(output_dir, "anova_results.csv"), row.names = FALSE)
+
+# 2. ALL PAIRWISE COMPARISONS - Combined into one comprehensive file
+all_comparisons <- bind_rows(
+  combined_age_group %>% mutate(comparison_type = "age_main_effect"),
+  combined_block %>% mutate(comparison_type = "block_main_effect"),
+  combined_age_by_block %>% mutate(comparison_type = "age_within_block"),
+  combined_block_by_age %>% mutate(comparison_type = "block_within_age")
+) %>%
+  select(outcome, comparison_type, everything()) %>%
+  arrange(outcome, comparison_type)
+
+write.csv(all_comparisons, file.path(output_dir, "all_pairwise_comparisons.csv"), row.names = FALSE)
+
+# 3. SIGNIFICANT RESULTS ONLY - Summary of all significant findings
+significant_results <- all_comparisons %>%
+  filter(p.value.adj < 0.05) %>%
+  select(outcome, comparison_type, contrast, estimate, SE, p.value, p.value.adj) %>%
+  arrange(outcome, comparison_type, p.value.adj)
+
+write.csv(significant_results, file.path(output_dir, "significant_results_summary.csv"), row.names = FALSE)
+
+# 4. INTERACTION EFFECTS SUMMARY - Key findings for Age x Block interactions
+interaction_effects <- combined_anova %>%
+  filter(grepl("Age_Group:Block_Num", rownames(.))) %>%
+  select(outcome, `F value`, `Pr(>F)`) %>%
+  rename(F_value = `F value`, p_value = `Pr(>F)`) %>%
+  mutate(
+    significant = p_value < 0.05,
+    effect_interpretation = case_when(
+      significant ~ "Significant Age x Block interaction",
+      TRUE ~ "No significant Age x Block interaction"
+    )
+  )
+
+write.csv(interaction_effects, file.path(output_dir, "interaction_effects_summary.csv"), row.names = FALSE)
+
+cat("Results consolidated into 3 files:\n")
+cat("1. anova_results.csv - All ANOVA F-tests\n")
+cat("2. all_pairwise_comparisons.csv - All emmeans pairwise comparisons with significance indicators\n") 
+cat("3. interaction_effects_summary.csv - Age x Block interaction summary\n")
+cat("\nFiles saved to:", output_dir, "\n")
+```
+
+```{r model-summaries, include=FALSE}
+# Print model summaries for inspection
+for (var in names(all_models)) {
+  if (!is.null(all_models[[var]])) {
+    cat("\n=== Model Summary for", var, "===\n")
+    print(summary(all_models[[var]]))
+    cat("\n")
+  }
+}
+```
+
+
+# Model Structure Summary:
+
+**Fixed Effects:**
+- Age_Group (YA vs OA)
+- Block_Num (1, 2, 3)  
+- Age_Group × Block_Num interaction
+
+**Random Effects:**
+- (1|Target_Name) - accounts for variability between different targets
+- (1|Participant) - accounts for individual differences between participants
+
+**Key Comparisons Available:**
+1. **Main effect of Age Group** - overall differences between younger and older adults
+2. **Main effect of Block** - overall learning/practice effects across trials
+3. **Age × Block interaction** - whether learning trajectories differ between age groups
+4. **Age comparisons within each block** - age differences at specific time points
+5. **Block comparisons within each age group** - learning within each group
+
+This model structure treats Target_Name as a random effect, which means you're modeling the variability across targets rather than testing specific target contrasts. This approach assumes that the 8 targets represent a sample from a larger population of possible targets, and you're interested in generalizing beyond these specific targets.
+
+The model will be more parsimonious and should have better power to detect Age × Block interactions, which seems to be your primary research interest.

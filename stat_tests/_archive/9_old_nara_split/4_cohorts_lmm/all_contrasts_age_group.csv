@@ -1,0 +1,25 @@
+Outcome,Correction,contrast,estimate,SE,df,t.ratio,p.value
+Total_Time,FDR_within_outcome,OA_High - OA_Low,-42.63747047,7.298649383,57,-5.841830212,3.91E-07
+Total_Time,FDR_within_outcome,OA_High - YA,21.85367839,6.173965242,57,3.539650377,8.06E-04
+Total_Time,FDR_within_outcome,OA_Low - YA,64.49114886,6.455168394,57,9.990622231,1.17E-13
+Orientation_Time,FDR_within_outcome,OA_High - OA_Low,-1.388233419,0.676783308,57.020009,-2.051222898,0.04485
+Orientation_Time,FDR_within_outcome,OA_High - YA,2.534266335,0.57254138,57.03841894,4.426346149,6.57E-05
+Orientation_Time,FDR_within_outcome,OA_Low - YA,3.922499754,0.598446354,56.97370873,6.554471803,5.26E-08
+Navigation_Time,FDR_within_outcome,OA_High - OA_Low,-41.22133274,6.88436513,57,-5.987673803,2.26E-07
+Navigation_Time,FDR_within_outcome,OA_High - YA,19.34731636,5.823520052,57,3.322271786,0.001563
+Navigation_Time,FDR_within_outcome,OA_Low - YA,60.56864911,6.088761615,57,9.947613806,1.37E-13
+Distance,FDR_within_outcome,OA_High - OA_Low,-188.3123279,37.11983493,57,-5.073091737,6.68E-06
+Distance,FDR_within_outcome,OA_High - YA,58.48399719,31.39986026,57,1.86255597,0.067681
+Distance,FDR_within_outcome,OA_Low - YA,246.7963251,32.83001727,57,7.517398576,1.31E-09
+Speed,FDR_within_outcome,OA_High - OA_Low,2.660417147,1.157238764,57,2.298935388,0.025195
+Speed,FDR_within_outcome,OA_High - YA,-3.643545092,0.978914253,57,-3.72202681,6.81E-04
+Speed,FDR_within_outcome,OA_Low - YA,-6.303962239,1.023500473,57,-6.159217711,2.36E-07
+Mean_Dwell,FDR_within_outcome,OA_High - OA_Low,-0.253629288,0.136305062,57,-1.860747387,0.101911
+Mean_Dwell,FDR_within_outcome,OA_High - YA,0.162478488,0.115301157,57,1.409166158,0.164218
+Mean_Dwell,FDR_within_outcome,OA_Low - YA,0.416107776,0.120552733,57,3.451666058,0.003169
+Teleportations,FDR_within_outcome,OA_High - OA_Low,-31.21912202,8.540724123,57,-3.655324955,8.42E-04
+Teleportations,FDR_within_outcome,OA_High - YA,17.07413194,7.224642686,57,2.363318532,0.021545
+Teleportations,FDR_within_outcome,OA_Low - YA,48.29325397,7.553700628,57,6.393323796,9.71E-08
+Mean_Teleport_Distance,FDR_within_outcome,OA_High - OA_Low,-0.209391,0.287281149,57,-0.728871355,0.469065
+Mean_Teleport_Distance,FDR_within_outcome,OA_High - YA,-0.633374043,0.243012609,57,-2.606342304,0.034972
+Mean_Teleport_Distance,FDR_within_outcome,OA_Low - YA,-0.423983043,0.254081008,57,-1.668692383,0.150994
