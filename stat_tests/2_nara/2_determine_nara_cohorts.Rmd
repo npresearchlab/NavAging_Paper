@@ -325,3 +325,363 @@ cat("  Range:", min(low_group), "-", max(low_group), "\n")
 cat("  Mean ± SD:", round(mean(low_group), 2), "±", round(sd(low_group), 2), "\n")
 cat("  Median (IQR):", median(low_group), "(", quantile(low_group, 0.25), "-", quantile(low_group, 0.75), ")\n")
 ```
+
+## Step 7: Test YA Group for Bimodality and Normality
+
+```{r ya-bimodality-normality-tests}
+cat("\n=== YOUNG ADULT (YA) GROUP NARA DISTRIBUTION ANALYSIS ===\n\n")
+
+# Test 1: Bimodality using Hartigan's dip test
+cat("1. BIMODALITY TEST (Hartigan's Dip Test)\n")
+cat("----------------------------------------\n")
+ya_dip_test <- dip.test(ya_nara_values)
+cat("D statistic:", round(ya_dip_test$statistic, 4), "\n")
+cat("p-value:", round(ya_dip_test$p.value, 4), "\n")
+cat("Interpretation:", ifelse(ya_dip_test$p.value < 0.05, 
+                            "Significant departure from unimodality (evidence of bimodality)", 
+                            "No significant evidence of bimodality (unimodal distribution)"), "\n")
+cat("Sample size:", length(ya_nara_values), "\n\n")
+
+# Test 2: Normality tests
+cat("2. NORMALITY TESTS\n")
+cat("----------------------------------------\n")
+
+# Shapiro-Wilk test
+shapiro_test <- shapiro.test(ya_nara_values)
+cat("Shapiro-Wilk Test:\n")
+cat("  W statistic:", round(shapiro_test$statistic, 4), "\n")
+cat("  p-value:", round(shapiro_test$p.value, 4), "\n")
+cat("  Interpretation:", ifelse(shapiro_test$p.value < 0.05,
+                               "Reject normality (data is NOT normally distributed)",
+                               "Fail to reject normality (data is consistent with normal distribution)"), "\n\n")
+
+# Kolmogorov-Smirnov test
+ks_test <- ks.test(ya_nara_values, "pnorm", mean(ya_nara_values), sd(ya_nara_values))
+cat("Kolmogorov-Smirnov Test:\n")
+cat("  D statistic:", round(ks_test$statistic, 4), "\n")
+cat("  p-value:", round(ks_test$p.value, 4), "\n")
+cat("  Interpretation:", ifelse(ks_test$p.value < 0.05,
+                               "Reject normality (data is NOT normally distributed)",
+                               "Fail to reject normality (data is consistent with normal distribution)"), "\n\n")
+
+# Anderson-Darling test (if nortest package is available)
+if(requireNamespace("nortest", quietly = TRUE)) {
+  library(nortest)
+  ad_test <- ad.test(ya_nara_values)
+  cat("Anderson-Darling Test:\n")
+  cat("  A statistic:", round(ad_test$statistic, 4), "\n")
+  cat("  p-value:", round(ad_test$p.value, 4), "\n")
+  cat("  Interpretation:", ifelse(ad_test$p.value < 0.05,
+                                 "Reject normality (data is NOT normally distributed)",
+                                 "Fail to reject normality (data is consistent with normal distribution)"), "\n\n")
+} else {
+  cat("Anderson-Darling Test: nortest package not available\n\n")
+}
+
+# Descriptive statistics for normality assessment
+cat("3. DISTRIBUTION CHARACTERISTICS\n")
+cat("----------------------------------------\n")
+cat("Mean:", round(mean(ya_nara_values), 3), "\n")
+cat("Median:", round(median(ya_nara_values), 3), "\n")
+cat("Standard deviation:", round(sd(ya_nara_values), 3), "\n")
+cat("Skewness:", round((mean(ya_nara_values) - median(ya_nara_values)) / sd(ya_nara_values), 3), "(rough estimate)\n")
+cat("Range:", min(ya_nara_values), "-", max(ya_nara_values), "\n")
+cat("IQR:", round(IQR(ya_nara_values), 3), "\n\n")
+
+# Calculate moments for formal skewness and kurtosis if e1071 is available
+if(requireNamespace("e1071", quietly = TRUE)) {
+  library(e1071)
+  cat("Formal skewness:", round(skewness(ya_nara_values), 3), 
+      "(< 0 = left-skewed, > 0 = right-skewed)\n")
+  cat("Kurtosis:", round(kurtosis(ya_nara_values), 3), 
+      "(< 0 = light-tailed, > 0 = heavy-tailed)\n\n")
+}
+
+cat("4. SUMMARY\n")
+cat("----------------------------------------\n")
+cat("Based on the statistical tests:\n")
+cat("• Bimodality: ", ifelse(ya_dip_test$p.value < 0.05, 
+                             "YES - Evidence of bimodality", 
+                             "NO - Unimodal distribution"), "\n")
+cat("• Normality: ", ifelse(shapiro_test$p.value < 0.05, 
+                            "REJECTED - Data is NOT normally distributed", 
+                            "ACCEPTED - Data is consistent with normal distribution"), "\n")
+
+# If non-normal, provide additional diagnostics
+if(shapiro_test$p.value < 0.05) {
+  cat("\n5. NON-NORMALITY DIAGNOSTICS\n")
+  cat("----------------------------------------\n")
+  cat("Since the data is not normally distributed, examining the type of departure:\n\n")
+  
+  # Skewness interpretation
+  if(requireNamespace("e1071", quietly = TRUE)) {
+    skew_val <- skewness(ya_nara_values)
+    cat("Skewness:", round(skew_val, 3), "\n")
+    if(abs(skew_val) < 0.5) {
+      cat("  Interpretation: Approximately symmetric\n")
+    } else if(skew_val < -0.5) {
+      cat("  Interpretation: Left-skewed (negative skew) - tail extends to the left\n")
+    } else if(skew_val > 0.5) {
+      cat("  Interpretation: Right-skewed (positive skew) - tail extends to the right\n")
+    }
+    
+    # Kurtosis interpretation
+    kurt_val <- kurtosis(ya_nara_values)
+    cat("\nKurtosis:", round(kurt_val, 3), "\n")
+    if(abs(kurt_val) < 0.5) {
+      cat("  Interpretation: Similar to normal distribution (mesokurtic)\n")
+    } else if(kurt_val < -0.5) {
+      cat("  Interpretation: Light-tailed, flatter than normal (platykurtic)\n")
+    } else if(kurt_val > 0.5) {
+      cat("  Interpretation: Heavy-tailed, more peaked than normal (leptokurtic)\n")
+    }
+    
+    cat("\nPrimary source of non-normality: ")
+    if(abs(skew_val) > abs(kurt_val) && abs(skew_val) > 0.5) {
+      cat("Skewness (asymmetry)\n")
+    } else if(abs(kurt_val) > abs(skew_val) && abs(kurt_val) > 0.5) {
+      cat("Kurtosis (tail behavior)\n")
+    } else if(abs(skew_val) > 0.5 && abs(kurt_val) > 0.5) {
+      cat("Both skewness and kurtosis\n")
+    } else {
+      cat("Mild departure from normality\n")
+    }
+  }
+  
+  # Check for outliers
+  Q1 <- quantile(ya_nara_values, 0.25)
+  Q3 <- quantile(ya_nara_values, 0.75)
+  IQR_val <- IQR(ya_nara_values)
+  lower_fence <- Q1 - 1.5 * IQR_val
+  upper_fence <- Q3 + 1.5 * IQR_val
+  outliers <- ya_nara_values[ya_nara_values < lower_fence | ya_nara_values > upper_fence]
+  
+  cat("\nOutlier Detection (1.5 × IQR rule):\n")
+  cat("  Lower fence:", round(lower_fence, 3), "\n")
+  cat("  Upper fence:", round(upper_fence, 3), "\n")
+  cat("  Number of outliers:", length(outliers), "\n")
+  if(length(outliers) > 0) {
+    cat("  Outlier values:", paste(round(outliers, 2), collapse = ", "), "\n")
+    cat("  Outliers may be contributing to non-normality\n")
+  } else {
+    cat("  No outliers detected\n")
+  }
+}
+```
+
+## Step 8: Visualize YA Group Distribution
+
+```{r ya-distribution-visualization, fig.width=14, fig.height=10}
+# Create comprehensive visualization of YA NARA distribution
+
+# Plot 1: Histogram with density overlay
+p1_ya <- ggplot(ya_data, aes(x = NARA)) +
+  geom_histogram(aes(y = ..density..), bins = 15, alpha = 0.7, fill = "salmon", color = "black") +
+  geom_density(color = "darkred", size = 1.2) +
+  stat_function(fun = dnorm, 
+                args = list(mean = mean(ya_nara_values), sd = sd(ya_nara_values)),
+                color = "blue", linetype = "dashed", size = 1) +
+  labs(title = "YA Group NARA Distribution",
+       subtitle = paste0("Histogram with kernel density (red) and theoretical normal (blue dashed)\n",
+                        "Shapiro-Wilk p = ", round(shapiro_test$p.value, 4)),
+       x = "NARA Score", y = "Density") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 14, face = "bold"))
+
+# Plot 2: Q-Q plot for normality assessment
+qq_data <- data.frame(
+  theoretical = qqnorm(ya_nara_values, plot.it = FALSE)$x,
+  sample = qqnorm(ya_nara_values, plot.it = FALSE)$y
+)
+
+p2_ya <- ggplot(qq_data, aes(x = theoretical, y = sample)) +
+  geom_point(size = 3, alpha = 0.7, color = "salmon") +
+  geom_abline(intercept = mean(ya_nara_values), slope = sd(ya_nara_values), 
+              color = "blue", linetype = "dashed", size = 1) +
+  labs(title = "Q-Q Plot for Normality Assessment",
+       subtitle = "Points should fall on the diagonal line if data is normally distributed",
+       x = "Theoretical Quantiles", y = "Sample Quantiles") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 14, face = "bold"))
+
+# Plot 3: Individual data points
+p3_ya <- ggplot(ya_data, aes(x = NARA, y = 1)) +
+  geom_jitter(height = 0.1, alpha = 0.7, size = 3, color = "salmon") +
+  labs(title = "Individual YA NARA Scores",
+       subtitle = paste0("n = ", length(ya_nara_values)),
+       x = "NARA Score", y = "") +
+  theme_minimal() +
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+        plot.title = element_text(size = 14, face = "bold"))
+
+# Plot 4: Box plot with violin overlay
+p4_ya <- ggplot(ya_data, aes(x = "YA", y = NARA)) +
+  geom_violin(fill = "salmon", alpha = 0.5) +
+  geom_boxplot(width = 0.2, fill = "white", alpha = 0.8) +
+  geom_jitter(width = 0.1, alpha = 0.5, size = 2, color = "darkred") +
+  labs(title = "YA NARA Score Distribution",
+       subtitle = paste0("Mean = ", round(mean(ya_nara_values), 2), 
+                        ", SD = ", round(sd(ya_nara_values), 2),
+                        ", Median = ", round(median(ya_nara_values), 2)),
+       x = "", y = "NARA Score") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 14, face = "bold"))
+
+# Combine all plots
+plot_grid(p1_ya, p2_ya, p3_ya, p4_ya, nrow = 2, ncol = 2, 
+          labels = c("A", "B", "C", "D"))
+```
+
+## Step 9: Advanced Non-Normality Diagnostics (if applicable)
+
+```{r advanced-diagnostics, fig.width=14, fig.height=10}
+# Only run if data is non-normal
+if(shapiro_test$p.value < 0.05) {
+  cat("=== ADVANCED NON-NORMALITY DIAGNOSTICS ===\n\n")
+  
+  # Test potential transformations
+  cat("TRANSFORMATION ANALYSIS\n")
+  cat("Testing if transformations improve normality:\n\n")
+  
+  # Log transformation (if all values are positive)
+  if(min(ya_nara_values) > 0) {
+    log_transformed <- log(ya_nara_values)
+    log_shapiro <- shapiro.test(log_transformed)
+    cat("Log transformation:\n")
+    cat("  Shapiro-Wilk p-value:", round(log_shapiro$p.value, 4), "\n")
+    cat("  ", ifelse(log_shapiro$p.value > shapiro_test$p.value, 
+                    "IMPROVED normality", "Did not improve normality"), "\n\n")
+  } else {
+    log_shapiro <- NULL
+    cat("Log transformation: Not applicable (contains zero or negative values)\n\n")
+  }
+  
+  # Square root transformation
+  if(min(ya_nara_values) >= 0) {
+    sqrt_transformed <- sqrt(ya_nara_values)
+    sqrt_shapiro <- shapiro.test(sqrt_transformed)
+    cat("Square root transformation:\n")
+    cat("  Shapiro-Wilk p-value:", round(sqrt_shapiro$p.value, 4), "\n")
+    cat("  ", ifelse(sqrt_shapiro$p.value > shapiro_test$p.value, 
+                    "IMPROVED normality", "Did not improve normality"), "\n\n")
+  } else {
+    sqrt_shapiro <- NULL
+    cat("Square root transformation: Not applicable (contains negative values)\n\n")
+  }
+  
+  # Square transformation (for left-skewed data)
+  square_transformed <- ya_nara_values^2
+  square_shapiro <- shapiro.test(square_transformed)
+  cat("Square transformation:\n")
+  cat("  Shapiro-Wilk p-value:", round(square_shapiro$p.value, 4), "\n")
+  cat("  ", ifelse(square_shapiro$p.value > shapiro_test$p.value, 
+                  "IMPROVED normality", "Did not improve normality"), "\n\n")
+  
+  # Determine best transformation
+  transformations <- list(
+    "Original" = list(data = ya_nara_values, p = shapiro_test$p.value)
+  )
+  if(!is.null(log_shapiro)) {
+    transformations[["Log"]] <- list(data = log_transformed, p = log_shapiro$p.value)
+  }
+  if(!is.null(sqrt_shapiro)) {
+    transformations[["Square root"]] <- list(data = sqrt_transformed, p = sqrt_shapiro$p.value)
+  }
+  transformations[["Square"]] <- list(data = square_transformed, p = square_shapiro$p.value)
+  
+  best_transform <- names(which.max(sapply(transformations, function(x) x$p)))
+  cat("Best transformation:", best_transform, 
+      "(p =", round(max(sapply(transformations, function(x) x$p)), 4), ")\n\n")
+  
+  # Create diagnostic plots
+  
+  # Plot 1: Histogram with skewed overlays
+  if(requireNamespace("e1071", quietly = TRUE)) {
+    skew_val <- skewness(ya_nara_values)
+    
+    p1_diag <- ggplot(ya_data, aes(x = NARA)) +
+      geom_histogram(aes(y = ..density..), bins = 15, alpha = 0.5, fill = "salmon") +
+      geom_density(color = "darkred", size = 1.2) +
+      stat_function(fun = dnorm, 
+                    args = list(mean = mean(ya_nara_values), sd = sd(ya_nara_values)),
+                    color = "blue", linetype = "dashed", size = 1) +
+      labs(title = "Distribution Shape Analysis",
+           subtitle = paste0("Skewness = ", round(skew_val, 3), 
+                           ifelse(skew_val > 0, " (right-skewed)", 
+                                  ifelse(skew_val < 0, " (left-skewed)", " (symmetric)"))),
+           x = "NARA Score", y = "Density") +
+      theme_minimal() +
+      theme(plot.title = element_text(size = 12, face = "bold"))
+  } else {
+    p1_diag <- p1_ya
+  }
+  
+  # Plot 2: Detrended Q-Q plot (residuals from theoretical line)
+  theoretical_quantiles <- qqnorm(ya_nara_values, plot.it = FALSE)$x
+  sample_quantiles <- qqnorm(ya_nara_values, plot.it = FALSE)$y
+  expected_quantiles <- mean(ya_nara_values) + sd(ya_nara_values) * theoretical_quantiles
+  residuals <- sample_quantiles - expected_quantiles
+  
+  detrended_qq <- data.frame(
+    theoretical = theoretical_quantiles,
+    residuals = residuals
+  )
+  
+  p2_diag <- ggplot(detrended_qq, aes(x = theoretical, y = residuals)) +
+    geom_point(size = 3, alpha = 0.7, color = "salmon") +
+    geom_hline(yintercept = 0, color = "blue", linetype = "dashed", size = 1) +
+    labs(title = "Detrended Q-Q Plot",
+         subtitle = "Shows deviation from normality (should cluster around zero)",
+         x = "Theoretical Quantiles", y = "Residuals") +
+    theme_minimal() +
+    theme(plot.title = element_text(size = 12, face = "bold"))
+  
+  # Plot 3: Comparison of transformations
+  if(best_transform != "Original") {
+    best_data <- transformations[[best_transform]]$data
+    
+    p3_diag <- ggplot(data.frame(x = best_data), aes(x = x)) +
+      geom_histogram(aes(y = ..density..), bins = 15, alpha = 0.5, fill = "lightgreen") +
+      geom_density(color = "darkgreen", size = 1.2) +
+      stat_function(fun = dnorm, 
+                    args = list(mean = mean(best_data), sd = sd(best_data)),
+                    color = "blue", linetype = "dashed", size = 1) +
+      labs(title = paste("Best Transformation:", best_transform),
+           subtitle = paste0("Shapiro-Wilk p = ", 
+                           round(transformations[[best_transform]]$p, 4)),
+           x = paste(best_transform, "Transformed NARA Score"), y = "Density") +
+      theme_minimal() +
+      theme(plot.title = element_text(size = 12, face = "bold"))
+  } else {
+    p3_diag <- ggplot(ya_data, aes(x = NARA, y = 1)) +
+      geom_text(aes(label = "No transformation improves normality"), 
+                x = mean(ya_nara_values), y = 1, size = 5) +
+      labs(title = "Transformation Analysis",
+           subtitle = "Original distribution is best") +
+      theme_void() +
+      theme(plot.title = element_text(size = 12, face = "bold"))
+  }
+  
+  # Plot 4: Distribution of residuals from mean
+  residuals_from_mean <- ya_nara_values - mean(ya_nara_values)
+  standardized_residuals <- residuals_from_mean / sd(ya_nara_values)
+  
+  p4_diag <- ggplot(data.frame(residuals = standardized_residuals), aes(x = residuals)) +
+    geom_histogram(aes(y = ..density..), bins = 15, alpha = 0.5, fill = "lightblue") +
+    geom_density(color = "darkblue", size = 1.2) +
+    stat_function(fun = dnorm, args = list(mean = 0, sd = 1),
+                  color = "red", linetype = "dashed", size = 1) +
+    labs(title = "Standardized Residuals from Mean",
+         subtitle = "Should match standard normal (red dashed) if data is normal",
+         x = "Standardized Residuals", y = "Density") +
+    theme_minimal() +
+    theme(plot.title = element_text(size = 12, face = "bold"))
+  
+  # Combine diagnostic plots
+  plot_grid(p1_diag, p2_diag, p3_diag, p4_diag, nrow = 2, ncol = 2, 
+            labels = c("A", "B", "C", "D"))
+  
+} else {
+  cat("Data is normally distributed - advanced diagnostics not needed.\n")
+}
+```
