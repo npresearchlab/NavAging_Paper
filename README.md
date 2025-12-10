@@ -6,9 +6,9 @@ This repository contains the data, code, and materials supporting:
 
 **Bassil et al., 2025**: *"Distinct aging-related profiles of allocentric knowledge recall following navigation in an immersive, naturalistic, city-like environment"*
 
-**Authors**: [List your authors here]  
+**Authors**: Yasmine Bassil, Anisha Kanukolanu, Emma Funderburg, Emily Cui, Thackery Brown, Michael R. Borich
 **Affiliation**: Neural Plasticity Research Lab, Emory University  
-**Contact**: Dr. Michael Borich ([mborich@emory.edu](mailto:mborich@emory.edu))  
+**Contact**: Dr. Michael Borich, PhD, DPT, PT ([mborich@emory.edu](mailto:mborich@emory.edu))  
 **Lab Website**: [npresearchlab.com](https://npresearchlab.com)
 
 ---
@@ -29,14 +29,13 @@ This repository contains the data, code, and materials supporting:
 
 ## Overview
 
-This repository provides complete reproducibility materials for our study examining age-related differences in spatial navigation and allocentric knowledge recall using an immersive, naturalistic virtual environment (NavCity). The study compares younger adults (YAs) and older adults (OAs) across multiple cognitive and navigational assessments.
+This repository provides complete reproducibility materials for our study examining aging-related differences in spatial navigation and allocentric knowledge recall using an immersive, naturalistic virtual environment (*NavCity*). The study compares younger adults (YAs) and older adults (OAs) across multiple cognitive and navigational assessments.
 
 **Key Features:**
 - Raw and processed data from all participants
 - Complete analysis pipeline from raw data to final figures
 - Statistical analysis scripts
 - Publication-ready figures
-- Demographic and cognitive assessment data
 
 ---
 
@@ -53,8 +52,14 @@ NavAging_Paper/
 │   └── demographic_data.csv  # Participant demographics and characteristics
 │
 ├── data_analysis/            # Data processing and analysis scripts
-│   └── 0_runall.ipynb       # Master script to process all raw data
-│
+│   └── 0_runall.ipynb        # Master script to process all raw data
+│   └── 1_calculate_outcomes.ipynb  # Calculates outcome measures from raw data
+│   └── 2_merge_data.ipynb    # Collects outcome measures per block per participant in one dataframe
+│   └── 3_average_data.ipynb  # Averages outcome measures over blocks per participant
+│   └── 4_target_data.ipynb   # Creates dataframes for overall paths per block across participants
+│   └── 5_graph_data.ipynb    # Creates overhead path map figures per block across participants
+│   └── 6_post_analyses.ipynb # Cleans up data based on documented errors during data collection
+|
 ├── figure_creation/          # Scripts to generate manuscript figures
 │
 ├── final_figures/            # Publication-ready figures (output)
@@ -77,17 +82,21 @@ This directory contains all experimental data:
 
 - **`YA_Data/`**: Raw navigation and performance data from younger adult participants (ages 18-35)
 - **`OA_Data/`**: Raw navigation and performance data from older adult participants (ages 60+)
-- **`non_nav_data.csv`**: Compiled data from cognitive assessments including:
-  - Montreal Cognitive Assessment (MoCA)
-  - Trail Making Test (TMT)
+- **`non_nav_data.csv`**: Compiled data from questionnaires and cognitive assessments including:
+  - Pittsburg Sleep Quality Index (PSQI)
+  - Stanford Sleepiness Scale (SSS) Pre and Post Session
   - Santa Barbara Sense of Direction Scale (SBSOD)
-  - Other validated neuropsychological measures
+  - MiniCog
+  - Trail Making Tests A & B
+  - Corsi Blocks
+  - Narrowing Beam Walking Test
+  - NavCity Allocentric Representation Assessment (NARA)
 - **`participants.csv`**: Cross-reference file linking participant IDs across different data collection systems
 - **`demographic_data.csv`**: Self-reported participant information:
   - Age, gender, handedness
   - VR experience level
   - Video game usage
-  - Education level
+  - Exercise frequency
   - Other relevant demographic variables
 
 **Data Format**: CSV files with headers, UTF-8 encoding  
@@ -102,14 +111,17 @@ This directory contains all experimental data:
 Contains Jupyter notebooks and Python scripts for data processing and analysis.
 
 - **`0_runall.ipynb`**: Master orchestration script
-  - Runs all analysis scripts in sequence
-  - Processes raw NavCity data files
+  - Runs all analysis scripts (labeled 1 through 6) in sequence
+  - Processes raw *NavCity* data files
   - Generates block-specific and session-averaged metrics
   - Outputs cleaned datasets for statistical analysis
-  - **⚠️ Important**: This file contains hardcoded file paths. You must update these paths before running:
-    - Line XX: Set your local data directory
-    - Line YY: Set output directory for processed files
-    - Line ZZ: Specify figure output location
+
+**⚠️ Important**: This file contains hardcoded file paths. You must update file paths before running on your local machine. To get started, you may set the following:
+    - Line 15: Set your local data directory for YA data
+    - Line 16: Set your local data directory for OA data
+    - Line 19: Set your local directory to analysis codes (scripts 0 through 6)
+
+Outputs from analysis scripts will be located in the *parent directory* of the YA data and OA data, respectively.
 
 **To Run the Complete Pipeline:**
 1. Clone this repository
@@ -130,10 +142,13 @@ Statistical analysis scripts for hypothesis testing and generating results repor
 
 Scripts to generate all manuscript figures from processed data.
 
-- Figure 1: [Brief description]
-- Figure 2: [Brief description]
-- Figure 3: [Brief description]
-- Supplementary figures
+- Figure 2: Included plots from `1_average_plots.Rmd` and `2_by_block_plots.Rmd` (for *NavCity* primary measures)
+- Figure 3: Included plots from `1_average_plots.Rmd` and `2_by_block_plots.Rmd` (for *NavCity* secondary measures)
+- Figure 4: Included plots from `4_corr_plots.Rmd` and `5_nara_plots.Rmd`
+- Figure 5: Included plots from `6_cohorts_average_plots.Rmd` and `2_cohorts_by_block_plots.Rmd` (for *NavCity* primary measures)
+- Figure 6: Included plots from `6_cohorts_average_plots.Rmd` and `2_cohorts_by_block_plots.Rmd` (for *NavCity* secondary measures)
+
+**⚠️ Important**: All figure creation scripts contains hardcoded file paths. You must update file paths before running on your local machine.
 
 ---
 
@@ -166,18 +181,6 @@ statsmodels>=0.12.0
 jupyter>=1.0.0
 ```
 
-**Installation:**
-
-```bash
-pip install -r requirements.txt
-```
-
-Or install individually:
-
-```bash
-pip install numpy pandas matplotlib seaborn scipy statsmodels jupyter
-```
-
 ### Hardware Requirements
 
 - Minimum 8GB RAM recommended
@@ -198,11 +201,11 @@ pip install numpy pandas matplotlib seaborn scipy statsmodels jupyter
 
 2. **Install dependencies:**
    ```bash
-   pip install -r requirements.txt
+   pip install numpy pandas matplotlib seaborn scipy statsmodels jupyter
    ```
 
 3. **Run the analysis pipeline:**
-   - Open `data_analysis/0_runall.ipynb` in Jupyter
+   - Open `data_analysis/0_runall.ipynb` in preferred IDE
    - Update file paths in the configuration section
    - Run all cells to reproduce analyses
 
@@ -210,20 +213,6 @@ pip install numpy pandas matplotlib seaborn scipy statsmodels jupyter
    - Navigate to `figure_creation/`
    - Run figure generation scripts
    - Outputs will be saved to `final_figures/`
-
-### Reproducing Specific Analyses
-
-To reproduce specific analyses or figures:
-
-```bash
-# Example: Generate Figure 2
-cd figure_creation/
-python generate_figure2.py
-
-# Example: Run statistical tests
-cd stat_tests/
-jupyter notebook statistical_analyses.ipynb
-```
 
 ---
 
@@ -247,14 +236,9 @@ If you use this code or data in your research, please cite:
 
 ## License
 
-<!-- Choose one of the following: -->
-
 **Data**: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) - Data are freely available with attribution
 
 **Code**: [MIT License](LICENSE) - Code is freely available for reuse and modification
-
-<!-- Or if you prefer: -->
-<!-- This work is licensed under [specify your license]. See LICENSE file for details. -->
 
 ---
 
@@ -287,11 +271,10 @@ This research was supported by [funding sources]. We thank all study participant
 ## Additional Resources
 
 - **Lab Website**: [npresearchlab.com](https://npresearchlab.com)
-- **Pre-registration**: [Link if applicable]
-- **Preprint**: [Link if available]
-- **OSF Project**: [Link if applicable]
+- **Preprint**: [NavAging Preprint](https://osf.io/daq64)
+- **OSF Project**: [OSF Data Repository](https://osf.io/qmwyk/overview)
 
 ---
 
 **Last Updated**: December 2025  
-**Repository Maintainer**: [Your Name/Lab Name]
+**Repository Maintainer**: Yasmine Bassil, Neuroscience PhD Candidate, Neural Plasticity Research Lab, Emory University
