@@ -117,9 +117,9 @@ Contains Jupyter notebooks and Python scripts for data processing and analysis.
   - Outputs cleaned datasets for statistical analysis
 
 **⚠️ Important**: This file contains hardcoded file paths. You must update file paths before running on your local machine. To get started, you may set the following:
-    - Line 15: Set your local data directory for YA data
-    - Line 16: Set your local data directory for OA data
-    - Line 19: Set your local directory to analysis codes (scripts 0 through 6)
+  - Line 15: Set your local data directory for YA data
+  - Line 16: Set your local data directory for OA data
+  - Line 19: Set your local directory to analysis codes (scripts 0 through 6)
 
 Outputs from analysis scripts will be located in the *parent directory* of the YA data and OA data, respectively.
 
