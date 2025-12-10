@@ -246,9 +246,6 @@ If you use this code or data in your research, please cite:
 
 The `/submission/` directory contains:
 - Final manuscript PDF
-- Supplementary materials
-- Response to reviewers (if applicable)
-- Revision history
 
 ---
 
