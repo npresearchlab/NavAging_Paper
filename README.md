@@ -255,7 +255,7 @@ We welcome questions, bug reports, and suggestions for improvements. Please:
 
 1. Check existing [Issues](https://github.com/npresearchlab/NavAging_Paper/issues)
 2. Open a new issue with detailed description
-3. For data questions, contact Dr. Michael Borich at [mborich@emory.edu](mailto:mborich@emory.edu)
+3. For data questions, contact Dr. Michael Borich at mborich [at] emory.edu
 
 ---
 
