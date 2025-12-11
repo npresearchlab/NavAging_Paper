@@ -1,6 +1,7 @@
 # ignoring specific project folders
 /data/
 /submission/
+_archive/
 
 # ignoring all DS Store files
 *.DS_Store
