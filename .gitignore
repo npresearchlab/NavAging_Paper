@@ -1,8 +1,12 @@
+# ignoring specific project folders
+/data/
+/submission/
+
 # ignoring all DS Store files
 *.DS_Store
 **/.DS_Store
 
-# macOS
+# ignoring basic macOS hidden files
 .DS_Store
 .DS_Store?
 ._*
