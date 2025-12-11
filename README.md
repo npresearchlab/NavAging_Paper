@@ -78,29 +78,7 @@ NavAging_Paper/
 
 ### `/data/`
 
-This directory contains all experimental data:
-
-- **`YA_Data/`**: Raw navigation and performance data from younger adult participants (ages 18-35)
-- **`OA_Data/`**: Raw navigation and performance data from older adult participants (ages 60+)
-- **`non_nav_data.csv`**: Compiled data from questionnaires and cognitive assessments including:
-  - Pittsburg Sleep Quality Index (PSQI)
-  - Stanford Sleepiness Scale (SSS) Pre and Post Session
-  - Santa Barbara Sense of Direction Scale (SBSOD)
-  - MiniCog
-  - Trail Making Tests A & B
-  - Corsi Blocks
-  - Narrowing Beam Walking Test
-  - NavCity Allocentric Representation Assessment (NARA)
-- **`participants.csv`**: Cross-reference file linking participant IDs across different data collection systems
-- **`demographic_data.csv`**: Self-reported participant information:
-  - Age, gender, handedness
-  - VR experience level
-  - Video game usage
-  - Exercise frequency
-  - Other relevant demographic variables
-
-**Data Format**: CSV files with headers, UTF-8 encoding  
-**Missing Data**: Coded as `NA` or blank cells
+All experimental data can be found in the Open Science Framework (OSF) project associated with this study: [NavAging OSF Project](https://osf.io/qmwyk/overview)
 
 ---
 
