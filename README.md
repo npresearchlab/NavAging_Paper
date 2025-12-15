@@ -199,19 +199,7 @@ jupyter>=1.0.0
 
 ## Citation
 
-If you use this code or data in your research, please cite:
-
-```bibtex
-@article{bassil2025navaging,
-  title={Distinct aging-related profiles of allocentric knowledge recall following navigation in an immersive, naturalistic, city-like environment},
-  author={Bassil, [FirstName] and [Co-authors]},
-  journal={[Journal Name]},
-  year={2025},
-  volume={[Volume]},
-  pages={[Pages]},
-  doi={[DOI]}
-}
-```
+*Will be posted when citation is available.*
 
 ---
 
