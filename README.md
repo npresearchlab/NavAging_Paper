@@ -2,11 +2,21 @@
 
 [![DOI](https://img.shields.io/badge/DOI-pending-blue)]() <!-- Add your DOI when available -->
 
-This repository contains relevant code and materials supporting:
+Welcome to the repository for the paper ***"Distinct aging-related profiles of allocentric knowledge recall following navigation in an immersive, naturalistic, city-like environment"*** (also nicknamed the NPRL "NavAging Paper"). 
 
-**Bassil et al., 2025**: *"Distinct aging-related profiles of allocentric knowledge recall following navigation in an immersive, naturalistic, city-like environment"*
+This project examines aging-related differences in spatial navigation in an immersive, naturalistic virtual environment (*NavCity*) and associated allocentric knowledge recall.
 
-All data for this paper can be found on the associated [NavAging OSF Project](https://osf.io/qmwyk/overview).
+## What's Here?
+
+This repository contains all **analysis code, figures, and statistical tests** associated with this study. 
+
+All **data** for this paper can be found on the associated [NavAging OSF Project](https://osf.io/qmwyk/overview).
+
+Below is an explanation of the folder structure in this repository. Feel free to reach out to the Neural Plasticity Research Lab via our [website](https://npresearchlab.com) or contact Yasmine Bassil at [ybassil@emory.edu](mailto:ybassil@emory.edu) with any questions.
+
+## Citation & Details
+
+> Bassil, Y., Kanukolanu, A., Funderburg, E., Cui, E., Brown, T., & Borich, M. R. (2025). Distinct aging-related profiles of allocentric knowledge recall following navigation in an immersive, naturalistic, city-like environment. *PsyArXiv*. https://osf.io/qmwyk.
 
 **Authors**: Yasmine Bassil, Anisha Kanukolanu, Emma Funderburg, Emily Cui, Thackery Brown, Michael R. Borich
 **Affiliation**: Neural Plasticity Research Lab, Emory University  
