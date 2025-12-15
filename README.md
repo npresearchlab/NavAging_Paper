@@ -2,9 +2,11 @@
 
 [![DOI](https://img.shields.io/badge/DOI-pending-blue)]() <!-- Add your DOI when available -->
 
-This repository contains the data, code, and materials supporting:
+This repository contains relevant code and materials supporting:
 
 **Bassil et al., 2025**: *"Distinct aging-related profiles of allocentric knowledge recall following navigation in an immersive, naturalistic, city-like environment"*
+
+All data for this paper can be found on the associated [NavAging OSF Project](https://osf.io/qmwyk/overview).
 
 **Authors**: Yasmine Bassil, Anisha Kanukolanu, Emma Funderburg, Emily Cui, Thackery Brown, Michael R. Borich
 **Affiliation**: Neural Plasticity Research Lab, Emory University  
@@ -44,13 +46,6 @@ This repository provides complete reproducibility materials for our study examin
 ```
 NavAging_Paper/
 │
-├── data/                      # Raw and processed data files
-│   ├── YA_Data/              # Younger adult participant data
-│   ├── OA_Data/              # Older adult participant data
-│   ├── non_nav_data.csv      # Non-NavCity cognitive assessments
-│   ├── participants.csv      # Participant ID mapping
-│   └── demographic_data.csv  # Participant demographics and characteristics
-│
 ├── data_analysis/            # Data processing and analysis scripts
 │   └── 0_runall.ipynb        # Master script to process all raw data
 │   └── 1_calculate_outcomes.ipynb  # Calculates outcome measures from raw data
@@ -65,8 +60,6 @@ NavAging_Paper/
 ├── final_figures/            # Publication-ready figures (output)
 │
 ├── stat_tests/               # Statistical analysis scripts
-│
-├── submission/               # Manuscript and supplementary materials
 │
 ├── .gitignore
 └── README.md
