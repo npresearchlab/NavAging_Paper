@@ -62,6 +62,7 @@ NavAging_Paper/
 ├── stat_tests/               # Statistical analysis scripts
 │
 ├── .gitignore
+├── LICENSE
 └── README.md
 ```
 
