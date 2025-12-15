@@ -34,7 +34,6 @@ All data for this paper can be found on the associated [NavAging OSF Project](ht
 This repository provides complete reproducibility materials for our study examining aging-related differences in spatial navigation and allocentric knowledge recall using an immersive, naturalistic virtual environment (*NavCity*). The study compares younger adults (YAs) and older adults (OAs) across multiple cognitive and navigational assessments.
 
 **Key Features:**
-- Raw and processed data from all participants
 - Complete analysis pipeline from raw data to final figures
 - Statistical analysis scripts
 - Publication-ready figures
@@ -211,13 +210,6 @@ If you use this code or data in your research, please cite:
 **Data**: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) - Data are freely available with attribution
 
 **Code**: [MIT License](LICENSE) - Code is freely available for reuse and modification
-
----
-
-## Submission Materials
-
-The `/submission/` directory contains:
-- Final manuscript PDF
 
 ---
 
