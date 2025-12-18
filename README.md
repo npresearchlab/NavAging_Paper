@@ -10,6 +10,9 @@ This project examines aging-related differences in spatial navigation in an imme
 
 This repository contains all **analysis code, figures, and statistical tests** associated with this study. 
 
+> **📌 Note on Code Versions**  
+> This repository is a **frozen snapshot** of the code used to produce the results in the published paper, preserved for reproducibility. For the latest version of the analysis code (with bug fixes, improvements, and extensions), see the [active development repository](https://github.com/npresearchlab/beh-nav) for *NavCity* data analysis.
+
 All **data** for this paper can be found on the associated [NavAging OSF Project](https://osf.io/qmwyk/overview).
 
 Below is an explanation of the folder structure in this repository. Feel free to reach out to the Neural Plasticity Research Lab via our [website](https://npresearchlab.com) or contact Yasmine Bassil at [ybassil@emory.edu](mailto:ybassil@emory.edu) with any questions.
